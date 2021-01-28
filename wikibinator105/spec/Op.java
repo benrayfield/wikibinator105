@@ -6,6 +6,24 @@ package wikibinator105.spec;
 <br><br>
 <br><br>
 
+UPDATE 2021-1-28[
+ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+ukƱuu1?? (λ   λ   (λ λ)   λ     λ     λ)    ?     ? //1
+ukƱuu0?? (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //0
+ukƱu∩∞?? (λ   λ   (λ λ)   λ   (λ λ)   λ)    ?     ? //infcur/∞
+ukƱu∩c?? (λ   λ   (λ λ)   λ   (λ λ) (λ λ))  ?     ? //curry/c
+ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+]
+
+<br><br>
+
 use ax as typeval where func is recog of that type and ret of leaf is true. create optimization to check for something like (igfp "double[]" (t u)) as tupe, to not have to check constraints where its certain it always returns u.
 ..
 change ax so...
@@ -291,9 +309,67 @@ ukƱu∩c? FIXME i want 2 curries after c to fit in the first 6 curries, those b
 ukƱx???
 
 ukƱu∩∞ 
+
+---
+
+
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+
+ukƱuu0??
+ukƱuu1??
+ukƱu∩∞??
+ukƱu∩c??
+ukƱx????
+
+ukƱuu0??
+ukƱuu1??
+ukƱuc???
+ukƱx????
+
+ukƱuuu0?
+ukƱuuu1?
+ukƱuu∩??
+ukƱu∩∞??
+ukƱu∩c??
+ukƱx????
+
+ukƱuuu0?
+ukƱuuu1?
+ukƱuu∩∞?
+ukƱuu∩@? //anothe constant can go at @?
+ukƱu∩c??
+ukƱx????
+
+//opByte can tell 0 vs 00 vs 01 vs 1 vs 10 vs 11 (so can do truthvalue efficiently), other than the prefixes of 0 and 1.
+ukƱuu0??
+ukƱuu1??
+ukƱu∩∞?? 
+ukƱu∩c?? //c/curry's first param is unaryNumber of curries, and is the 6th param of u. Its important that fit in the first 6.
+ukƱx???? //x/ax's first 3 params are the fourth fifth and sixth params of u. checks constraint at sixth. evals at 7.
+
+ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+ukƱuu1?? (λ   λ   (λ λ)   λ     λ     λ)    ?     ? //1
+ukƱuu0?? (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //0
+ukƱu∩∞?? (λ   λ   (λ λ)   λ   (λ λ)   λ)    ?     ? //infcur/∞
+ukƱu∩c?? (λ   λ   (λ λ)   λ   (λ λ) (λ λ))  ?     ? //curry/c
+ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
 */
 public enum Op{
-	
 	
 	/*FIXME change all strings to only use those 2 chars instead of the more chars I used while designing it,
 	or actually write it like "(λ λ (λ λ) λ)" etc of how to write the normed form of the op in the default syntax,
@@ -327,7 +403,7 @@ public enum Op{
 	so for it to see other systems it would have to emulate axiomforest such as using
 	(pair cbt16_axiomforestHeader (pair axiomforestLeftChild axiomforestRightChild)) for example.
 	*/
-	deepLazy("",true,false,0),
+	deepLazy(null,true,false,0),
 	
 	//First param is λ (aka u aka leaf) for clean, or anything else (such as (λ λ)) for dirty.
 	//
@@ -355,40 +431,21 @@ public enum Op{
 	//(aClean bDirty) -> (aClean (recursivelyChangeFirstParamsToClean bDirty)) -> (aClean bClean) -> thing_that_clean.
 	
 	
-	/*FIXME??? move the wiki and ax ops so that theres only 1 possible isdirty form of them,
-	so that they use u instead of (u u) in their opcodes, or at least that way for wiki
-	since they cant both have all u's as their prefix. the wiki is the most important
-	to be that way cuz its the only nondeterministic thing in the system.
+	/*
+	ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+	ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+	ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+	ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+	ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+	ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+	ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+	ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+	ukƱuu1?? (λ   λ   (λ λ)   λ     λ     λ)    ?     ? //1
+	ukƱuu0?? (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //0
+	ukƱu∩∞?? (λ   λ   (λ λ)   λ   (λ λ)   λ)    ?     ? //infcur/∞
+	ukƱu∩c?? (λ   λ   (λ λ)   λ   (λ λ) (λ λ))  ?     ? //curry/c
+	ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
 	*/
-	
-	/** l/getFunc. TODO copy comments from wikibinator104 and maybe modify them...
-	<br><br>
-	(l x) is left child of x in the binary forest of call pairs.
-	Not the same as lispCar since pair is the church-pair lambda.
-	isLeaf, l, and r make this a "pattern calculus function".
-	*/
-	getFunc("(λ λ λ λ λ λ λ) FIXME uΩuuul",false,false,1),
-	GetFunc("∩Ωuuul",false,false,1),
-	
-	/** r/getParam. TODO copy comments from wikibinator104 and maybe modify them...
-	<br><br>
-	(r x) is right child of x in the binary forest of call pairs.
-	Not the same as lispCdr since pair is the church-pair lambda.
-	isLeaf, l, and r make this a "pattern calculus function".
-	*/
-	getParam("(λ λ λ λ λ λ (λ λ)) FIXME uΩuu∩r",false,false,1),
-	GetParam("∩Ωuu∩r",false,false,1),
-	
-	//FIXME TODO: l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
-	
-	/** a/isLeaf. TODO copy comments from wikibinator104 and maybe modify them...
-	<br><br>
-	(isLeaf x) is t or f depending if x is the leaf which all paths in the binary forest of call pairs lead to
-	aka the wikibinator104 universal function itself.
-	isLeaf, l, and r make this a "pattern calculus function".
-	*/
-	isLeaf("(λ λ λ λ λ (λ λ) λ) FIXME uΩuu∩a",false,false,1),
-	IsLeaf("∩Ωuu∩a",false,false,1),
 	
 	/** all nondeterminism goes here. TODO copy comments from wikibinator104 and maybe modify them...
 	<br><br>
@@ -429,44 +486,81 @@ public enum Op{
 	and if that doesnt work out, try other combos automatically.
 	Everything gets connected to everything if thats what those parts want at the time and context.
 	*/
-	wiki("(λ λ λ λ λ (λ λ) (λ λ)) FIXME uΩuu∩w",false,false,1),
-	Wiki("∩Ωuu∩w",false,false,1),
+	wiki("(λ λ λ λ λ λ λ)",false,false,1),
+	Wiki("(λ (λ λ) λ λ λ λ λ)",false,false,1),
+	
+	/** a/isLeaf. TODO copy comments from wikibinator104 and maybe modify them...
+	<br><br>
+	(isLeaf x) is t or f depending if x is the leaf which all paths in the binary forest of call pairs lead to
+	aka the wikibinator104 universal function itself.
+	isLeaf, l, and r make this a "pattern calculus function".
+	*/
+	isLeaf("(λ λ λ λ λ λ (λ λ))",false,false,1),
+	IsLeaf("(λ (λ λ) λ λ λ λ (λ λ))",false,false,1),
+	
+	/*FIXME??? move the wiki and ax ops so that theres only 1 possible isdirty form of them,
+	so that they use u instead of (u u) in their opcodes, or at least that way for wiki
+	since they cant both have all u's as their prefix. the wiki is the most important
+	to be that way cuz its the only nondeterministic thing in the system.
+	*/
+	
+	/** l/getFunc. TODO copy comments from wikibinator104 and maybe modify them...
+	<br><br>
+	(l x) is left child of x in the binary forest of call pairs.
+	Not the same as lispCar since pair is the church-pair lambda.
+	isLeaf, l, and r make this a "pattern calculus function".
+	*/
+	getFunc("(λ λ λ λ λ (λ λ) λ)",false,false,1),
+	GetFunc("(λ (λ λ) λ λ λ (λ λ) λ)",false,false,1),
+	
+	/** r/getParam. TODO copy comments from wikibinator104 and maybe modify them...
+	<br><br>
+	(r x) is right child of x in the binary forest of call pairs.
+	Not the same as lispCdr since pair is the church-pair lambda.
+	isLeaf, l, and r make this a "pattern calculus function".
+	*/
+	getParam("(λ λ λ λ λ (λ λ) (λ λ))",false,false,1),
+	GetParam("(λ (λ λ) λ λ λ (λ λ) (λ λ))",false,false,1),
+	
+	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
 	
 	/** λy.λz.y aka true. (pair b c tru) is b. Is the K lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
-	tru("(λ λ λ (λ λ) λ) FIXME uΩu∩t",false,false,2),
-	Tru("∩Ωu∩t",false,false,2),
+	tru("(λ λ λ λ (λ λ) λ)",false,false,2),
+	Tru("(λ (λ λ) λ λ (λ λ) λ)",false,false,2),
 	
 	/** λy.λz.z aka false aka f. (fal λ) is identityFunc aka λz.z. (pair b c fal) is c. */
-	fal("(λ λ λ (λ λ) (λ λ)) FIXME uΩu∩f",false,false,2),
-	Fal("∩Ωu∩f",false,false,2),
+	fal("(λ λ λ λ (λ λ) (λ λ))",false,false,2),
+	Fal("(λ (λ λ) λ λ (λ λ) (λ λ))",false,false,2),
 	
 	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
-	trecurse("uΩ∩s",false,false,3),
-	Trecurse("∩Ω∩s",false,false,3),
+	trecurse("(λ λ λ (λ λ) λ)",false,false,3),
+	Trecurse("(λ (λ λ) λ (λ λ) λ)",false,false,3),
 	
 	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
-	pair("uΩ∩p",false,false,3),
-	Pair("∩Ω∩p",false,false,3),
+	pair("(λ λ λ (λ λ) (λ λ))",false,false,3),
+	Pair("(λ (λ λ) λ (λ λ) (λ λ))",false,false,3),
 	
 	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
-	zero("uƱuuu0",false,true,0),
+	one("(λ λ (λ λ) λ λ λ)",false,true,0), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	One("(λ (λ λ) (λ λ) λ λ λ)",false,true,0), //one and One do the same thing except viewed thru reflect, and only one is optimized
 	
 	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
-	one("uƱuuu1",false,true,0),
+	zero("(λ λ (λ λ) λ λ (λ λ))",false,true,0), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	Zero("(λ (λ λ) (λ λ) λ λ (λ λ))",false,true,0), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
 	
 	/** waiting for infinity curries, never evals just keeps accumulating params. A list of anything you want,
 	without the inefficiency of using ((pair x) y). Just call it on y without the pair.
 	No funcbody or unaryNumber of curries left to cache. Just create a halted callpair for each next curry.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
-	infcur("uƱuu∞",false,true,0),
-	Infcur("∩Ʊuu∞",false,true,0),
+	infcur("(λ λ (λ λ) λ (λ λ) λ)",false,true,0),
+	Infcur("(λ (λ λ) (λ λ) λ (λ λ) λ)",false,true,0),
 	
 	/** (curry unaryNum comment funcbody ...params...)
 	or TODO choose a design, maybe unaryNum other than 0 (u) is the curry op itself?
@@ -475,8 +569,8 @@ public enum Op{
 	and this will instead cache the unaryNumber (thats deep inside, near funcBody) similar to caching funcBody.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
-	curry("uƱuc",false,true,0),
-	Curry("∩Ʊuc",false,true,0),
+	curry("(λ λ (λ λ) λ (λ λ) (λ λ))",false,true,0),
+	Curry("(λ (λ λ) (λ λ) λ (λ λ) (λ λ))",false,true,0),
 	
 	//cleancall will be derived at user level, not an op.
 	
@@ -569,8 +663,8 @@ public enum Op{
 		Similarly func could be something that calls its param on another func, if you want it to do some other order.
 	]
 	*/
-	ax("uƱx",false,true,4),
-	Ax("∩Ʊx",false,true,4);
+	ax("(λ λ (λ λ) (λ λ))",false,true,4),
+	Ax("(λ (λ λ) (λ λ) (λ λ))",false,true,4);
 	
 	/** after (u u) aka clean or (u anything_except_u) aka dirty,
 	this is "u" for leaf vs "∩" for anything except leaf, which is a binary prefix for each op.

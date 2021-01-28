@@ -1,10 +1,42 @@
 # wikibinator105
-(TODO) A deterministic way for millions of people and AIs to build and play together, safely sandboxed but not dumbed-down,
+(TODO) A deterministic way for millions of people and AIs to build and play together in p2p, safely sandboxed but not dumbed-down,
 a very simple kind of self-aware living number, where 2 numbers combine to create or find another number, and so on,
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.  
 
+You start with the universal function: λ
+(x y) is calling the function x on y,
+which returns some function or stays as itself if waiting on more functions like (x y z).
+(λ λ) is calling λ on λ.
+Here are the (TODO)drag-and-droppable opcodes and how to get them using only λ...
+
+```
+ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+ukƱuu1?? (λ   λ   (λ λ)   λ     λ     λ)    ?     ? //1
+ukƱuu0?? (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //0
+ukƱu∩∞?? (λ   λ   (λ λ)   λ   (λ λ)   λ)    ?     ? //infcur/∞
+ukƱu∩c?? (λ   λ   (λ λ)   λ   (λ λ) (λ λ))  ?     ? //curry/c
+ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+
+Theres twice that many opcodes
+by starting with (λ (λ λ)) aka dirty instead of (λ λ) aka clean.
+
+From these, anything can be built. This will be demonstrated soon in a basic form,
+but it will take a long time to optimize it for GPU, graphics, sound, networking, etc
+(JIT compiler designed for this kind of lambdas).
+```
+
+
 TODO rewrite disorganized text...
+
+A redesign of https://github.com/benrayfield/wikibinator104/ to directly allow vararg, instead of putting it in linkedlists, for efficiency. This is a big change to the universal function so is its own project. TODO copy parts from wikibinator104's readme etc. See Op.java
 
 and pattern calculus functionfunction thats a lambda, combinator, and pattern ca thats also a pattern calculus function.
 
@@ -13,8 +45,6 @@ What makes the internet work, this is its purest simplest form, a kind of number
 (TODO) A kind of number that any 2 of them create or find another number and so on, that millions of 
 Scalable gaming-low-lag p2p wiki of 1 editable universal function for millions of people and AIs to build and play together, safely sandboxed but not dumbed down, 
 a universal lambda and pattern calculus function of infinity/vararg params with opcode in the first few, GPU optimizable, turing-complete-challenge-response, godel-quality-self-reference (wiki can call itself recursively, emulate itself, etc), safely sandboxed across millions of untrusted computers. (TODO)
-
-A redesign of wikibinator104 to directly allow vararg, instead of putting it in linkedlists, for efficiency. This is a big change to the universal function so is its own project. TODO copy parts from wikibinator104's readme etc. See Op.java
 
 For ages 0 to expert. It will teach you how itself and every known kind of math works and to build fun games and useful tools and play and work together, from the basics of math counting on your fingers up to the most advanced AI and number crunching and scaleable systems deployed in realtime, and for millions of people to be able to do that together in p2p without anyone being above or below anyone else, just merges and forks in binary forest of immutable objects viewed any way you like as functions can be built to view functions in new ways. (TODO).
 
