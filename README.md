@@ -4,13 +4,13 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.  
 
+```
 You start with the universal function: λ
 (x y) is calling the function x on y,
 which returns some function or stays as itself if waiting on more functions like (x y z).
 (λ λ) is calling λ on λ.
 Here are the (TODO)drag-and-droppable opcodes and how to get them using only λ...
 
-```
 ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
 ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
 ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
