@@ -21,6 +21,16 @@ and it doesnt have that infloop in curry behavior cuz its an axiom related thing
 */
 public interface λ extends UnaryOperator<λ>{
 	
+	TODO implement ids like that page of text near the top of readme as of 2021-1-29
+	about nsat, axiomforest header 16 bits, merging (something like?) axiomforest node with wikibinator node,
+	and having 2 or 3 childs like axiomforestnode depending if all are yes or all unknown or if its mixed,
+	the third child being deriveable from binary forest shape plus the truthvalue per node,
+	and it being a stateless model of all possible wiki states etc in a 3^numberOfPossibleBinaryForestNodes bayes node way.
+	
+	OLder... TODO implement ids like in "indat qtodo.txt 2021-1-28" (incomplete design)
+	
+	TODO wikibinator105_axOpDoesntNeed2OpcodeesAtSecondLastParamCuzShould((fn,fn)->fn_inBigo1)DovetaillikeGoThroughCallquadlikeStuffThenBackToItselfHalted
+	
 	//"wikibinatorDovetailForDebugstepoverAndDebugstepintoCuzThoseAreManyPathsToTheSameFuncparamreturnAndNeedDovetailingSo(L x (R x))EqualsXForXIs(axiomOp ... stepstuff)"
 	
 	//TODO copy designs from "wikibinator102Designing2021-1-21+"

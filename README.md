@@ -4,13 +4,13 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.  
 
+```
 You start with the universal function: λ
 (x y) is calling the function x on y,
 which returns some function or stays as itself if waiting on more functions like (x y z).
 (λ λ) is calling λ on λ.
 Here are the (TODO)drag-and-droppable opcodes and how to get them using only λ...
 
-```
 ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
 ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
 ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
@@ -32,6 +32,35 @@ From these, anything can be built. This will be demonstrated soon in a basic for
 but it will take a long time to optimize it for GPU, graphics, sound, networking, etc
 (JIT compiler designed for this kind of lambdas).
 ```
+
+TODO implement ids like that page of text near the top of readme as of 2021-1-29
+	about nsat, axiomforest header 16 bits, merging (something like?) axiomforest node with wikibinator node,
+	and having 2 or 3 childs like axiomforestnode depending if all are yes or all unknown or if its mixed,
+	the third child being deriveable from binary forest shape plus the truthvalue per node,
+	and it being a stateless model of all possible wiki states etc in a 3^numberOfPossibleBinaryForestNodes bayes node way. Its this[[[
+wikibinator id256...
+if first byte not \ then its cbt256 and is its own id.
+if next bit is 1 then the next 55 bits are height and bize etc, not storing whole opbyte, just store enuf to know opbyte. height is by highest 1 bit in those 55-few etc, bize just under that.
+make 0 and 1 be at param 6 so less to remember.
+put typeval somewhere also other than ax and in ax, for nonenforced loose typevals, hard typevals still go in ax. maybe want second ax, or derive it, as normed form of how to ask what does (x y) return in rfpd cache, but in fp order, so maybe use that in the java map of rfpd.
+opbyte is all 255 values of first 7 curries being leaf bs nonleaf.
+a bit for saying its a cbt and a long long range of it comes after the 256 bit header, for efficient binary storage, and store no padding or only padding to next block of 256 bits as it goes in array of ids but just dont point at the subrange of blob. or a bit that means store the whole blob and can use a rfpd to say one thing is which subrange of which other thing.
+if its not cbt or is very big cbt then opbyte is stored and num of curries is stored in those 47-few bits.
+also similar to cbt but for whatever kind of unary counting curry op uses, same depth in id as num of curries, so to get that unary node its just flip a bit in those 47 bits etc.
+do dovetailing debugstepover asap.
+opbyte must be knowable from every id256.
+ishalted or islazy bit not always derived from forest shape? or how about truthvalue? could use opbyte0 for that, and use that in java map key? (ax ret func param) of opbyte 0 vs the halted opbyte for that?
+wikibinator see into axiomforest? probably not all of it but just its own namespace and opbyte 0 is unknown and all else is yes and ax ret func param vs ax otherret func param if one is yes the other is no.
+push 0 and 1 deeper 1. they were both at param 5, move to 6 so  an have another op  at param 5. if also do that for curry and infcur can have a new op at param4 which can be typeval. but problem currys first param is unary and would be at param7. unless that unary is itself the curry op and if its leaf its infcur, so can curry 1u to any finite unary and in ids cache that unary etc up to around 2^45 curries and past that have to interpret lambdas.
+the isstrange opbit is no longer descriptive of vararg vs nonvararg but is just another prefix opbit, cuz typeval is in its (u u) side.
+Generalize ax to all 6 permutations of rfp rpf fpr etc by it being ax of 4 things and the extra is in ax's opbit being anynonleaf that axkind x y z???? probably not cuz that makes ax not knowable just from opbyte or makes you have to store 4 things instead of 3.
+i want to think of the system as circles with colored arrows between them, green for left child, blue for right child, red for what (self u) returns (useful with lazig), maybe white for what (wiki self) returns. wiki is the only nondeterminism so the dirtynode edges are conditionalprobability with eachother. every edge has a binary forest form using ax. so the whole system is conditionalprobability/satlogicetc of set of binary forest nodes. maybe use the bayeslambda kind of 3^n bayesnode as each dim has 3 positions -1 0 1, and along any dim the midpoint has bayes weight of the sum of the 2 ends, and the center of it all has bayes weight of 1. this is a constant trinarybayesnode, and its dims/bayesvars are every unique binary forest node like in axiomforest. can use separate axiomforest id256 for that as its more general and needs a cached norm third child, so together a wikibinator105 id with an axiomforest id is 512 bits, and remember axiomforest can have yes no for any set of nodes while all others are unknown and efficiently cache that. its a bayesaddr. so map of axiomforestnode to chance, or ratio of chances maybe dince its an infinite space.
+use axiomforest a different way... accumulate nsat exclusions, each an axiomforest node, that are proven can never happen in wikibinator105. exclusions dont have to agree with eachother the way possibleinclusions do. also have an evolving set of possibleinclusions like how evolving subsets of observed bit vars can evolve in nsat. each exclusion must be self proving by its forest shape and truthvalues alone. add another bit to axiomforestnodeheader maybe, to say its an inclusion vs exclusion, or maybe do that at a higher level since its 1 bit per whole forest below. this will maybe help p2p sync especially about wiki op and ax op. the set of exclusions are facts including the space of all possible wiki functions/states, so at this level the whole system is truly stateless and multiverselike. but im worried that it might take very large number of bayesvars/binforestnodes to describe wikibinator105. still im happy to have a stateless theory of it at all. given this nsat forest sync ability in theory, its now ok to define the energy function of the whole system as weighted sum of proofofwork attached to each inclusionaxiomnode in a clique aka none of them overlap to bull eachother AND none of them conflict with any exclusionnsatforestnode since exclusions are only the things that cant happen in wikibinator105 etc. proofofwork may be also on exclusions but does not affect the energy function but may affect peoples and computers attention to look at them. share sets containing multiple inclusions and multiple exclusions, or maybe just pairs of relevant things to look at, and put proofofwork also on that small set maybe. use the dovetailing debugsyepover etc in the nsat view (where  every binaryforestnode is a dim/bayesvar/nsatvar). maybe include the 16bit axiomforestnodeheader in wikibinator id so theres only 22 bytes left for hash and  needs 3 childs...  but if all are yes or all unknown then only need 2 childs. the third child is derivable from binaryforest shape and is only a cache.
+cbts are always included, especially cbt256.
+there will be a bit in ids (other than cbt256) that tells if its include or exclude, and it doesnt affect hashid except at a higher level of sets of includes and excludes. proofofwork comes in 2 forms, in the hash bits of nonliteralcbt256 ids, and as an extra 256 bits of nonce thats only valid if its lessthan the proofofworkamount it generates, so its a cache, and maybe that same thing but for sets of includes and excludes.
+keep the 192 bit hash and shrink the bize to fit in 32-few bits? could also have use 40 byte ids and 64 byte ids etc later if needed. i want the main stuff in the long header.
+fixme, for ids to be makeable by custom idmakers created at runtime, wikibinator105 needs at least ability to read cbt2 truthvalue from param, but they all have to be yes if they halt especially ax 6th param, so im unsure what the behaviors are for unknowns nos etc. since only a dirty can see all yes nodes since some yes nodes are dirty, could kind of put that func in wiki but paradox everything in wiki must also be yes. could define another kind of idmaker as func of 256+256+2 bits to 256 bits aka 2 child ids and a truthvalue to parent id, but it still couldnt see the truthvalue of ots param... unless, take that op space made room for typeval and put the getyespart and getnopart, and derive typeval using curry.
+]]]
 
 
 TODO rewrite disorganized text...
