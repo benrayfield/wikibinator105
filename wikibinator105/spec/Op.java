@@ -6,6 +6,21 @@ package wikibinator105.spec;
 <br><br>
 <br><br>
 
+UPDATING 2021-1-29... (todo rewrite this...)
+ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ     λ)    ? //1
+XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ   (λ λ))  ? //0
+XXXXXXXX (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //infcur_if_next_param_is_leaf_else_curry_if_its_unarynum
+XXXXXXXX (λ   λ   (λ λ)   λ   (λ λ))  ?     ?     ? //typeval_and_the_2_get_truthval_ops
+ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+
 UPDATE 2021-1-28[
 ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
 ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
@@ -432,6 +447,23 @@ public enum Op{
 	
 	
 	/*
+	UPDATING 2021-1-29... (todo rewrite this...)
+	ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+	ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+	ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+	ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+	ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+	ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+	ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+	ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+	XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ     λ)    ? //1
+	XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ   (λ λ))  ? //0
+	XXXXXXXX (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //infcur_if_next_param_is_leaf_else_curry_if_its_unarynum
+	XXXXXXXX (λ   λ   (λ λ)   λ   (λ λ))  ?     ?     ? //typeval_and_the_2_get_truthval_ops
+	ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+	
+	
+	OLD:
 	ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
 	ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
 	ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
@@ -544,23 +576,23 @@ public enum Op{
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
-	one("(λ λ (λ λ) λ λ λ)",false,true,0), //one and One do the same thing except viewed thru reflect, and only one is optimized
-	One("(λ (λ λ) (λ λ) λ λ λ)",false,true,0), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	one("(λ   λ   (λ λ)   λ     λ     λ     λ)",false,true,0), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	One("(λ (λ λ) (λ λ)   λ     λ     λ     λ)",false,true,0), //one and One do the same thing except viewed thru reflect, and only one is optimized
 	
 	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
-	zero("(λ λ (λ λ) λ λ (λ λ))",false,true,0), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
-	Zero("(λ (λ λ) (λ λ) λ λ (λ λ))",false,true,0), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	zero("(λ   λ   (λ λ)   λ     λ     λ   (λ λ))",false,true,0), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	Zero("(λ (λ λ) (λ λ)   λ     λ     λ   (λ λ))",false,true,0), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
 	
 	/** waiting for infinity curries, never evals just keeps accumulating params. A list of anything you want,
 	without the inefficiency of using ((pair x) y). Just call it on y without the pair.
 	No funcbody or unaryNumber of curries left to cache. Just create a halted callpair for each next curry.
 	TODO copy comments from wikibinator104 and maybe modify them.
-	*/
-	infcur("(λ λ (λ λ) λ (λ λ) λ)",false,true,0),
-	Infcur("(λ (λ λ) (λ λ) λ (λ λ) λ)",false,true,0),
+	*
+	infcur("(λ   λ   (λ λ) λ (λ λ) (λ λ) λ)",false,true,0),
+	Infcur("(λ (λ λ) (λ λ) λ (λ λ) (λ λ) λ)",false,true,0),
 	
 	/** (curry unaryNum comment funcbody ...params...)
 	or TODO choose a design, maybe unaryNum other than 0 (u) is the curry op itself?
@@ -568,9 +600,29 @@ public enum Op{
 	compared to wikibinator104 uses a pair for every curry, and calls curry and a unary number on it,
 	and this will instead cache the unaryNumber (thats deep inside, near funcBody) similar to caching funcBody.
 	TODO copy comments from wikibinator104 and maybe modify them.
+	*
+	curry("(λ   λ   (λ λ) λ (λ λ) (λ λ) (λ λ))",false,true,0),
+	Curry("(λ (λ λ) (λ λ) λ (λ λ) (λ λ) (λ λ))",false,true,0),
 	*/
-	curry("(λ λ (λ λ) λ (λ λ) (λ λ))",false,true,0),
-	Curry("(λ (λ λ) (λ λ) λ (λ λ) (λ λ))",false,true,0),
+	infcur_if_next_param_is_leaf_else_curry_if_its_unarynum("(λ   λ   (λ λ)   λ     λ   (λ λ))",false,true,0),
+	Infcur_if_next_param_is_leaf_else_curry_if_its_unarynum("(λ (λ λ) (λ λ)   λ     λ   (λ λ))",false,true,0),
+	
+	/** λtype.λval.λparam.(val param), like (typeval "image/jpeg" bytesOfJpg),
+	except type cant be leaf cuz then it means getTruthvalueYesPart or getTruthvalueNoPart.
+	Similar to (ax ret func param x)->(param x) and (ax ret func param) is halted only if (func param)->ret,
+	except typeval is an informal way of saying a type, more of a semantic,
+	which you could do the same thing in (ax λ) if its next param is a func that returns λ for all possible params.
+	*/
+	typeval_butTypeIsNotLeaf("(λ   λ   (λ λ) λ (λ λ))",false,true,3),
+	Typeval_butTypeIsNotLeaf("(λ (λ λ) (λ λ) λ (λ λ))",false,true,3),
+	
+	/** returns t or f. Overlaps (typeval λ λ), which is ok since typeval's first param never needs to be λ. */
+	getTruthvalueYesPart("(λ   λ   (λ λ) λ (λ λ) λ λ)",false,false,1),
+	GetTruthvalueYesPart("(λ (λ λ) (λ λ) λ (λ λ) λ λ)",false,false,1),
+	
+	/** returns t or f. Overlaps (typeval λ (λ λ)), which is ok since typeval's first param never needs to be λ. */
+	getTruthvalueNoPart("(λ   λ   (λ λ) λ (λ λ) λ (λ λ))",false,false,1),
+	GetTruthvalueNoPart("(λ (λ λ) (λ λ) λ (λ λ) λ (λ λ))",false,false,1),
 	
 	//cleancall will be derived at user level, not an op.
 	

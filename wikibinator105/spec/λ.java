@@ -2,6 +2,7 @@
 package wikibinator105.spec;
 import java.lang.ref.WeakReference;
 import java.util.function.UnaryOperator;
+import axiomforest.TruthValue;
 
 /** TODO rewrite code and comments cuz copied alot from wikibinator104 to this wikibinator105.
 immutable. binary forest node, defined ONLY by its forest shape, with no data in each node
@@ -20,6 +21,8 @@ As of 2021-1-21 github.com/benrayfield/occamsfuncer is version 3 but doesnt say 
 and it doesnt have that infloop in curry behavior cuz its an axiom related thing thats hard to prove things about. 
 */
 public interface λ extends UnaryOperator<λ>{
+	
+	TODO merge wikibinator105 node with axiomforest node, but how much can they merge?
 	
 	TODO implement ids like that page of text near the top of readme as of 2021-1-29
 	about nsat, axiomforest header 16 bits, merging (something like?) axiomforest node with wikibinator node,
@@ -44,6 +47,44 @@ public interface λ extends UnaryOperator<λ>{
 	
 	/** param/R child, of the 2 childs in binary forest. Self is 1. left of x is x*2. right of x is x*2+1. */
 	public default λ r(){ return g(3); }
+	
+	/** axiomforest node's third child is a cache deriveable from the other 2 childs and TruthValue,
+	and if all TruthValue here and reachable downward in l() and r() recursively are YES or all are UNKNOWN
+	then this third child as cache doesnt need to be stored since all yes and all unknown
+	differ by only 1 (or a few? todo verify) bits in id256, as in axiomforest header 16 bits,
+	which will be in long λ.header().
+	*/
+	public default λ superposition(){ return g(3); }
+	
+	/** normally all TruthValue.yes, but there are 2 Op (typeval u u) and (typeval u (u u))
+	which get the 2 bits (as t vs f) in the TruthValue of any node,
+	and the only condition a TruthValue should ever become no is when the same (func param) call
+	returns 2 different things, so at most 1 of those can be yes (or neither) at a time,
+	and as axiomforest models the space of all possible turing complete wiki functions,
+	without modelling its internal call pair structure but instead just its param/return pairs
+	and recursively outward in all possible halting combos of thing called on thing returns thing,
+	all TruthValue.no (and therefore also TruthValue.bull if someone isnt following the protocol
+	or if multiple wiki states are trying to be used together which is allowed in the protocol
+	but the protocol is to converge toward a shared wiki state)...
+	then TruthValue is yes everywhere except where Op.ax finds multiple returns for the same call
+	and echoing outward from that.
+	<br><br>
+	Wikibinator105 doesnt have ability to write TruthValue, only to read it,
+	and the writing of it (by forkEdit) is at a lower level than wikibinator105
+	where a set of NSAT constraints model the space of all possible turing completness
+	including all possible behaviors of all possible wiki functions
+	and will be an optimization for p2p network sync (at gaming-low-lag and number-crunching)
+	to only compute the universal function defined in Op.java more efficiently
+	and to fit that puzzle together using a "TURING COMPLETE ENERGY FUNCTION" (see README.md)
+	which converges toward (at least approx) consistent (func param)->returnVal
+	when given a bunch of sparse claims that some func called on some other func returns another func
+	(all of those are λs), and some of those may have different wiki states than others,
+	but the wiki state is not stored directly, instead is in the puzzle defined by
+	Op.ax calls which each say (ax ret func param) or (ax λ type instance x)->(param x)
+	or technically could be (ax anyRet func param x). Ax is a turing complete type system,
+	compared to Op.typeval which is a loose type system for things like "image/jpeg" and "text/plain".
+	*/
+	public TruthValue tv();
 	
 	/** same as l().r() but may be more efficient, such as in the optimization used in Pair.java
 	to store x and y but lazyEval (pair x) in (pair x y) and not trigger laziEval of that just to get x or y.
