@@ -390,6 +390,8 @@ public enum Op{
 	TODO Create typeOfListOfPrimeSize and typeOfListOfNonprimeSize with it, given a func isPrimeSizeList....
 	and create debugStepOver etc.
 	
+	todo op(s) to get λColor, instead of to get the 2 truthvalue bits which color replaces.
+	
 	/*FIXME change all strings to only use those 2 chars instead of the more chars I used while designing it,
 	or actually write it like "(λ λ (λ λ) λ)" etc of how to write the normed form of the op in the default syntax,
 	then rename (String)Op.prefix to Op.sourceCode,
