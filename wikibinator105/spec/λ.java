@@ -22,7 +22,9 @@ and it doesnt have that infloop in curry behavior cuz its an axiom related thing
 */
 public interface λ extends UnaryOperator<λ>{
 	
+	/*Here's the plan: see λColor and superposition()
 	TODO merge wikibinator105 node with axiomforest node, but how much can they merge?
+	*/
 	
 	TODO implement ids like that page of text near the top of readme as of 2021-1-29
 	about nsat, axiomforest header 16 bits, merging (something like?) axiomforest node with wikibinator node,
@@ -48,13 +50,28 @@ public interface λ extends UnaryOperator<λ>{
 	/** param/R child, of the 2 childs in binary forest. Self is 1. left of x is x*2. right of x is x*2+1. */
 	public default λ r(){ return g(3); }
 	
-	/** axiomforest node's third child is a cache deriveable from the other 2 childs and TruthValue,
+	/** UPDATE: use as many bits of bloomfilter per node as λColor,
+	and all those bits are 0 in the superposition/axiomforestnormcachedderivedchild,
+	and its onehot for the usual nodes (not normed/unknown form) so can OR them together
+	where this superposition/norm matches. Dont need to store this except for verifying purposes,
+	and can generated it as needed so actually could just not store it
+	as long as you dont need very very large forests that you cant fit all of in memory at once
+	or have to deal with alot of p2p turing complete syncing.
+	On just 1 computer, its ok to only store l() and r() and generate superposition() as needed.
+	In p2p might use 512 bit ids as 2 of id256 the one with color and the one with unknown/superposition color. 
+	<br><br>
+	axiomforest node's third child is a cache deriveable from the other 2 childs and TruthValue,
+	where its the same binary forest shape but every TruthValue is UNKNOWN,
+	<br><br>
 	and if all TruthValue here and reachable downward in l() and r() recursively are YES or all are UNKNOWN
 	then this third child as cache doesnt need to be stored since all yes and all unknown
 	differ by only 1 (or a few? todo verify) bits in id256, as in axiomforest header 16 bits,
 	which will be in long λ.header().
 	*/
-	public default λ superposition(){ return g(3); }
+	public λ superposition();
+	
+	/** see superposition() and comment in λColor.java */
+	public λColor color();
 	
 	/** normally all TruthValue.yes, but there are 2 Op (typeval u u) and (typeval u (u u))
 	which get the 2 bits (as t vs f) in the TruthValue of any node,
