@@ -533,7 +533,13 @@ public enum Op{
 	
 	/** all nondeterminism goes here. TODO copy comments from wikibinator104 and maybe modify them...
 	<br><br>
-	if strict/clean this is (S I I (S I I)), else/dirty is loose and (wiki x) == ret in (ax ret wiki x).
+	if strict/clean this is (S I I (S I I)), else/dirty is loose
+	and (wiki x) == ret in (ax (fpr wiki x ret)) being color colorAxEven to say thats true
+	or being colorAxOdd to say it returns something other than ret but it does return/halt,
+	else being color colorAxNonhalt to mean (wiki x) does not halt,
+	the same as ax is used for funcs other than wiki,
+	except wiki needs ax due to wiki being defined only by examples that fit together in NSAT puzzle,
+	where the NSAT level is below the lambda level and may be computed in ways other than NSAT but thats the math spec.
 	<br><br>
 	You can effectively have unlimited number of wikis by using a linkedlist whose deepest part is the name of the wiki,
 	and parts after that you use whatever you want, for example,
@@ -606,14 +612,16 @@ public enum Op{
 	getParam("(λ λ λ λ λ (λ λ) (λ λ))",false,false,1),
 	GetParam("(λ (λ λ) λ λ λ (λ λ) (λ λ))",false,false,1),
 	
-	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
+	/** is a cbt whose first bit is 0. can only be part of cbt or something containing a cbt.
+	if its param is not a cbt of same size, then calls itself on itself instead,
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
 	zero("(λ   λ   (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
 	Zero("(λ (λ λ) (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
 	
-	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
+	/** is a cbt whose first bit is 1. can only be part of cbt or something containing a cbt.
+	if its param is not a cbt of same size, then calls itself on itself instead,
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
@@ -641,6 +649,7 @@ public enum Op{
 	"or does even odd help with turingCompleteChallengeResponse since theres an infinite number of each vs only 1 leaf?"
 	
 	"TODO should the 2 isColor ops give these 2 bits?: the NSAT on the combo of every possible binary forest node having 2 bits that tell 1 of 4 colors. Of so, both of them being t could mean colorAxNonhalt, and both being f could mean colorNormal. Of course they would never both return t at the lambda level cuz the call of ax would not halt, but they can be any of those 4 ways at the NSAT level which is below the lambda level."
+	"TODO for better turingCompleteChallengeResponse, should id256 contain nand of its 2 nands of the childs, and leaf has nand of 0 (todo verify if thats true of leafs 2 childs being identityfunc and leaf, and move those if they dont), so colorAxNandIs1 vs colorAxNandIs0 vs colorAxNonhalt vs colorNormal. Its an easily fakeable 1-bit hash but viewed in many combos at once it adds to security a little at a time. u vs (u u) have opposite nand values so can still use those 2 constants as the normed form."
 	
 	
 	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
