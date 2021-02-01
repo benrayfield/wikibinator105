@@ -1,7 +1,6 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
 
-
 /** TODO rewrite disorganized text...
 <br><br>
 <br><br>
@@ -386,11 +385,12 @@ ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
 */
 public enum Op{
 	
-	TODO "axOpIsChangingTo2OpsOf2ParamsEach_retsLeafWhenCalledOnLeafVsAnythingelse_(axA x y)->(x (t y))_(axA x)_isHaltedIf_(x u)->u"
+	/*TODO "axOpIsChangingTo2OpsOf2ParamsEach_retsLeafWhenCalledOnLeafVsAnythingelse_(axA x y)->(x (t y))_(axA x)_isHaltedIf_(x u)->u"
 	TODO Create typeOfListOfPrimeSize and typeOfListOfNonprimeSize with it, given a func isPrimeSizeList....
 	and create debugStepOver etc.
 	
 	todo op(s) to get λColor, instead of to get the 2 truthvalue bits which color replaces.
+	*/
 	
 	/*FIXME change all strings to only use those 2 chars instead of the more chars I used while designing it,
 	or actually write it like "(λ λ (λ λ) λ)" etc of how to write the normed form of the op in the default syntax,
@@ -402,7 +402,15 @@ public enum Op{
 	
 	
 	
-	/** not used in the wikibinator105 prototype since everything is either halted or evaling on java stack,
+	/** opByte0. The other 255 opBytes are for each of the first 7 params being λ vs anything_except_λ,
+	then pad a high 1 bit after however many params it is 0..7 if its at most 7 params,
+	and if its more than 7 params it copies opByte from its l().
+	When or if an opByte0 finishes evaling, it becomes 1 of those 255 opBytes.
+	opByte is part of the long (64 bits) header, which is part of id256 and that long is used in memory
+	even before id256 is created.
+	<br><br>
+	(TODO maybe used or not used? probably not in wikibinator105, but TODO think about it)
+	not used in the wikibinator105 prototype since everything is either halted or evaling on java stack,
 	but other implementations might use this for call pairs that are not halted.
 	TODO copy comments from wikibinator104 and maybe modify them...
 	<br><br>
@@ -425,6 +433,7 @@ public enum Op{
 	(pair cbt16_axiomforestHeader (pair axiomforestLeftChild axiomforestRightChild)) for example.
 	*/
 	deepLazy(null,true,false,0),
+	DeepLazy(null,true,false,0), //dont ever use this one. Use deepLazy instead.
 	
 	//First param is λ (aka u aka leaf) for clean, or anything else (such as (λ λ)) for dirty.
 	//
@@ -453,6 +462,43 @@ public enum Op{
 	
 	
 	/*
+	UPDATING again...
+	ukuuuuw? //wiki
+	ukuuuua? //is param leaf
+	ukuuu∩l? //getfunc/l
+	ukuuu∩r? //getparam/r
+	ukuu∩u1? //cbt whose first bit is 1
+	ukuu∩u0? //cbt whose first bit is 0
+	ukuu∩∩e? //is param colorAxEven
+	ukuu∩∩o? //is param colorAxOdd
+	uku∩ut?? //tru aka the K lambda of SKI calculus
+	uku∩uf?? //fal. (fal u) is identityFunc.
+	uk∩up??? //pair
+	uk∩uv??? //typeval
+	uk∩us??? //the S lambda of SKI Calculus
+	ukuuuu∞? //infcur
+	ukuc???? //(curry unarynumOtherThanU comment funcBody ...params...), where last param calls (funcBody [(curry...) lastParam)])
+	uku3???? //fpr
+	ukuuux?? //ax aka axType
+	
+	(fpr func param ret u)->u if (func param)->ret,
+	or ->(u u) if (func param) returns something else,
+	or not halts if (func param) not halts. Used with ax.
+	
+	curry, where the c in that is a unarynum other than u, such as (t (t (t u))) is 3unary aka 3u.
+	
+	0 and 1 are cbt size 1 and can only form into cbts,
+	as it replaces any param thats not a cbt of its own height with itself.
+	
+	v means typeval, a loose kind of type such as for "image/jpeg" or "text/plain",
+	which allows every possible value for every possible type,
+	and if you want turingCompleteTypes then use ax. You could even use them together
+	such as wrapping a (typeval "image/jpeg" bytesOfJpg) in something then put that in ax to verify
+	whatever that wrapper is claiming about it.
+	
+	x means ax (the only kind of ax remaining as of 2021-2-1 is axType, used with the 4 colors,
+	only 3 of which you ever see at lambda level, but see all 4 at NSAT level.
+	
 	UPDATING 2021-1-29... (todo rewrite this...)
 	ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
 	ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
@@ -560,6 +606,38 @@ public enum Op{
 	getParam("(λ λ λ λ λ (λ λ) (λ λ))",false,false,1),
 	GetParam("(λ (λ λ) λ λ λ (λ λ) (λ λ))",false,false,1),
 	
+	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
+	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	*/
+	zero("(λ   λ   (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	Zero("(λ (λ λ) (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	
+	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
+	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	*/
+	one("(λ   λ   (λ λ)   λ     λ     λ     λ)",false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	One("(λ (λ λ) (λ λ)   λ     λ     λ     λ)",false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	
+	"fIXME choose an alignment between zero one tru fal isColorAxEven isColorAxOdd thats intuitive to Humans programming using those, considering the order it happens in pair func, u vs (u u), etc."
+	
+	/** returns t or f. Overlaps (typeval λ λ), which is ok since typeval's first param never needs to be λ. *
+	getTruthvalueYesPart("(λ   λ   (λ λ) λ (λ λ) λ λ)",false,false,1),
+	GetTruthvalueYesPart("(λ (λ λ) (λ λ) λ (λ λ) λ λ)",false,false,1),
+	/** returns t or f. Overlaps (typeval λ (λ λ)), which is ok since typeval's first param never needs to be λ. *
+	getTruthvalueNoPart("(λ   λ   (λ λ) λ (λ λ) λ (λ λ))",false,false,1),
+	GetTruthvalueNoPart("(λ (λ λ) (λ λ) λ (λ λ) λ (λ λ))",false,false,1),
+	*/
+	//getColor TODO since theres 4 colors should this be 2 funcs to get 1 bit each, or return a cbt2 or a cbt4 or 4 funcs of bit?
+	
+	isColorAxEven("TODO",false,false,1),
+	IsColorAxEven("TODO",false,false,1),
+	
+	isColorAxOdd("TODO",false,false,1),
+	IsColorAxOdd("TODO",false,false,1),
+	
+	
 	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
 	
 	/** λy.λz.y aka true. (pair b c tru) is b. Is the K lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
@@ -570,65 +648,62 @@ public enum Op{
 	fal("(λ λ λ λ (λ λ) (λ λ))",false,false,2),
 	Fal("(λ (λ λ) λ λ (λ λ) (λ λ))",false,false,2),
 	
-	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
-	trecurse("(λ λ λ (λ λ) λ)",false,false,3),
-	Trecurse("(λ (λ λ) λ (λ λ) λ)",false,false,3),
-	
-	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
-	pair("(λ λ λ (λ λ) (λ λ))",false,false,3),
-	Pair("(λ (λ λ) λ (λ λ) (λ λ))",false,false,3),
-	
-	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
-	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
-	TODO copy comments from wikibinator104 and maybe modify them.
-	*/
-	one("(λ   λ   (λ λ)   λ     λ     λ     λ)",false,true,0), //one and One do the same thing except viewed thru reflect, and only one is optimized
-	One("(λ (λ λ) (λ λ)   λ     λ     λ     λ)",false,true,0), //one and One do the same thing except viewed thru reflect, and only one is optimized
-	
-	/** is a cbt. can only be part of cbt. if its param is not a cbt of same size, then calls itself on itself instead,
-	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
-	TODO copy comments from wikibinator104 and maybe modify them.
-	*/
-	zero("(λ   λ   (λ λ)   λ     λ     λ   (λ λ))",false,true,0), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
-	Zero("(λ (λ λ) (λ λ)   λ     λ     λ   (λ λ))",false,true,0), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
-	
 	/** waiting for infinity curries, never evals just keeps accumulating params. A list of anything you want,
 	without the inefficiency of using ((pair x) y). Just call it on y without the pair.
 	No funcbody or unaryNumber of curries left to cache. Just create a halted callpair for each next curry.
 	TODO copy comments from wikibinator104 and maybe modify them.
+	<br><br>
+	Counting this as having 1 curry, even though its infinite,
+	so in the counting of opcodes it takes as much space as a func of 1 param.
 	*
-	infcur("(λ   λ   (λ λ) λ (λ λ) (λ λ) λ)",false,true,0),
-	Infcur("(λ (λ λ) (λ λ) λ (λ λ) (λ λ) λ)",false,true,0),
-	
-	/** (curry unaryNum comment funcbody ...params...)
-	or TODO choose a design, maybe unaryNum other than 0 (u) is the curry op itself?
-	Avoids the need for pairs, except just 1 pair when it evals,
-	compared to wikibinator104 uses a pair for every curry, and calls curry and a unary number on it,
-	and this will instead cache the unaryNumber (thats deep inside, near funcBody) similar to caching funcBody.
-	TODO copy comments from wikibinator104 and maybe modify them.
-	*
-	curry("(λ   λ   (λ λ) λ (λ λ) (λ λ) (λ λ))",false,true,0),
-	Curry("(λ (λ λ) (λ λ) λ (λ λ) (λ λ) (λ λ))",false,true,0),
+	infcur("(λ   λ   (λ λ) λ (λ λ) (λ λ) λ)",false,true,1),
+	Infcur("(λ (λ λ) (λ λ) λ (λ λ) (λ λ) λ)",false,true,1),
 	*/
-	infcur_if_next_param_is_leaf_else_curry_if_its_unarynum("(λ   λ   (λ λ)   λ     λ   (λ λ))",false,true,0),
-	Infcur_if_next_param_is_leaf_else_curry_if_its_unarynum("(λ (λ λ) (λ λ)   λ     λ   (λ λ))",false,true,0),
+	
+	//DONE, by putting in in infcur: need typeval back. can let something be in (typeval λ)
+	//or could put typeval in infcur
+	//typeval("TODO",false,false,3),
+	//Typeval("TODO",false,false,3),
 	
 	/** λtype.λval.λparam.(val param), like (typeval "image/jpeg" bytesOfJpg),
 	except type cant be leaf cuz then it means getTruthvalueYesPart or getTruthvalueNoPart.
 	Similar to (ax ret func param x)->(param x) and (ax ret func param) is halted only if (func param)->ret,
 	except typeval is an informal way of saying a type, more of a semantic,
 	which you could do the same thing in (ax λ) if its next param is a func that returns λ for all possible params.
-	*/
+	*
 	typeval_butTypeIsNotLeaf("(λ   λ   (λ λ) λ (λ λ))",false,true,3),
 	Typeval_butTypeIsNotLeaf("(λ (λ λ) (λ λ) λ (λ λ))",false,true,3),
+	*/
 	
-	/** returns t or f. Overlaps (typeval λ λ), which is ok since typeval's first param never needs to be λ. */
-	getTruthvalueYesPart("(λ   λ   (λ λ) λ (λ λ) λ λ)",false,false,1),
-	GetTruthvalueYesPart("(λ (λ λ) (λ λ) λ (λ λ) λ λ)",false,false,1),
 	
-	/** returns t or f. Overlaps (typeval λ (λ λ)), which is ok since typeval's first param never needs to be λ. */
-	getTruthvalueNoPart("(λ   λ   (λ λ) λ (λ λ) λ (λ λ))",false,false,1),
-	GetTruthvalueNoPart("(λ (λ λ) (λ λ) λ (λ λ) λ (λ λ))",false,false,1),
+	/** (curryOrInfcurOrTypeval λ) is infcur ((1) and (2)).
+	(1) (curryOrInfcurOrTypeval λ type value) aka (infcur type value),
+		where type != λ, is how to use it as typeval, though its still infcur as it can take infinity curries.
+	(2) (curryOrInfcurOrTypeval λ λ ...) aka (infcur λ ...), is how to use it as not typeval.
+	(3) (curryOrInfcurOrTypeval anythingExceptλ) is curry, and anythingExceptλ is a unarynum like (t (t (t λ))) aka ,,,λ.
+	opByte can tell the difference between those 3 things since opByte knows λ vs anythingExceptλ for first 7 curries.
+	Its important for that unarynum to be at curry 6 so every func's number of currys is known before
+	opByte starts being copied from self.l().
+	self.l().l().l()...l().opByte is always the same opByte at curry number 7 after leaf, if self is curry number 7 or higher.
+	I didnt write these as 3 separate ops, cuz number of curries depends on its first param
+	in a more detailed way than λ vs anythingExceptλ, cuz the anythingExceptλ is looked at in more detail
+	to view it as a unarynum, therefore the first param of curryOrInfcurOrTypeval cant be used ONLY as an opbit
+	to choose between these 3 op-like-things inside it.
+	Using infcur as typeval vs anything_except_typeval could be an opbit, but since it comes after the unarynum
+	(which is 0u aka λ to mean infinity curries, else is for example 3u aka (t (t (t λ))) to mean 3 curries
+	(TODO start counting after funcbody or after the op or where?))... since it comes after the unarynum
+	it cant be part of an op prefix (of n opbits), so these 3 things are joined into 1 op called curryOrInfcurOrTypeval,
+	but in ImportStatic.java they will be 3 separate things,
+	and ImportStatic.curry will be this curryOrInfcurOrTypeval and only acts as curry if you give it
+	a unarynum thats at least 1u.
+	*/
+	curryOrInfcurOrTypeval("TODO",false,true,2),
+	CurryOrInfcurOrTypeval("TODO",false,true,2),
+	
+	
+	//curryOrInfcur("TODO",false,true,3),
+	//curry("TODO",false,true,4),
+	//Curry("TODO",false,true,4),
 	
 	//cleancall will be derived at user level, not an op.
 	
@@ -720,9 +795,59 @@ public enum Op{
 			but func cant be the last one cuz func has control.
 		Similarly func could be something that calls its param on another func, if you want it to do some other order.
 	]
-	*/
+	*
 	ax("(λ λ (λ λ) (λ λ))",false,true,4),
 	Ax("(λ (λ λ) (λ λ) (λ λ))",false,true,4);
+	*/
+	
+	/** aka axType. see comment of fpr */
+	ax("TODO",false,true,2),
+	Ax("TODO",false,true,2),
+	
+	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
+	pair("(λ λ λ (λ λ) (λ λ))",false,false,3),
+	Pair("(λ (λ λ) λ (λ λ) (λ λ))",false,false,3),
+	
+	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
+	trecurse("(λ λ λ (λ λ) λ)",false,false,3),
+	Trecurse("(λ (λ λ) λ (λ λ) λ)",false,false,3),
+	
+	/** (curry unaryNum comment funcbody ...params...)
+	or TODO choose a design, maybe unaryNum other than 0 (u) is the curry op itself?
+	Avoids the need for pairs, except just 1 pair when it evals,
+	compared to wikibinator104 uses a pair for every curry, and calls curry and a unary number on it,
+	and this will instead cache the unaryNumber (thats deep inside, near funcBody) similar to caching funcBody.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	*
+	curry("(λ   λ   (λ λ) λ (λ λ) (λ λ) (λ λ))",false,true,0),
+	Curry("(λ (λ λ) (λ λ) λ (λ λ) (λ λ) (λ λ))",false,true,0),
+	*
+	infcur_if_next_param_is_leaf_else_curry_if_its_unarynum("(λ   λ   (λ λ)   λ     λ   (λ λ))",false,true,0),
+	Infcur_if_next_param_is_leaf_else_curry_if_its_unarynum("(λ (λ λ) (λ λ)   λ     λ   (λ λ))",false,true,0),
+	*/
+	//FIXME theres more room from changing ax to axType,
+	//so use some of that room to put the numOfCurriesAsUnary, funcBody, and maybe comment in the first 6 params,
+	//but unsure if comment will fit and it might need to go after funcbody instead of before.
+	
+	/** (fpr func param ret λ) -> λ if (func param)->ret,
+	and (fpr func param ret λ) -> (λ λ) if (func param) -> something other than ret (but it still returns),
+	and (fpr func param ret λ) does not halt if (func param) does not halt.
+	<br><br>
+	By itself its a question, but with ax its a proof of the answer, the proof being in the color of (ax anything).
+	Used with ax to store (func param)->ret cache or statements that it does not return that,
+	or in VM theres normally a hashtable to store that more efficiently but could reflect it as that. 
+	Normally used as (ax (fpr func param ret)) (which costs 4 callpairs to store),
+	which is colorAxEven if (func param)->ret,
+	and is colorAxOdd if (func param) -> something other than ret but does halt,
+	and does not halt if (func param) does not halt
+	(so colorAxNonhalt is only used at NSAT level, not at lambda level above it).
+	Anything whose l() is not axType is colorNormal. Those are the 4 colors.
+	axType can of course be used with other funcs as it only cares about
+	does its param return something of even height, of odd height, or not return.
+	*/
+	fpr("TODO",false,false,4),
+	Fpr("TODO",false,false,4);
+
 	
 	/** after (u u) aka clean or (u anything_except_u) aka dirty,
 	this is "u" for leaf vs "∩" for anything except leaf, which is a binary prefix for each op.
@@ -738,6 +863,10 @@ public enum Op{
 	*/
 	public final int curriesElse0;
 	
+	//TODO rename isStrange to isVararg, counting ax as vararg since it evals at 2 specific number of curries,
+	//which is a very weak form of vararg compared to the curry ops and 0 and 1 ops.
+	
+	
 	private Op(String sourceCode, boolean isAlwaysEvaling, boolean isStrange, int curriesElse0){
 		this.prefix = sourceCode;
 		this.isAlwaysEvaling = isAlwaysEvaling;
@@ -745,7 +874,41 @@ public enum Op{
 		this.curriesElse0 = curriesElse0;
 	}
 	
+	public static void lg(String line){
+		System.out.println(line);
+	}
+	
+	//FIXME need to get rid of some ops so it fits.
+	public static void main(String[] args){
+		int sum = 0;
+		lg("Ops...");
+		for(Op op : Op.values()){
+			if(Character.isLowerCase(op.name().charAt(0))){
+			if(op.curriesElse0 != 0) sum += 1<<op.curriesElse0;
+			lg("Op."+op+"("+op.curriesElse0+")");
+			} //else skip the clean/dirty mirror, and just double the number in sum *= 2
+		}
+		System.out.println("sumBeforeDoubling="+Integer.toBinaryString(sum));
+		sum *= 2; //cuz first of 7 params chooses !isDirty (leaf) vs isDirty (anything except leaf)
+		System.out.println("sum="+Integer.toBinaryString(sum));
+		if(sum > 1<<7) throw new RuntimeException(
+			"Opcodes dont fit in 7 params. 0..7 curries each being leaf vs nonleaf fits in a byte,"
+			+" as a bitstring size 0..7 then a high 1 bit, aka the byte opcode"
+			+" used in an earlier version of SimpleFn.interpretedMode's switch statement.");
+	}
+	
 	/*
+	UPDATE: since theres 4 colors per node, axiomforest would have to be modified to have 4-bit truthvalues
+	to hold wikibinator105, OR could use multiple axiomforest nodes per wikibinator node.
+	TODO update axiomforest that way, as the 4 colors (colorAxEven colorAxOdd colorAxNonhalt and colorNormal)
+	are very general and could be used in other systems,
+	and colorAxEven and colorAxOdd are the closest match to what I meant by TruthValue.yes and TruthValue.no,
+	and colorNormal means to ignore truthvalue here, and colorAxNonhalt wont be observed at the lambda level ever
+	since (ax anything) whose color is colorAxNonhalt means (anything u) does not halt
+	so (ax anything) itself does not halt, which could be seen at the NSAT level but not at the lambda level,
+	or maybe generalize axiomforest to n colors.
+	
+	OLD...
 	Can be mounted into axiomforest.
 	
 	FIXME rewrite the below 2 paragraphs cuz i just replaced "wikibinator104" with "wikibinator105"
