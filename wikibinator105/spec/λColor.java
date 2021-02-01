@@ -25,17 +25,23 @@ compared to the 2 or 3 valid values in TruthValue).
 */
 public enum λColor{
 	
-	/** color of halted (ax typeandinstance) IFF (typeandinstance u)->u */
+	/** color of halted (ax typeandinstance) IFF (typeandinstance u)->u.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	*/
 	proof,
 	//colorAxHaltLeaf,
 	//colorAxEven,
 	
-	/** color of halted (ax typeandinstance) IFF (typeandinstance u) -> anything_except_u */
+	/** color of halted (ax typeandinstance) IFF (typeandinstance u) -> anything_except_u.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	*/
 	disproof,
 	//colorAxHaltNonleaf,
 	//colorAxOdd,
 	
-	/** color of nonhalting (ax typeandinstance) IFF (typeandinstance u) does not halt */
+	/** color of nonhalting (ax typeandinstance) IFF (typeandinstance u) does not halt.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	*/
 	wordsalad,
 	//colorAxNonhalt,
 	

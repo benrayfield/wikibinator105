@@ -824,6 +824,8 @@ public enum Op{
 	but it will be seen at NSAT level which is below lambda level,
 	the NSAT on the combo of every possible binary forest node having 2 bits that tell 1 of 4 colors.
 	If a node's l() is not ax, then its color is colorNormal.
+	<br><br>
+	(ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
 	*/
 	ax("TODO",false,true,2),
 	Ax("TODO",false,true,2),

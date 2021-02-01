@@ -70,8 +70,79 @@ public interface λ extends UnaryOperator<λ>{
 	*/
 	public λ superposition();
 	
-	/** see superposition() and comment in λColor.java */
-	public λColor color();
+	/** see superposition() and comment in λColor.java
+	FIXME should this be λColorTruthValue? Or 4 bits? Those 4 bits will be in long header().
+		cuz otherwise, what does superposition().color() return? Its λColorTruthValue.unknown.
+	*
+	public λColor color(); //throws Unknown, Bull?
+	*/
+	public λColorTruthValue tv();
+	
+	/** color of halted (ax typeandinstance) IFF (typeandinstance u)->u.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	*/
+	public default boolean isProof(){
+		return tv()==λColorTruthValue.proof;
+	}
+	
+	/** color of halted (ax typeandinstance) IFF (typeandinstance u) -> anything_except_u.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	*/
+	public default boolean isDisproof(){
+		return tv()==λColorTruthValue.disproof;
+	}
+	
+	/** color of nonhalting (ax typeandinstance) IFF (typeandinstance u) does not halt.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	<br><br>
+	In the wikibinator105 prototype, this could always be false since all nodes are halted
+	and anything nonhalted uses java stack, but in other implementations this could be true
+	during use of simulated stack similar to occamsfuncer callquads simulate the stack on the heap
+	as a callquad's childs include:
+	func, param, stack, cacheKey, isParentsFunc (on stack, else is parents param on stack),
+	and in wikibinator105 things like callquads (to implement debugStepOver, debugStepInto, etc)
+	will be created at user level (not part of VM except some user level stuff can have EvalerChain
+	optimizations in VM, which the user level stuff would not know about other than it happens to eval faster)...
+	those things could be built using (ax typeandinstance) whose color is λColor.proof
+	(theres an op to check for proof and an op to check for disproof),
+	and to use callquad-like things on eachother, such as one callquad is a func param return cache
+	that another callquad is a stack state looking for what does (func param) return,
+	then you use (ax typeandinstanceX typeandinstanceY) -> (typeandinstanceX (t typeandinstanceY))
+	which typeandinstanceX may be designed to return another call of ax to create or find some other
+	typed object, such as another callquad or just a normal lambda (thats not a call of ax).
+	For example, you could have 2 typed lambdas that are listOfPrimeSize and listOfNonprimeSize
+	which take a param and append it to their list and return a listOfPrimeSize or listOfNonprimeSize
+	depending on the size of that next list. Its a turingCompleteTypeSystem.
+	<br><br>
+	TODO move some of the above text into design docs, as its more generally relevant than isWordsalad.
+	*/
+	public default boolean isWordsalad(){
+		return tv()==λColorTruthValue.wordsalad;
+	}
+	
+	/** color of anything whose l() is not ax, regardless of if its halted or not.
+	Most nodes are this color, which means they're not claiming anything (by ax)
+	and are just are a binary forest shape of call pairs,
+	other than they may contain such claims if you look in l() and r() deeply.
+	*/
+	public default boolean isNormal(){
+		return tv()==λColorTruthValue.normal;
+	}
+	
+	/** unknown which of λColor.proof λColor.disproof λColor.wordsalad λColor.normal, similar to TruthValue.unknown.
+	This is used in the normed form, aka λ.superposition(), thats just the binary forest shape without colors,
+	so different merkle forests can be matched node for node to compare their colors and OR the colors into eachother,
+	changing unknown to any of those 4 colors or to bull where theres 2 or more different colors claimed,
+	which would mark the bull bit in the default kind of id256 so anything which contains bull knows instantly in id256.
+	*/
+	public default boolean isUnknown(){
+		return tv()==λColorTruthValue.unknown;
+	}
+	
+	/** claim of at least 2 of λColor.proof λColor.disproof λColor.wordsalad λColor.normal, similar to TruthValue.bull */
+	public default boolean isBull(){
+		return tv()==λColorTruthValue.bull;
+	}
 	
 	/** normally all TruthValue.yes, but there are 2 Op (typeval u u) and (typeval u (u u))
 	which get the 2 bits (as t vs f) in the TruthValue of any node,
