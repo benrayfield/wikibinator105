@@ -621,6 +621,7 @@ public enum Op{
 	One("(λ (λ λ) (λ λ)   λ     λ     λ     λ)",false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
 	
 	"fIXME choose an alignment between zero one tru fal isColorAxEven isColorAxOdd thats intuitive to Humans programming using those, considering the order it happens in pair func, u vs (u u), etc."
+	"Then replace all the strings in the constructors of these enums, as I recently moved many of them."
 	
 	/** returns t or f. Overlaps (typeval λ λ), which is ok since typeval's first param never needs to be λ. *
 	getTruthvalueYesPart("(λ   λ   (λ λ) λ (λ λ) λ λ)",false,false,1),
@@ -636,6 +637,10 @@ public enum Op{
 	
 	isColorAxOdd("TODO",false,false,1),
 	IsColorAxOdd("TODO",false,false,1),
+	"TODO choose should it be isColorAxLeaf vs isColorAxNonleaf instead of even vs odd?"
+	"or does even odd help with turingCompleteChallengeResponse since theres an infinite number of each vs only 1 leaf?"
+	
+	"TODO should the 2 isColor ops give these 2 bits?: the NSAT on the combo of every possible binary forest node having 2 bits that tell 1 of 4 colors. Of so, both of them being t could mean colorAxNonhalt, and both being f could mean colorNormal. Of course they would never both return t at the lambda level cuz the call of ax would not halt, but they can be any of those 4 ways at the NSAT level which is below the lambda level."
 	
 	
 	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
@@ -800,7 +805,17 @@ public enum Op{
 	Ax("(λ (λ λ) (λ λ) (λ λ))",false,true,4);
 	*/
 	
-	/** aka axType. see comment of fpr */
+	/** aka axType. see comment of fpr.
+	(ax typeandinstance param) -> (typeandinstance (t param)).
+	(ax typeandinstance) is halted if (typeandinstance λ) halts (after it halts, the (ax typeandinstance) is returned to you).
+	Color of (ax typeandinstance) is colorAxEven vs colorAxOdd
+	depending on the height of what (typeandinstance λ) returns being even or odd.
+	Color of (ax typeandinstance) is colorAxNonhalt if (typeandinstance λ) never halts
+	but that wont be seen at lambda level since (ax typeandinstance) wont halt,
+	but it will be seen at NSAT level which is below lambda level,
+	the NSAT on the combo of every possible binary forest node having 2 bits that tell 1 of 4 colors.
+	If a node's l() is not ax, then its color is colorNormal.
+	*/
 	ax("TODO",false,true,2),
 	Ax("TODO",false,true,2),
 	
