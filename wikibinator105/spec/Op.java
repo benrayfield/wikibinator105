@@ -814,18 +814,28 @@ public enum Op{
 	Ax("(λ (λ λ) (λ λ) (λ λ))",false,true,4);
 	*/
 	
+	
+	
+	
+	
 	/** aka axType. see comment of fpr.
 	(ax typeandinstance param) -> (typeandinstance (t param)).
 	(ax typeandinstance) is halted if (typeandinstance λ) halts (after it halts, the (ax typeandinstance) is returned to you).
-	Color of (ax typeandinstance) is colorAxEven vs colorAxOdd
-	depending on the height of what (typeandinstance λ) returns being even or odd.
-	Color of (ax typeandinstance) is colorAxNonhalt if (typeandinstance λ) never halts
-	but that wont be seen at lambda level since (ax typeandinstance) wont halt,
-	but it will be seen at NSAT level which is below lambda level,
-	the NSAT on the combo of every possible binary forest node having 2 bits that tell 1 of 4 colors.
-	If a node's l() is not ax, then its color is colorNormal.
+	For example, a typed object could be created whose type is a list of prime size,
+	and another type is a list of nonprime size, and those 2,
+	using (ax typeandinstance nextParam) could append nextParam to a linkedlist they contain
+	(by forkEdit as everything is immutable) and return a listOfPrimeSize or a listOfNonprimeSize
+	depending on the size of the contained resulting linkedlist,
+	or could be a type of opencl code strings that dont try to read or write outside allowed memory ranges,
+	or could be a type of 64 normed bits of IEEE754 double or float. 
 	<br><br>
-	(ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	Color of (ax typeandinstance) is λColor.proof if (typeandinstance λ)->λ.
+	<br><br>
+	Color of (ax typeandinstance) is λColor.disproof if (typeandinstance λ) -> anything except λ (and does halt).
+	<br><br>
+	Color of (ax typeandinstance) is λColor.wordsalad if (typeandinstance λ) does not halt,
+	<br><br>
+	Color of x where !x.l().equals(ax) is λColor.normal.
 	*/
 	ax("TODO",false,true,2),
 	Ax("TODO",false,true,2),
