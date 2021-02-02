@@ -2,7 +2,8 @@
 package wikibinator105.impl;
 import wikibinator105.spec.Blob;
 
-/** 512 bit ids, which is a literal 512 bits if the first byte is (byte)'\\',
+/** 512 bit ids, which is a literal 512 bits if the first byte is NOT (byte)'\\',
+so 255/256 of all literal 512 bits fit in 512 bits,
 else the first half is a binary forest node with color, and second half
 is that same shape of binary forest node without color aka the normed form
 for matching it to compare colors of the same node and OR them together as bloomfilter.
@@ -15,7 +16,10 @@ The first 256 bits are for binary forest node with color, and the second 256 bit
 to match it and consider different combos of color and OR them together into bloomfilter (a node is a bloomfilter),
 unless they're a literal in which case the 512 bits mean something else.
 <br><br>
-TODO swap the first and second halfs, since I want the part without color to be first so it sorts that way.
+TODO choose order of the 2 halfs...
+Its better for it to be hard to find something with the same prefix as another call pair,
+so put the one with color first, cuz treemaps are a little more efficient the shorter the shared prefix.
+On the other hand, sorting by the one without color puts those that need to be color-ORed together right beside eachother.  
 */
 public final class Id implements Blob{
 	
@@ -37,7 +41,7 @@ public final class Id implements Blob{
 	Anything else is a call pair as usual.
 	*/
 	public boolean isLiteral512(){
-		return firstByte()=='\\';
+		return firstByte()!='\\';
 	}
 
 }
