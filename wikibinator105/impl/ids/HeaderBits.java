@@ -1,9 +1,14 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl;
+package wikibinator105.impl.ids;
 
 import java.awt.Color;
 
 public enum HeaderBits{
+	
+	containsAnyAxCalls (could be known by !allNormal color)
+	
+	TODO in cbt512, only need 1 long header, not 2, so use 2 of sha3_224 instead of 2 192 bit hashes,
+	or... use some of that space for a long bize header and int height, int curriesLeft, int curriesSoFar, etc?
 	
 	TODO??? literal cbt512, since its going to have 2 id256s together anyways (1 with color and 1 without),
 		and cuz cbt is always λColor.normal? Should there be another color for cbt?

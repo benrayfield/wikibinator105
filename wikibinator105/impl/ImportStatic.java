@@ -1,6 +1,8 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl;
 import wikibinator104.spec.*;
+import wikibinator105.impl.nodes.Leaf;
+import wikibinator105.impl.nodes.Simpleλ;
 
 public class ImportStatic{
 	

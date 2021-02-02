@@ -1,10 +1,14 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl;
-import wikibinator105.spec.Blob;
+package wikibinator105.impl.ids;
+import java.util.function.Predicate;
+
+import wikibinator105.spec.*;
 
 /** The default kind of id of a wikibinator105 node. More kinds of ids can be created at runtime,
 as any lambda that returns a cbt512 or cbt256 or cbt1024 etc when called on another lambda to create the id of,
 but this kind is just to get started. I'm a little concerned about it only having 96 bits of collision security,
+(UPDATE: todo could raise that to 112 bits (2 of 224 bit hashes)
+since they can share a long header, instead of 2 longs??? but might want that for extra bize precision, num of curries, etc)
 and ids can be created for other purposes such as to optimize its alignment to specific other systems,
 and use multiple kinds of ids together at once, matching them together.
 Ids are global (whole internet) and sync with zero knowledge instantly,
@@ -36,27 +40,34 @@ somehow able to tell each other apart and address each other as Marklar without 
 -- https://southpark.fandom.com/wiki/Marklar
 It seems similar to how a universal function works. Theres only 1 word but you can say anything as combos of it.  
 */
-public final class MarklarId implements Blob{
+public final class MarklarId105b implements IdMaker{
 	
-	TODO make this be a λ. Will λ be a Blob or have a func to return a Blob? Either way, this class can be both.
+	public static final MarklarId105b instance = new MarklarId105b();
 	
-	private final long[] data;
-	
-	public Id(long... data){
-		this.data = data;
-		if(data.length != 8) throw new RuntimeException("Wrong size");
-	}
-	
-	public byte firstByte(){
-		return (byte)(data[0]>>>56);
+	public static byte firstByte(Blob id){
+		throw new RuntimeException("TODO");
+		//return (byte)(data[0]>>>56);
 	}
 	
 	/** If true, this is both the 512 bit content and the id of that content. The only other kinds
 	of literal (that fit in an id) are cbt256 cbt128 cbt64 cbt32 cbt16 cbt8 cbt4 cbt2 cbt1 and leaf/u.
 	Anything else is a call pair as usual.
 	*/
-	public boolean isLiteral512(){
-		return firstByte()!='\\';
+	public static boolean isLiteral512(Blob id){
+		return firstByte(id)!='\\';
+	}
+
+	public Blob idOfLeaf(){
+		throw new RuntimeException("TODO");
+	}
+
+	public Blob idOfBits(Blob bits){
+		throw new RuntimeException("TODO");
+	}
+
+	/** boolean[λColor.values().length] and id512 and id512 -> id512 of the parent of those */
+	public Blob idOfCallPair(Predicate<λColor> mapOfColorToBit, Blob funcId, Blob paramId){
+		throw new RuntimeException("TODO");
 	}
 
 }

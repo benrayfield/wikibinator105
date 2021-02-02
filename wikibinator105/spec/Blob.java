@@ -1,3 +1,4 @@
+/** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
 
 /** immutable. todo cbt or also include cache of bize (bitstring size aka whats the index before the last 1 bit)?

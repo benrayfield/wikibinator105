@@ -1,7 +1,8 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl;
+package wikibinator105.impl.nodes;
 import static wikibinator104.impl.ImportStatic.*;
 import wikibinator104.spec.*;
+import wikibinator105.impl.evalers.InterpretedMode;
 
 public abstract class Abstractλ implements λ{
 	

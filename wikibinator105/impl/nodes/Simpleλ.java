@@ -1,5 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl;
+package wikibinator105.impl.nodes;
 import static wikibinator105.impl.ImportStatic.*;
 
 import axiomforest.TruthValue;
