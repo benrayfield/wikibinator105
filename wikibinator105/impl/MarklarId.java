@@ -2,7 +2,15 @@
 package wikibinator105.impl;
 import wikibinator105.spec.Blob;
 
-/** 512 bit ids, which is a literal 512 bits if the first byte is NOT (byte)'\\',
+/** The default kind of id of a wikibinator105 node. More kinds of ids can be created at runtime,
+as any lambda that returns a cbt512 or cbt256 or cbt1024 etc when called on another lambda to create the id of,
+but this kind is just to get started. I'm a little concerned about it only having 96 bits of collision security,
+and ids can be created for other purposes such as to optimize its alignment to specific other systems,
+and use multiple kinds of ids together at once, matching them together.
+Ids are global (whole internet) and sync with zero knowledge instantly,
+and they're lazyEvaled so you dont even need to create the 512 bits just to use a node as a binary forest shape.
+<br><br>
+512 bit ids, which is a literal 512 bits if the first byte is NOT (byte)'\\',
 so 255/256 of all literal 512 bits fit in 512 bits,
 else the first half is a binary forest node with color, and second half
 is that same shape of binary forest node without color aka the normed form
@@ -19,9 +27,16 @@ unless they're a literal in which case the 512 bits mean something else.
 TODO choose order of the 2 halfs...
 Its better for it to be hard to find something with the same prefix as another call pair,
 so put the one with color first, cuz treemaps are a little more efficient the shorter the shared prefix.
-On the other hand, sorting by the one without color puts those that need to be color-ORed together right beside eachother.  
+On the other hand, sorting by the one without color puts those that need to be color-ORed together right beside eachother.
+<br><br>
+About the name of this kind of id...
+'The Marklar are an intelligent species of identical aliens who refer to all people, places,
+and things as "Marklar". Despite being almost identical and all having the same name, they are still
+somehow able to tell each other apart and address each other as Marklar without ambiguity.'
+-- https://southpark.fandom.com/wiki/Marklar
+It seems similar to how a universal function works. Theres only 1 word but you can say anything as combos of it.  
 */
-public final class Id implements Blob{
+public final class MarklarId implements Blob{
 	
 	TODO make this be a λ. Will λ be a Blob or have a func to return a Blob? Either way, this class can be both.
 	
