@@ -1,9 +1,28 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl;
 
+import java.awt.Color;
+
 public enum HeaderBits{
 	
-	/** If first byte is NOT 0x5c aka (byte)'\\' then the id256 is the ids of itself
+	TODO??? literal cbt512, since its going to have 2 id256s together anyways (1 with color and 1 without),
+		and cuz cbt is always λColor.normal? Should there be another color for cbt?
+	If the cbt512 fits in an id, then theres 2 bytes which are limited: the first of 32 bits of each half,
+	must not be \, AND there must be a way to know its a cbt512 instead of a cbt256.
+	Maybe should always be 512 bit ids and just have the 1 prefix for cbt512 literal
+	and cbt256 simply fits in half of it, and for other things (like normal call pairs)
+	its 2 id256s in that id512.
+	but its wasteful to use id512 for bigger cbts since they only need id256 as they are always λColor.normal.
+	
+	id512 is id256 containing 192 bit hash of concat of 2 child id512s (the whole 1024 bits, not just half of each),
+	and the second 256 bits in id512 hashes just from the second 256 bits of left child and second 256 bits of right child
+	so the second 256 bits stays the normed form without color,
+	and the first 256 bits holds the with Color and without color parts together
+	cuz if they were separate then could fake them easily in merkle.
+	Any id512 that does not start with the \ byte is a literal cbt512,
+	else it may contain 256 literal bits in the right 256 bits or 128 or 64 ... or 1 bit or be a noncbt etc.
+	
+	/** If first byte is NOT 0x5c aka (byte)'\\' then the id256 is the id of its own bits
 	(so 255/256 of cbt256s are their own id),
 	of those literal 256 bits, a literal cbt256 that is its own id.
 	All other kinds of ids, in the "default id system" (which you may derive other idMakers instead or use both)...
