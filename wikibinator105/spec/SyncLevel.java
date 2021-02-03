@@ -6,7 +6,7 @@ then slDirty is hardest to sync but also needed for wiki to do anything nontrivi
 Work up the levels gradually, in experiments, both in single computer and sync in p2p network,
 and if theres a sync problem, retreat to lower levels and explore from there
 to find what went wrong.
-In mslCleanAxless and slCleanWithAx, every node has a specific correct color,
+In slCleanAxless and slCleanWithAx, every node has a specific correct color,
 known before you even run the system, all infinity possible nodes in the space of all
 possible turing completeness. Its deterministic. Thats what makes it clean.
 slDirty allows the colors to depend on eachother in an NSAT way,

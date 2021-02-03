@@ -631,6 +631,13 @@ public enum Op{
 	"fIXME choose an alignment between zero one tru fal isColorAxEven isColorAxOdd thats intuitive to Humans programming using those, considering the order it happens in pair func, u vs (u u), etc."
 	"Then replace all the strings in the constructors of these enums, as I recently moved many of them."
 	
+	isColorProof("TODO",false,false,1),
+	IsColorProof("TODO",false,false,1),
+	
+	isColorDisproof("TODO",false,false,1),
+	IsColorDisproof("TODO",false,false,1),
+	
+	
 	/** returns t or f. Overlaps (typeval λ λ), which is ok since typeval's first param never needs to be λ. *
 	getTruthvalueYesPart("(λ   λ   (λ λ) λ (λ λ) λ λ)",false,false,1),
 	GetTruthvalueYesPart("(λ (λ λ) (λ λ) λ (λ λ) λ λ)",false,false,1),
@@ -640,7 +647,7 @@ public enum Op{
 	*/
 	//getColor TODO since theres 4 colors should this be 2 funcs to get 1 bit each, or return a cbt2 or a cbt4 or 4 funcs of bit?
 	
-	isColorAxEven("TODO",false,false,1),
+	/*isColorAxEven("TODO",false,false,1),
 	IsColorAxEven("TODO",false,false,1),
 	
 	isColorAxOdd("TODO",false,false,1),
@@ -650,6 +657,7 @@ public enum Op{
 	
 	"TODO should the 2 isColor ops give these 2 bits?: the NSAT on the combo of every possible binary forest node having 2 bits that tell 1 of 4 colors. Of so, both of them being t could mean colorAxNonhalt, and both being f could mean colorNormal. Of course they would never both return t at the lambda level cuz the call of ax would not halt, but they can be any of those 4 ways at the NSAT level which is below the lambda level."
 	"TODO for better turingCompleteChallengeResponse, should id256 contain nand of its 2 nands of the childs, and leaf has nand of 0 (todo verify if thats true of leafs 2 childs being identityfunc and leaf, and move those if they dont), so colorAxNandIs1 vs colorAxNandIs0 vs colorAxNonhalt vs colorNormal. Its an easily fakeable 1-bit hash but viewed in many combos at once it adds to security a little at a time. u vs (u u) have opposite nand values so can still use those 2 constants as the normed form."
+	*/
 	
 	
 	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
@@ -834,6 +842,11 @@ public enum Op{
 	Color of (ax typeandinstance) is λColor.disproof if (typeandinstance λ) -> anything except λ (and does halt).
 	<br><br>
 	Color of (ax typeandinstance) is λColor.wordsalad if (typeandinstance λ) does not halt,
+	and if (ax typeandinstance) is this color then (ax typeandinstance) does not halt,
+	so lambdas will never see this color (except if they form an emulator of it and in some cases know it wont halt),
+	but the NSAT level (below the lambda level) will see all 4 colors at least in abstract math
+	but probably will only solve for the other 3 of 4 colors and leave the others unknown.
+	Every node must have a valid color, even if we dont know what it is, else the whole system would break.
 	<br><br>
 	Color of x where !x.l().equals(ax) is λColor.normal.
 	*/
