@@ -4,7 +4,7 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.
 
-Planned UI, which will have drag-and-droppable functions (colored circles) with colored edges between them showing left child, right child, return value (when called on leaf, especially if its a (lazy x y) call, and various edges to skip over internal tree nodes to make it look like linkedlists, sCurryLists, and human readable, might look something like this...
+Planned UI, which will have drag-and-droppable functions (colored circles) with colored edges between them showing left child, right child, return value (when called on leaf, especially if its a (lazy x y) call, and various edges to skip over internal tree nodes to make it look like linkedlists, sCurryLists, and human readable, might look something like this, and it will be the game-tree of all possible turing-completeness, at first appearing very basic but as you navigate deeper into the tree you might find a chess board with the chess game tree in it, derived at runtime (including its graphics, just another lambda, and all lambdas are in the game-tree already), the same way you would find pacman, FPS games, GPU optimizations, new kinds of web browsers, music tools, etc...
 
 <img src=https://github.com/benrayfield/wikibinator105/raw/main/data/wikibinator105/pics/todoEdgesUi.png>
 
