@@ -1,19 +1,20 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl.nodes;
 import static wikibinator105.impl.ImportStatic.*;
-
-import axiomforest.TruthValue;
+import wikibinator105.impl.Λ;
 import wikibinator105.spec.*;
 
-public class Simpleλ extends Abstractλ{
+public class Simpleλ extends AbstractΛ{
 	
 	//TODO a λ which is a Blob, from lazycl's Blob interface
 	
-	public final λ l, r;
+	public final Λ l, r;
 	
 	//public final byte opByte;
 	
 	public final long header;
+	
+	public final long bize;
 	
 	/** leaf *
 	public Simpleλ(){
@@ -21,11 +22,14 @@ public class Simpleλ extends Abstractλ{
 	}*/
 	
 	/** nonleaf */
-	public Simpleλ(TruthValue tv, λ l, λ r){
+	public Simpleλ(λColor color, Λ l, Λ r){
 		this.l = l;
 		this.r = r;
 		//this.opByte = parentOpByte(l.opByte(),r.opByte());
-		this.opByte = parentOpByte(l.opByte(),r.opByte());
+		//this.opByte = parentOpByte(l.opByte(),r.opByte());
+		long[] headerAndBize = parentHeaderAndBize(color, l.header(), l.bize(), r.header(), r.bize()); //TODO optimize by not creating long[2]?
+		this.header = headerAndBize[0];
+		this.bize = headerAndBize[1];
 		
 		// |1 cuz this is not a leaf, cuz this has 2 childs.
 		//The 2 childs of leaf are identityFunc and leaf, but that would eval instantly and return leaf
@@ -52,8 +56,56 @@ public class Simpleλ extends Abstractλ{
 	/** false, this is not a leaf */
 	public boolean a(){ return false; }
 
-	public λ l(){ return l; }
+	public Λ l(){ return l; }
 
-	public λ r(){ return r; }
+	public Λ r(){ return r; }
+
+	public long header(){
+		return header;
+	}
+
+
+	public long bize(){
+		return bize;
+	}
+
+	public λColorTruthValue tv(){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public Λ g(long binheapIndex){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public Λ G(long binheapIndex){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public Λ e(Λ r){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public $λ e(long maxSpend, Λ r){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public byte opByte(){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public Blob blob(){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public Λ apply(Λ t){
+		throw new RuntimeException("TODO");
+	}
 
 }

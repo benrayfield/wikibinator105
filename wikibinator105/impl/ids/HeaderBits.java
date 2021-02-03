@@ -1,11 +1,9 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl.ids;
 
-import java.awt.Color;
-
 public enum HeaderBits{
 	
-	containsAnyAxCalls (could be known by !allNormal color)
+	/*containsAnyAxCalls (could be known by !allNormal color)
 	
 	TODO in cbt512, only need 1 long header, not 2, so use 2 of sha3_224 instead of 2 192 bit hashes,
 	or... use some of that space for a long bize header and int height, int curriesLeft, int curriesSoFar, etc?
@@ -26,6 +24,7 @@ public enum HeaderBits{
 	cuz if they were separate then could fake them easily in merkle.
 	Any id512 that does not start with the \ byte is a literal cbt512,
 	else it may contain 256 literal bits in the right 256 bits or 128 or 64 ... or 1 bit or be a noncbt etc.
+	*/
 	
 	/** If first byte is NOT 0x5c aka (byte)'\\' then the id256 is the id of its own bits
 	(so 255/256 of cbt256s are their own id),
@@ -83,10 +82,10 @@ public enum HeaderBits{
 	If allNormal or allUnknown then id should differ by only 1 bit (FIXME what about cbt256 literals that dont start with \ ?,
 	should those be excluded from the allnormal vs allunknown optimization, aka allUnknownExceptCbt256sWhichCanBeNormal vs allNormal???
 	*/
-	allUnknown(1),
+	allUnknown(1);
 	
 	
-	TODO 3 different things for the rest of the bits, depending if its
+	/*TODO 3 different things for the rest of the bits, depending if its
 	noncbt, cbtButThisIsAnId256, or cbtButThisHas2LongsOfRangeToIncludeThatBitstringAfterTheIdAndPadToFillNextBlockOf256AsEfficientBinaryStorage.
 	
 	TODO also might want place for 128 bits of nonce that go with a pair of id256,
@@ -98,7 +97,8 @@ public enum HeaderBits{
 	and thats the state of the system that anyone can add to in a proofofstake way,
 	proofofstake being that they know what is likely to fit in with the existing claims of (func param)->ret
 	considering the wiki func is the only nondeterministic func in the whole system
-	but affects other (func param)->ret if those call wiki such as looping thru all possible funcs by dovetailing. 
+	but affects other (func param)->ret if those call wiki such as looping thru all possible funcs by dovetailing.
+	*/ 
 	
 	/** bize means bitstring size */
 	public final int bize;

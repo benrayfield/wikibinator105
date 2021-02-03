@@ -1,8 +1,8 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
 
-public interface Evaler{
+public interface Evaler<T extends λ>{
 	
-	public $λ eval(long maxSpend, λ func, λ param);
+	public $λ<T> eval(long maxSpend, T func, T param);
 
 }

@@ -1,3 +1,4 @@
+/** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
 
 /** I'm undecided if will use this vs just 4 bits for the 4 colors, plus other parts of long header of course. */

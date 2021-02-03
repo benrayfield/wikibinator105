@@ -9,7 +9,7 @@ public class InterpretedMode implements Evaler{
 	public static final EvalerChain chain = new SimpleEvalerChain(instance);
 	
 	public $λ eval(long maxSpend, λ func, λ param){
-		
+		throw new RuntimeException("TODO");
 	}
 
 }

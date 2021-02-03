@@ -612,14 +612,6 @@ public enum Op{
 	getParam("(λ λ λ λ λ (λ λ) (λ λ))",false,false,1),
 	GetParam("(λ (λ λ) λ λ λ (λ λ) (λ λ))",false,false,1),
 	
-	/** is a cbt whose first bit is 0. can only be part of cbt or something containing a cbt.
-	if its param is not a cbt of same size, then calls itself on itself instead,
-	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
-	TODO copy comments from wikibinator104 and maybe modify them.
-	*/
-	zero("(λ   λ   (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
-	Zero("(λ (λ λ) (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
-	
 	/** is a cbt whose first bit is 1. can only be part of cbt or something containing a cbt.
 	if its param is not a cbt of same size, then calls itself on itself instead,
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
@@ -628,12 +620,32 @@ public enum Op{
 	one("(λ   λ   (λ λ)   λ     λ     λ     λ)",false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
 	One("(λ (λ λ) (λ λ)   λ     λ     λ     λ)",false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
 	
-	"fIXME choose an alignment between zero one tru fal isColorAxEven isColorAxOdd thats intuitive to Humans programming using those, considering the order it happens in pair func, u vs (u u), etc."
-	"Then replace all the strings in the constructors of these enums, as I recently moved many of them."
+	/** is a cbt whose first bit is 0. can only be part of cbt or something containing a cbt.
+	if its param is not a cbt of same size, then calls itself on itself instead,
+	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	*/
+	zero("(λ   λ   (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	Zero("(λ (λ λ) (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
 	
+	//"fIXME choose an alignment between zero one tru fal isColorAxEven isColorAxOdd thats intuitive to Humans programming using those, considering the order it happens in pair func, u vs (u u), etc."
+	//"Then replace all the strings in the constructors of these enums, as I recently moved many of them."
+	
+	/** since lambdas cant observe λColor.wordsalad
+	(which only happens when the thing of that color is (ax something) and does not halt,
+	even if derive debugStepInto and debugStepOver lambdas and step thru it,
+	you would never reach a proof that it does not halt in any finite number of steps,
+	and each such step halts but is at a lower "debug level"
+	which "pattern calculus function" aka getfunc/l getparam/r isleaf/a ops allow you to build)...
+	since lambdas cant observe λColor.wordsalad,
+	observing !isColorProof and !isColorDisproof proves the color is λColor.normal,
+	but you could also know that by the left child not being ax or Ax...
+	"Color of x where (!x.l().equals((λ)ax) & !x.l().equals((λ)Ax)) is λColor.normal." -- see comment in ax. 
+	*/
 	isColorProof("TODO",false,false,1),
 	IsColorProof("TODO",false,false,1),
 	
+	/** see comment in isColorProof and in ax */
 	isColorDisproof("TODO",false,false,1),
 	IsColorDisproof("TODO",false,false,1),
 	
@@ -669,6 +681,14 @@ public enum Op{
 	/** λy.λz.z aka false aka f. (fal λ) is identityFunc aka λz.z. (pair b c fal) is c. */
 	fal("(λ λ λ λ (λ λ) (λ λ))",false,false,2),
 	Fal("(λ (λ λ) λ λ (λ λ) (λ λ))",false,false,2),
+	
+	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
+	pair("(λ λ λ (λ λ) (λ λ))",false,false,3),
+	Pair("(λ (λ λ) λ (λ λ) (λ λ))",false,false,3),
+	
+	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
+	trecurse("(λ λ λ (λ λ) λ)",false,false,3),
+	Trecurse("(λ (λ λ) λ (λ λ) λ)",false,false,3),
 	
 	/** waiting for infinity curries, never evals just keeps accumulating params. A list of anything you want,
 	without the inefficiency of using ((pair x) y). Just call it on y without the pair.
@@ -824,8 +844,6 @@ public enum Op{
 	
 	
 	
-	
-	
 	/** aka axType. see comment of fpr.
 	(ax typeandinstance param) -> (typeandinstance (t param)).
 	(ax typeandinstance) is halted if (typeandinstance λ) halts (after it halts, the (ax typeandinstance) is returned to you).
@@ -848,18 +866,10 @@ public enum Op{
 	but probably will only solve for the other 3 of 4 colors and leave the others unknown.
 	Every node must have a valid color, even if we dont know what it is, else the whole system would break.
 	<br><br>
-	Color of x where !x.l().equals(ax) is λColor.normal.
+	Color of x where (!x.l().equals((λ)ax) & !x.l().equals((λ)Ax)) is λColor.normal.
 	*/
 	ax("TODO",false,true,2),
 	Ax("TODO",false,true,2),
-	
-	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
-	pair("(λ λ λ (λ λ) (λ λ))",false,false,3),
-	Pair("(λ (λ λ) λ (λ λ) (λ λ))",false,false,3),
-	
-	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
-	trecurse("(λ λ λ (λ λ) λ)",false,false,3),
-	Trecurse("(λ (λ λ) λ (λ λ) λ)",false,false,3),
 	
 	/** (curry unaryNum comment funcbody ...params...)
 	or TODO choose a design, maybe unaryNum other than 0 (u) is the curry op itself?
@@ -893,6 +903,9 @@ public enum Op{
 	Anything whose l() is not axType is colorNormal. Those are the 4 colors.
 	axType can of course be used with other funcs as it only cares about
 	does its param return something of even height, of odd height, or not return.
+	<br><br>
+	TODO what does (fpr x y z anything_except_λ) return?
+	(ret λ)? (lazig x y)? {,x ,y}? (ax (fpr x y z))? (S I I (S I I))? z?
 	*/
 	fpr("TODO",false,false,4),
 	Fpr("TODO",false,false,4);

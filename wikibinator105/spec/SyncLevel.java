@@ -1,3 +1,4 @@
+/** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
 
 /** sync levels in order of increasing difficulty of sync,

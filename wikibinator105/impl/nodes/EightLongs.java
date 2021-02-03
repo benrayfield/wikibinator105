@@ -1,4 +1,5 @@
 package wikibinator105.impl.nodes;
+import static wikibinator105.impl.ImportStatic.*;
 import wikibinator105.spec.Blob;
 
 public class EightLongs implements Blob{

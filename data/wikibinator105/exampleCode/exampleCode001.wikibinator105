@@ -1,0 +1,42 @@
+λ#u
+(u u)#uu
+(u uu u u u u u u)#Wiki
+(...)#x
+(...)#a
+(...)#t
+(...)#f
+(f u)#i
+(...)#if
+(...)#paramN
+(...)#comment
+(...)#recur
+(...)#p0
+(...)#p2
+(...)#p3
+(...)#p4
+(...)#p5
+(...)#and2
+(...)#curry
+
+{
+	,curry
+	2u
+	{
+		,if
+		{,a p0}
+		{,a p1}
+		{
+			,if
+			{,a p1}
+			,,t
+			{
+				,and2
+				{recur {,l p0} {,l p1}}
+				{recur {,r p0} {,r p1}}
+			}
+		}
+	}
+}#equals
+
+
+

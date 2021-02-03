@@ -4,6 +4,80 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.
 
+```
+Incomplete example code...
+
+λ#u
+(u u)#uu
+(u uu u u u u u u)#Wiki
+(...)#x
+(...)#a
+(...)#t
+(...)#f
+(f u)#i
+(...)#ifButNotInS
+(...)#if
+(...)#paramN
+(...)#comment
+(...)#recur
+(...)#p0
+(...)#p2
+(...)#p3
+(...)#p4
+(...)#p5
+(...)#and
+(...)#and3
+(...)#c
+(c ,u)#c1
+(c ,,u)#c2
+(c ,,,u)#c3
+(c ,,,,u)#c4
+(c ,,,,,u)#c5
+(...)#isColorProof
+(...)#isColorDisproof
+(...)#nor
+
+/* TODO where to write comments like this? Maybe curry isnt the only place comments should
+ have a place in? I might want them in {...} which always contains an S op,
+and maybe also in [] and <> which are made of pairs aka (pair x y) aka ((pair x) y){
+	,c2
+	"its colorNormal if its halted and neither of colorProof or colorDisproof, since
+	 colorWordsalad is (ax anything) where (anything u) does not halt so that (ax anything)
+	  does not halt. colorNormal is anything whose left child is not ax."
+	{,nor {,isColorDisproof p0
+}#isColorNormal
+*/
+{,nor isColorProof isColorDisproof}#isColorNormal
+
+{
+	,c2
+	"todo write a comment here"
+	{
+		,if
+		{,a p0}
+		{,a p1}
+		{
+			,if
+			{,a p1}
+			,,t
+			{
+				,and
+				{recur {,l p0} {,l p1}}
+				{recur {,r p0} {,r p1}}
+			}
+		}
+	}
+}#equals
+
+{,equals ,equals ,equals}#lazy_eqeqeq_callMeOnLeafAndShouldGetT
+{,equals ,"hello" ,"hi"}#lazy_eqhellohi_callMeOnLeafAndShouldGetF
+{,equals ,"hello" {,L ,"hello" {,R ,"hello"}}}#lazy_eqhellolhellorhello_callMeOnLeafAndShouldGetT
+
+(ax (fpr lazy_eqeqeq_callMeOnLeafAndShouldGetT u t))#test_lazy_eqeqeq_callMeOnLeafAndShouldGetT_todoVerifyColorIsProof
+(ax (fpr lazy_eqeqeq_callMeOnLeafAndShouldGetT u f))#testOpp_lazy_eqeqeq_callMeOnLeafAndShouldGetT_todoVerifyColorIsDisproof
+(,isColorProof ,test_lazy_eqeqeq_callMeOnLeafAndShouldGetT_todoVerifyColorIsProof)#testColorProof_shouldBeT
+```
+
 ===Planned FEATURES===
 * After the prototype is finished and hooks into some other systems, will be for ages 0 to expert, that anyone of any age and skill, maybe even some of the smarter mice or cats or monkeys, will near instantly find it intuitive on a mulitouchscreen or with camera watching their movements and responding with sound or a video projector or whatever kind of UI they are able to use, but for experts will connect many things across the internet through a universal pure math function to make things simpler, more efficient, more scaleable, compatible, secure, low lag, and deploy a global system in a tiny fraction of a second in tiny pieces similar to how a cellular automata spreads but in sparse turing complete dimensions and safely sandboxed and with formal verification.
 * Human readable programming language and interactive visual and sound and game controller mouse keyboard webcam multitouchscreen etc forms, where you may drag-and-drop function onto function to find or create function or use it like normal systems, such as {I I} is a function that calls its parameter on itself if I is identityFunc, and {I ,"hello"} aka (S I (T "hello")) is a function that calls its parameter on "hello", and there will be drag-and-droppable functions for as advanced of things that any programming expert does, like a whole game, simulation, picture, video, sound, word, sentence, pdf file, way of using multiple compute clouds together, social network, digital signature algorithm, musical instruments, photoshop-like tools, browser plugins to view the web new ways and share tools that build tools when they act on combos of other tools to measure or improve tools, etc... all those things might be built from calling λ on itself in various combos.

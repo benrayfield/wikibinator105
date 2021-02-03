@@ -1,0 +1,49 @@
+λ#u
+(u u)#uu
+(u uu u u u u u u)#Wiki
+(...)#x
+(...)#a
+(...)#t
+(...)#f
+(f u)#i
+(...)#ifButNotInS
+(...)#if
+(...)#paramN
+(...)#comment
+(...)#recur
+(...)#p0
+(...)#p2
+(...)#p3
+(...)#p4
+(...)#p5
+(...)#and
+(...)#and3
+(...)#c
+
+{
+	,c
+	,,u
+	{
+		,if
+		{,a p0}
+		{,a p1}
+		{
+			,if
+			{,a p1}
+			,,t
+			{
+				,and
+				{recur {,l p0} {,l p1}}
+				{recur {,r p0} {,r p1}}
+			}
+		}
+	}
+}#equals
+
+{,equals ,equals ,equals}#lazy_eqeqeq_callMeOnLeafAndShouldGetT
+{,equals ,"hello" ,"hi"}#lazy_eqhellohi_callMeOnLeafAndShouldGetF
+{,equals ,"hello" {,L ,"hello" {,R ,"hello"}}}#lazy_eqhellolhellorhello_callMeOnLeafAndShouldGetT
+
+
+
+

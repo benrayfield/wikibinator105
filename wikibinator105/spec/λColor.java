@@ -1,6 +1,5 @@
+/** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
-
-import com.sun.tools.sjavac.Log.Level;
 
 /** (ax typeandinstance) calls (typeandinstance u) to get an even height or an odd height
 (UPDATE: (typeandinstance u) returns u vs anything_except_u) OLD...
@@ -84,7 +83,7 @@ public enum λColor{
 	Probably best to keep the colors as they are... proof, disproof, wordsalad, normal.
 	*/
 	
-	TODO should there be an isleaf color?
+	/*TODO should there be an isleaf color?
 			
 	TODO should there be an ishaltedandisnormal color?
 			
@@ -97,5 +96,6 @@ public enum λColor{
 	isdisproof
 	ishalted
 	isleaf
+	*/
 
 }

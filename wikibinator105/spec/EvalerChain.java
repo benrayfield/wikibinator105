@@ -1,6 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
-import java.util.function.BinaryOperator;
 
 /** TODO rewrite code and comments cuz copied alot from wikibinator104 to this wikibinator105.
 TODO rewrite the below text for wikibinator104 cuz was copied from wikibinator101...

@@ -2,7 +2,6 @@
 package wikibinator105.spec;
 import java.lang.ref.WeakReference;
 import java.util.function.UnaryOperator;
-import axiomforest.TruthValue;
 
 /** TODO rewrite code and comments cuz copied alot from wikibinator104 to this wikibinator105.
 immutable. binary forest node, defined ONLY by its forest shape, with no data in each node
@@ -20,13 +19,13 @@ which is similar to occamsfuncerV2's curry op which used its second last param f
 As of 2021-1-21 github.com/benrayfield/occamsfuncer is version 3 but doesnt say what its version is,
 and it doesnt have that infloop in curry behavior cuz its an axiom related thing thats hard to prove things about. 
 */
-public interface λ extends UnaryOperator<λ>{
+public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	
 	/*Here's the plan: see λColor and superposition()
 	TODO merge wikibinator105 node with axiomforest node, but how much can they merge?
 	*/
 	
-	TODO implement ids like that page of text near the top of readme as of 2021-1-29
+	/*TODO implement ids like that page of text near the top of readme as of 2021-1-29
 	about nsat, axiomforest header 16 bits, merging (something like?) axiomforest node with wikibinator node,
 	and having 2 or 3 childs like axiomforestnode depending if all are yes or all unknown or if its mixed,
 	the third child being deriveable from binary forest shape plus the truthvalue per node,
@@ -35,6 +34,7 @@ public interface λ extends UnaryOperator<λ>{
 	OLder... TODO implement ids like in "indat qtodo.txt 2021-1-28" (incomplete design)
 	
 	TODO wikibinator105_axOpDoesntNeed2OpcodeesAtSecondLastParamCuzShould((fn,fn)->fn_inBigo1)DovetaillikeGoThroughCallquadlikeStuffThenBackToItselfHalted
+	*/
 	
 	//"wikibinatorDovetailForDebugstepoverAndDebugstepintoCuzThoseAreManyPathsToTheSameFuncparamreturnAndNeedDovetailingSo(L x (R x))EqualsXForXIs(axiomOp ... stepstuff)"
 	
@@ -45,12 +45,15 @@ public interface λ extends UnaryOperator<λ>{
 	public boolean a();
 	
 	/** func/L child, of the 2 childs in binary forest */
-	public default λ l(){ return g(2); }
+	public default Subclass l(){ return g(2); }
 	
 	/** param/R child, of the 2 childs in binary forest. Self is 1. left of x is x*2. right of x is x*2+1. */
-	public default λ r(){ return g(3); }
+	public default Subclass r(){ return g(3); }
 	
-	/** UPDATE: use as many bits of bloomfilter per node as λColor,
+	/** UPDATE: This is 1 of the 2 192 bit hashes in id512, so do keep this comment here,
+	but dont return it as a λ. This is only visible at the NSAT level and in some kinds of ids.
+	Old...
+	UPDATE: use as many bits of bloomfilter per node as λColor,
 	and all those bits are 0 in the superposition/axiomforestnormcachedderivedchild,
 	and its onehot for the usual nodes (not normed/unknown form) so can OR them together
 	where this superposition/norm matches. Dont need to store this except for verifying purposes,
@@ -67,16 +70,9 @@ public interface λ extends UnaryOperator<λ>{
 	then this third child as cache doesnt need to be stored since all yes and all unknown
 	differ by only 1 (or a few? todo verify) bits in id256, as in axiomforest header 16 bits,
 	which will be in long λ.header().
-	*/
-	public λ superposition();
-	
-	/** see superposition() and comment in λColor.java
-	FIXME should this be λColorTruthValue? Or 4 bits? Those 4 bits will be in long header().
-		cuz otherwise, what does superposition().color() return? Its λColorTruthValue.unknown.
 	*
-	public λColor color(); //throws Unknown, Bull?
+	public λ superposition();
 	*/
-	public λColorTruthValue tv();
 	
 	/** color of halted (ax typeandinstance) IFF (typeandinstance u)->u.
 	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
@@ -144,7 +140,9 @@ public interface λ extends UnaryOperator<λ>{
 		return tv()==λColorTruthValue.bull;
 	}
 	
-	/** normally all TruthValue.yes, but there are 2 Op (typeval u u) and (typeval u (u u))
+	/** OLD...
+	<br><br>
+	normally all TruthValue.yes, but there are 2 Op (typeval u u) and (typeval u (u u))
 	which get the 2 bits (as t vs f) in the TruthValue of any node,
 	and the only condition a TruthValue should ever become no is when the same (func param) call
 	returns 2 different things, so at most 1 of those can be yes (or neither) at a time,
@@ -171,13 +169,24 @@ public interface λ extends UnaryOperator<λ>{
 	Op.ax calls which each say (ax ret func param) or (ax λ type instance x)->(param x)
 	or technically could be (ax anyRet func param x). Ax is a turing complete type system,
 	compared to Op.typeval which is a loose type system for things like "image/jpeg" and "text/plain".
-	*/
+	*
 	public TruthValue tv();
+	*/
+	
+	
+	/** see superposition() and comment in λColor.java
+	FIXME should this be λColorTruthValue? Or 4 bits? Those 4 bits will be in long header().
+		cuz otherwise, what does superposition().color() return? Its λColorTruthValue.unknown.
+	*
+	public λColor color(); //throws Unknown, Bull?
+	*/
+	public λColorTruthValue tv();
+	
 	
 	/** same as l().r() but may be more efficient, such as in the optimization used in Pair.java
 	to store x and y but lazyEval (pair x) in (pair x y) and not trigger laziEval of that just to get x or y.
 	*/
-	public default λ lr(){ return g(5); }
+	public default Subclass lr(){ return g(5); }
 	
 	/** UPDATE: isSkip means ONLY that its normally created only when observed and is normally skiped
 	when creating ids, such as Curnode, Pairnode, PairnodeWithFuncCache etc.
@@ -232,32 +241,32 @@ public interface λ extends UnaryOperator<λ>{
 	/** each bit in binheapIndex chooses l() vs r(). Self is 1. left of x is x*2. right of x is x*2+1.
 	g(...) can do the same as about half as deep in G(...) in cbt. g can do a gigabit. G an exabit.
 	*/
-	public default λ g(int binheapIndex){ return g((long)binheapIndex); }
+	public default Subclass g(int binheapIndex){ return g((long)binheapIndex); }
 	
 	/** each bit in binheapIndex chooses l() vs r(). Self is 1. left of x is x*2. right of x is x*2+1.
 	g(...) can do the same as about half as deep in G(...) in cbt. g can do a gigabit. G an exabit.
 	*/
-	public λ g(long binheapIndex);
+	public Subclass g(long binheapIndex);
 	
 	/** each bit in binheapIndex chooses lr() vs r() which is useful for pairs and cbts.
 	Self is 1. left.right of x is x*2. right of x is x*2+1.
 	g(...) can do the same as about half as deep in G(...) in cbt. g can do a gigabit. G an exabit.
 	*/
-	public default λ G(int binheapIndex){ return G((long)binheapIndex); }
+	public default Subclass G(int binheapIndex){ return G((long)binheapIndex); }
 	
 	/** each bit in binheapIndex chooses lr() vs r() which is useful for pairs and cbts.
 	Self is 1. left.right of x is x*2. right of x is x*2+1.
 	g(...) can do the same as about half as deep in G(...) in cbt. g can do a gigabit. G an exabit.
 	*/
-	public λ G(long binheapIndex);
+	public Subclass G(long binheapIndex);
 	
 	/** callpair of this and param, without checking if thats a valid thing to do,
 	since (todo choose a design?) only halted nodes are allowed.
 	*/
-	public λ p(λ r);
+	public Subclass p(Subclass r);
 	
 	/** lambda call (eval this on) by eager eval. For lazy eval (todo choose a design?) use this.p(λ)??? */
-	public λ e(λ r);
+	public Subclass e(Subclass r);
 	
 	/** Returns the same return as e(λ),
 	if it has enough gas (compute resources such as time and memory and num of compiles),
@@ -275,12 +284,12 @@ public interface λ extends UnaryOperator<λ>{
 	and those (x z) and (y z) often do the same call multiple times using the <func param return> caches
 	which will be in (Op.ax ret param func) or in optimizations of that in hashtables in the VM.
 	*/
-	public $λ e(long maxSpend, λ r);
+	public $λ<Subclass> e(long maxSpend, Subclass r);
 	
 	/** lambda call (eval this on) by eager eval. For lazy eval (todo choose a design?) use this.p(λ)??? 
 	UnaryOperator<λ>, but I want the func names used very often to have short names like e(λ) instead of apply(λ).
 	*/
-	public default λ apply(λ r){
+	public default Subclass apply(Subclass r){
 		return e(r);
 	}
 	
@@ -299,11 +308,11 @@ public interface λ extends UnaryOperator<λ>{
 	*/
 	public byte opByte();
 	
-	public default λ clean(){
+	public default Subclass clean(){
 		throw new RuntimeException("TODO returns a forkEdit of this where first param after leaf is leaf, unless it already is. TODO optimize this in Simpleλ by each keeping a ptr to the opposite clean/dirty.");
 	}
 	
-	public default λ dirty(){
+	public default Subclass dirty(){
 		throw new RuntimeException("TODO returns a forkEdit of this where first param after leaf is (leaf leaf), unless it already is something other than leaf. TODO optimize this in Simpleλ by each keeping a ptr to the opposite clean/dirty.");
 	}
 	

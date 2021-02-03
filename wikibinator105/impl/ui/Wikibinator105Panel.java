@@ -2,10 +2,7 @@
 package wikibinator105.impl.ui;
 import wikibinator105.spec.*;
 import java.awt.Graphics;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 import javax.swing.JPanel;
 
 public class Wikibinator105Panel extends JPanel{
