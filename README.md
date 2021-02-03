@@ -4,6 +4,10 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.
 
+Planned UI, which will have drag-and-droppable functions (colored circles) with colored edges between them showing left child, right child, return value (when called on leaf, especially if its a (lazy x y) call, and various edges to skip over internal tree nodes to make it look like linkedlists, sCurryLists, and human readable, might look something like this...
+
+<img src=https://github.com/benrayfield/wikibinator105/raw/main/data/wikibinator105/pics/todoEdgesUi.png>
+
 ```
 Incomplete example code...
 
