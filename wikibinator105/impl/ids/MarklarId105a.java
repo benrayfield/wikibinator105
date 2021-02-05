@@ -1,5 +1,7 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl.ids;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import wikibinator105.spec.*;
@@ -21,7 +23,7 @@ MarklarId105a(x,y) = concat(
 FIXME need to put in check for BULL and place to write color (1 of 4 colors, need 4 bits each for bloomfilter).
 Remember, this is not mean to be efficient, just to show the simplest kind of id thats also secure.
 */
-public final class MarklarId105a implements IdMaker{
+public final class MarklarId105a implements IdMaker_old_useFuncsDirectlyAsIdmaker{
 	
 	public static final MarklarId105a instance = new MarklarId105a();
 
@@ -33,7 +35,11 @@ public final class MarklarId105a implements IdMaker{
 		throw new RuntimeException("TODO");
 	}
 
-	public Blob idOfCallPair(Predicate<λColor> mapOfColorToBit, Blob funcId, Blob paramId){
+	public Blob idOfCallPair(EnumSet<λColor> colors, Blob funcId, Blob paramId){
+		throw new RuntimeException("TODO");
+	}
+
+	public λ fn(){
 		throw new RuntimeException("TODO");
 	}
 

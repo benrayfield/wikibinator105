@@ -1,5 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package axiomforest;
+package axiomforest_todoRedesignThisForMoreColorsOrRemoveIt;
 import java.io.InputStream;
 
 /** Immutable. bitstring of size 0 to 2^63-1 bits.

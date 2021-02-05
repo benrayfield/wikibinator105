@@ -6,6 +6,8 @@ import wikibinator105.spec.λ;
 
 public class Node{
 	
+	//public final long localId;
+	
 	/** display position */
 	public double y, x;
 	

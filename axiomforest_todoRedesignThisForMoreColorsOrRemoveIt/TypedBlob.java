@@ -1,5 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package axiomforest;
+package axiomforest_todoRedesignThisForMoreColorsOrRemoveIt;
 import java.lang.reflect.Array;
 
 /** knows which primitive type its a 1d array/list/Buffer/sparseView/etc of,

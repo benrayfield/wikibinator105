@@ -49,6 +49,44 @@ public enum SyncLevel{
 	slCleanWithAx,
 	
 	/** wiki behaviors are nondeterministicly chosen by (ax (fpr wiki x y)) to mean (wiki x)->y */ 
-	slDirty;
+	slDirty,
+	
+	/** if it contains any λColorTruthValue.bull, λColorTruthValue.unknown, or λColorTruthValue.wordsalad,
+	then it cant be seen at the lambda level but can be seen at nsat level.
+	Things that contain λColorTruthValue.unknown can be a part of something lambda can see,
+	but lambda can only see things that in l() and r() deeply all the way down to leaf
+	everything is λColor.proof, λColor.disproof, or λColor.normal,
+	and nothing is λColor.wordsalad since thats only if it doesnt halt,
+	and nothing is λColorTruthValue.bull cuz that only happens if a node has more than 1 color,
+	and nothing is λColorTruthValue.unknown cuz whatever it can see thru l() and r() have a specific λColor.
+	The nodes above it (of bigger height, which there are infinity of them) are all unknown from here
+	since they're not reachable thru l() and r() deeply.
+	*/
+	slLambdaCantSee;
+	
+	/** todo need more synclevels for things that cant be seen at lambda level but can at nsat level and bloom syncing???...
+	Here's some things from wikibinator105.impl.ids.HeaderBits 2021-2-4 but I'm still designing it,
+	(and λColorTruthValue has unknown and bull)...
+
+	bloomProof
+	
+	bloomDisproof
+	
+	bloomWordsalad
+	
+	bloomNormal
+	
+	anyBull(1)
+	
+	anyAxCall(1)
+	
+	anyWordsalad(1)
+	
+	anyUnknown
+	
+	allUnknown
+	
+	allUnknownBelow
+	*/
 
 }

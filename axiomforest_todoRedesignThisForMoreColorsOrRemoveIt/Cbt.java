@@ -1,5 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package axiomforest;
+package axiomforest_todoRedesignThisForMoreColorsOrRemoveIt;
 import java.io.InputStream;
 
 /** complete binary tree of 1s and 0s. ((u u) u) is 1. (u (u u)) is 0. ( ((u u) u) (u (u u)) ) is 10, and so on.

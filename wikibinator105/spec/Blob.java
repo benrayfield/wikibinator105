@@ -6,6 +6,8 @@ TODO rewrite code and comments cuz copied alot from wikibinator104 to this wikib
 */
 public interface Blob{
 	
+	public long bize();
+	
 	//TODO merge with lazycl's Blob class?
 
 }

@@ -1,5 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package axiomforest;
+package axiomforest_todoRedesignThisForMoreColorsOrRemoveIt;
 //import wikibinator100.impl.Bull;
 //import wikibinator100.impl.Unknown;
 

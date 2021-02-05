@@ -1,7 +1,10 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
 import java.lang.ref.WeakReference;
+import java.util.EnumSet;
 import java.util.function.UnaryOperator;
+
+import wikibinator105.spec.err.NotObserve;
 
 /** TODO rewrite code and comments cuz copied alot from wikibinator104 to this wikibinator105.
 immutable. binary forest node, defined ONLY by its forest shape, with no data in each node
@@ -76,14 +79,14 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	
 	/** color of halted (ax typeandinstance) IFF (typeandinstance u)->u.
 	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
-	*/
+	*
 	public default boolean isProof(){
 		return tv()==λColorTruthValue.proof;
 	}
 	
 	/** color of halted (ax typeandinstance) IFF (typeandinstance u) -> anything_except_u.
 	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
-	*/
+	*
 	public default boolean isDisproof(){
 		return tv()==λColorTruthValue.disproof;
 	}
@@ -111,7 +114,7 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	depending on the size of that next list. Its a turingCompleteTypeSystem.
 	<br><br>
 	TODO move some of the above text into design docs, as its more generally relevant than isWordsalad.
-	*/
+	*
 	public default boolean isWordsalad(){
 		return tv()==λColorTruthValue.wordsalad;
 	}
@@ -120,7 +123,7 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	Most nodes are this color, which means they're not claiming anything (by ax)
 	and are just are a binary forest shape of call pairs,
 	other than they may contain such claims if you look in l() and r() deeply.
-	*/
+	*
 	public default boolean isNormal(){
 		return tv()==λColorTruthValue.normal;
 	}
@@ -132,12 +135,27 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	which would mark the bull bit in the default kind of id256 so anything which contains bull knows instantly in id256.
 	*/
 	public default boolean isUnknown(){
-		return tv()==λColorTruthValue.unknown;
+		//return tv()==λColorTruthValue.unknown;
+		return colors().isEmpty();
 	}
 	
 	/** claim of at least 2 of λColor.proof λColor.disproof λColor.wordsalad λColor.normal, similar to TruthValue.bull */
 	public default boolean isBull(){
-		return tv()==λColorTruthValue.bull;
+		//return tv()==λColorTruthValue.bull;
+		return colors().size()>1;
+	}
+	
+	/** has exactly 1 color? At lambda level, everything does, but at NSAT level, it can be any in powerset of colors per node. */
+	public default boolean isObserve(){
+		return colors().size()==1;
+	}
+	
+	public default boolean has(λColor color){
+		return colors().contains(color);
+	}
+	
+	public default boolean is(λColor color){
+		return isObserve() && color()==color;
 	}
 	
 	/** OLD...
@@ -179,8 +197,26 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 		cuz otherwise, what does superposition().color() return? Its λColorTruthValue.unknown.
 	*
 	public λColor color(); //throws Unknown, Bull?
-	*/
+	*
 	public λColorTruthValue tv();
+	*/
+	
+	/** powerset of λColors per node. empty set is Unknown. If colors().size()>1 thats Bull. Either way thats NotObserve.
+	At lambda level each node has exactly 1 color, but at NSAT level it can be any in the powerset of colors per node.
+	*/
+	public EnumSet<λColor> colors();
+	
+	/** TODO override for efficiency, else it creates iterator of colors() to get first.
+	At lambda level each node has exactly 1 color, but at NSAT level it can be any in the powerset of colors per node.
+	*/
+	public default λColor color() throws NotObserve{
+		EnumSet<λColor> colors = colors();
+		if(colors.size() != 1){
+			throw new NotObserve();
+			//throw NotObserve.instance; //TODO new NotObserve() so get stacktrace but is much slower?
+		}
+		return colors().iterator().next();
+	}
 	
 	
 	/** same as l().r() but may be more efficient, such as in the optimization used in Pair.java

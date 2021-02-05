@@ -1,6 +1,8 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
 
+import java.util.EnumSet;
+
 /** (ax typeandinstance) calls (typeandinstance u) to get an even height or an odd height
 (UPDATE: (typeandinstance u) returns u vs anything_except_u) OLD...
 <br><br>
@@ -26,29 +28,71 @@ compared to the 2 or 3 valid values in TruthValue).
 */
 public enum λColor{
 	
+	/* Requirements for choosing number of colors in a lambda system,
+	are that you can uniquely identify every possible lambda only by color here, color at left child, color at right child,
+	and recursively from that, and left and right childs are infinitely deep since (L u) is identityFunc and (R u) is u,
+	and that if something can be proven in finite time theres a color which says that
+	since thats the only kind of proofs available thru dovetailing.
+	I want the fewest number of colors which can do that.
+	Also, the lambda level cant see nonhalting, but the nsat level below it can,
+	in a pigeonholing way that anything the lambdas cant derive is nonhalting.
+	???
+	TODO? "lambda level only needs 1 bit of color the predicate [l is ax and r called on u returns something other than u]"
+		(contradiction between that and the text below)
+		but the NOT of that since normal nodes should be same color as (ax something) where (something u)->u aka proof,
+		so color would be ONLY proof or disproof, and nonhalting goes in disproof,
+		and can make that welldefined at nsat level by also including a doesnthalt color (more general than wordsalad),
+		and maybe also a leaf color so all you need is colors
+	???
+	*/
+	
+	/** ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall. */
+	nonaxof1paramcallLeaf,
+	
+	/** color of anything whose l() is not ax, regardless of if its halted or not.
+	ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall.
+	*/
+	nonaxof1paramcallNormal,
+	//colorNormal;
+	
+	/** ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall. */
+	nonaxof1paramcallNohalt,
+	
 	/** color of halted (ax typeandinstance) IFF (typeandinstance u)->u.
 	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall.
 	*/
-	proof,
+	axof1paramcallProof,
 	//colorAxHaltLeaf,
 	//colorAxEven,
 	
 	/** color of halted (ax typeandinstance) IFF (typeandinstance u) -> anything_except_u.
 	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall.
 	*/
-	disproof,
+	axof1paramcallDisproof,
 	//colorAxHaltNonleaf,
 	//colorAxOdd,
 	
 	/** color of nonhalting (ax typeandinstance) IFF (typeandinstance u) does not halt.
 	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
-	*/
+	ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall.
+	*
 	wordsalad,
 	//colorAxNonhalt,
+	*/
+	axof1paramcallNohalt;
 	
-	/** color of anything whose l() is not ax, regardless of if its halted or not. */
-	normal;
-	//colorNormal;
+	public final EnumSet<λColor> set = EnumSet.of(this);
+	
+	public static final EnumSet<λColor> none = EnumSet.noneOf(λColor.class);
+	
+	public static final EnumSet<λColor> all = EnumSet.allOf(λColor.class);
+	
+	//TODO these colors? proof disproof nonhalting leaf normal?
+	
+	
+	
 	
 	/*TODO can it be done with fewer colors?
 	replace normal with proof (proof that its normal, but proof would mean something else if l() is ax)?

@@ -1,5 +1,7 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl;
+import java.util.EnumSet;
+
 import wikibinator105.impl.nodes.*;
 import wikibinator105.spec.*;
 
@@ -142,8 +144,8 @@ public class ImportStatic{
 	public static final Λ t         = bootOp(u,	u,	u,	uu,	u);
 	public static final Λ T         = t.dirty();
 	
-	public static final Λ fi        = bootOp(u,	u,	u,	uu,	uu);
-	public static final Λ Fi        = fi.dirty();
+	public static final Λ f        = bootOp(u,	u,	u,	uu,	uu);
+	public static final Λ F        = f.dirty();
 	
 	public static final Λ curry     = bootOp(u,	u,	uu,	u,	u);
 	public static final Λ Curry     = curry.dirty();
@@ -167,7 +169,7 @@ public class ImportStatic{
 	
 	
 	/** identityFunc */
-	public static final Λ i       = cp(fi,u);
+	public static final Λ i       = cp(f,u);
 	public static final Λ I       = i.dirty();
 	
 	/** like cleancall except it just has 1 param, the thing to clean,
@@ -258,7 +260,7 @@ public class ImportStatic{
 	}
 	
 	/** returns long[]{header,bize} */
-	public static long[] parentHeaderAndBize(λColor color, long leftHeader, long leftBize, long rightHeader, long rightBize){
+	public static long[] parentHeaderAndBize(EnumSet<λColor> colors, long leftHeader, long leftBize, long rightHeader, long rightBize){
 		throw new RuntimeException("TODO");
 	}
 

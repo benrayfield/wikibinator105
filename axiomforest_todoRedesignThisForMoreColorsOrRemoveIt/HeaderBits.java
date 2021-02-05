@@ -1,5 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package axiomforest;
+package axiomforest_todoRedesignThisForMoreColorsOrRemoveIt;
 
 /** 16 bit header, often followed by 240 bits of merkle hash or an object in memory that lazyEvals those 240 bits
 and is partial instant deduped, or slower full instant deduped, using a hashtable as in hash-consing.

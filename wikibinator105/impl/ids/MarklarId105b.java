@@ -1,5 +1,7 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl.ids;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import wikibinator105.spec.*;
@@ -40,7 +42,7 @@ somehow able to tell each other apart and address each other as Marklar without 
 -- https://southpark.fandom.com/wiki/Marklar
 It seems similar to how a universal function works. Theres only 1 word but you can say anything as combos of it.  
 */
-public final class MarklarId105b implements IdMaker{
+public final class MarklarId105b implements IdMaker_old_useFuncsDirectlyAsIdmaker{
 	
 	public static final MarklarId105b instance = new MarklarId105b();
 	
@@ -65,8 +67,11 @@ public final class MarklarId105b implements IdMaker{
 		throw new RuntimeException("TODO");
 	}
 
-	/** boolean[λColor.values().length] and id512 and id512 -> id512 of the parent of those */
-	public Blob idOfCallPair(Predicate<λColor> mapOfColorToBit, Blob funcId, Blob paramId){
+	public Blob idOfCallPair(EnumSet<λColor> colors, Blob funcId, Blob paramId){
+		throw new RuntimeException("TODO");
+	}
+
+	public λ fn(){
 		throw new RuntimeException("TODO");
 	}
 

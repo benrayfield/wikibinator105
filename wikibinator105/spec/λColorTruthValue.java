@@ -4,6 +4,8 @@ package wikibinator105.spec;
 /** I'm undecided if will use this vs just 4 bits for the 4 colors, plus other parts of long header of course. */
 public enum λColorTruthValue{
 	
+	//FIXME redesigning what the λColors are, so need to change them here too 
+	
 	/** λColor.proof */
 	proof,
 	

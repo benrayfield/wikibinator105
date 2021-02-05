@@ -1,6 +1,12 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl.ids;
 
+/** defines 64 header bits.
+The default kind of id512 has these header bits, 64 bits of bize (bitstring size),
+and 2 192 bit hashes that are 192 bits of sha3 (todo sha3_224? sha3_256, is there a sha3_192?),
+and those 2 hashes are of the unknowncolor and withcolor forms,
+to use to align nodes/bloomfilters to OR them together.
+*/
 public enum HeaderBits{
 	
 	/*containsAnyAxCalls (could be known by !allNormal color)
@@ -41,6 +47,99 @@ public enum HeaderBits{
 	magic_ignore2(0),
 	magic_ignore1(0),
 	
+	/** If 0 then this is some other datastruct than id. You might use an ASCII char (0..127, followed by 0 or more UTF8 char(s)),
+	to name the datastruct it is. Remember, the first byte is \ (cuz when its not, its a literal cbt512 or whatever id size is),
+	so maybe \thingXλYZ:<...bytes...> would be a datastruct,
+	or maybe it would have a multihash/multicoded header or at least the varint datastruct that uses,
+	or could be anything.
+	If 1, then this is an id, normally 512 bits but this 64 bit header could go in other sizes of id.
+	*/
+	isId(1),
+	
+	/** a unary is λ or (t aUnary), such as (t (t (t λ))) aka ,,,λ aka 3u.
+	Used with Op.curryOrInfcurOrTypeval to define the number of curries before it evals.
+	See comment of isBigCurry for an optimization of the first approx 2^16 unary numbers.
+	<br><br>
+	There is no isCbt bit cuz that can be known by opbyte being 1 of 4 specific values,
+	2 of which are for Op.zero and 2 of which are for Op.one,
+	each at 6 curries and 7_or_more curries.
+	*/
+	isUnary(1),
+	
+	/** If 1, then number of curries doesnt fit in curriesAllIf andOr curriesUntilIf, so dont use those optimizations,
+	and instead compute the curries in interpreted mode,
+	which is just to append another halted callpair (cp) if infcur (see opbyte)
+	or to call to get the unarynum just after the curry op (see opbyte, its 3 things in 1 opbyte: infcur, curry, typeval)
+	which can be func_param_return cached so simply call it recursively and that will return (t oneLowerUnaryNum)
+	where λ is 0u aka the unary number 0, and (t (t (t λ))) is 3u, for example.
+	An optimization of the first (few less than) 2^16 unary numbers might go in a λ[1<<16]
+	and call it with ImportState.unary(int), and put that in an Evaler of a function to get the nth unary number
+	when given a cbt16 and another such func for cbt64 of unarynumber, etc.
+	*/
+	isBigCurry(1),
+	
+	/** Is curriesAllIf infinity, which happens when opbyte is infcur? If !isBigCurry then !isInfcur.
+	Remember, opbyte is always copied from l.opbyte if number of curries > 7.
+	*/
+	isInfcur(1),
+	
+	/** bloomfilter bit λColor.nonaxof1paramcallLeaf.
+	λColor.leaf is when opbyte is 1, but have a bit for it here anyways to keep the bloom filter simple??
+	*/
+	bloomNonaxof1paramcallLeaf(1),
+	
+	/** bloomfilter bit λColor.nonaxof1paramcallNormal. */
+	bloomNonaxof1paramcallNormal(1),
+	
+	/** bloomfilter bit λColor.nonaxof1paramcallNohalt. */
+	bloomNonaxof1paramcallNohalt(1),
+	
+	/** bloomfilter bit λColor.axof1paramcallProof. */
+	bloomAxof1paramcallProof(1),
+	
+	/** bloomfilter bit λColor.axof1paramcallDisproof. */
+	bloomAxof1paramcallDisproof(1),
+	
+	/** bloomfilter bit λColor.axof1paramcallNohalt. */
+	bloomAxof1paramcallNohalt(1),
+	
+	/** self.l().anyBull | self.r().anyBull | [self.isBull() aka self has more than 1 of the 4 colorsL proof disproof wordsalad normal] */
+	anyBull(1),
+	
+	/** SyncLevel is known from this bit with opByte. This could be named notAllColorNormal,
+	though I'm undecided if there should be more than 4 colors (proof disproof wordsalad normal) such as for leaf and cbt.
+	self.bloomNormal & self.l().bloomNormal & self.r().bloomNormal & !self.anyBull.
+	If allNormal or allUnknown then id should differ by only 1 bit (FIXME what about cbt256 literals that dont start with \ ?,
+	should those be excluded from the allnormal vs allunknown optimization, aka allUnknownExceptCbt256sWhichCanBeNormal vs allNormal???
+	(UPDATE: allUnknown is "COMMENTEDOUT CUZ ids have both the unknowncolor form and the withcolor form.").
+	*/
+	anyAxof1paramcall(1),
+	
+	/** Since the colors λColor.bloomAxof1paramcallNohalt and λColor.bloomNonaxof1paramcallNohalt
+	only occurs when something does not halt, the lambda level never sees that, but the NSAT level can,
+	but the NSAT level would on average have to solve an infinite number of NSAT constraints
+	to solve the halting problem which fits with the fact of math that halting-oracles are impossible,
+	while some calls such as (S I I (S I I)) could be proven to not halt quickly. For example,
+	bloomAxof1paramcallNohalt happens when (ax anything) does not halt, caused by (anything λ) not halting.
+	*/
+	anyNohalt(1),
+	
+	/** If 1 then here and deeply in l() and r() below, there exists at least 1 node where
+	its 6 bloom* bits (such as bloomNonaxof1paramcallLeaf) are all 0.
+	*/
+	anyUnknown(1),
+
+	/** If 1 then here and deeply in l() and r() below, the 6 bloom* bits (such as bloomNonaxof1paramcallLeaf) are all 0. */
+	allUnknown(1),
+	
+	/** when allUnknownBelow and exactly 1 of the colors is here (such as bloomAxof1paramcallProof),
+	that would for example be a map of this one node to λColor.axof1paramcallProof,
+	compared to normally all nodes reachable deeply thru l() and r() have 1 color each,
+	but you might instead want to use this like a Map.Entry<λ,λColor>
+	which may be useful in the NSAT level (which is below the lambda level).
+	*/
+	allUnknownBelow(1),
+	
 	/** opByte has 0..7 bits for the first 0..7 curries being u vs anything_except_u, then pad a high 1 bit.
 	That covers 255 of the 256 values. opByte0 is Op.deepLazy which is the only op thats not halted,
 	and deepLazy's opByte becomes 1 of the other 255 values when or if the eval finishes.
@@ -56,33 +155,53 @@ public enum HeaderBits{
 	opbyte_ignore2(0),
 	opbyte_ignore1(0),
 	
-	/** bloomfilter bit λColor.proof */
-	bloomProof(1),
+	/*...todo fill 16 bits with the bloom/ax/any/all/etc section,
+	or maybe have a bit for is there a blob stored right after this for efficient binary storage,
+	such as having 2 longs for bitIndexFromIncl and bitIndexToExcl,
+	or maybe just storing the whole bitstring and use (ax (fpr (rangeOf bitIndexFromIncl_and_bitIndexToExcl) bitstring theSubbitstring)).
+	49% binary storage efficiency is good enough for the prototype,
+	and later you might for example store a map of id to bitstring in simpleblobtable
+	or a database or at urls named by the hex of that id512 etc,
+	such as (however many bytes the blob is, though its bit aligned) at
+	https://example.com/blob_wikibinator105_marklarId105b_97d4206a9582a04f0082829adf82daf1f768553b737177513312308e516b89c89b45b82ed3fe810d4960a9eab3611a5c03d1a46ae6efadbb4f5d0677ef8048fe
+	and its 2 childs (128 bytes) at
+	https://example.com/wikibinator105/97d4206a9582a04f0082829adf82daf1f768553b737177513312308e516b89c89b45b82ed3fe810d4960a9eab3611a5c03d1a46ae6efadbb4f5d0677ef8048fe
+	https://example.com/λ97d4206a9582a04f0082829adf82daf1f768553b737177513312308e516b89c89b45b82ed3fe810d4960a9eab3611a5c03d1a46ae6efadbb4f5d0677ef8048fe
 	
-	/** bloomfilter bit λColor.disproof */
-	bloomDisproof(1),
-	
-	/** bloomfilter bit λColor.wordsalad */
-	bloomWordsalad(1),
-	
-	/** bloomfilter bit λColor.normal */
-	bloomNormal(1),
-	
-	/** self.l().anyBull | self.r().anyBull | [self.isBull() aka self has more than 1 of the 4 colorsL proof disproof wordsalad normal] */
-	anyBull(1),
-	
-	/** self.bloomNormal & self.l().bloomNormal & self.r().bloomNormal & !self.anyBull.
-	If allNormal or allUnknown then id should differ by only 1 bit (FIXME what about cbt256 literals that dont start with \ ?,
-	should those be excluded from the allnormal vs allunknown optimization, aka allUnknownExceptCbt256sWhichCanBeNormal vs allNormal???
+	https://www.appdevtools.com/base58-encoder-decoder
+	or written in base58 it might look like this...
+	https://example.com/λ434ZMsiiXxGee7EiaMu4eHfEomH8Wbk3aWSnvJkaPSrrdXQSm75Vdpq4w6ezG4QmeV5EWpREkKEnAEPbrjqRNMBb
+	...
 	*/
-	allNormal(1),
 	
-	/** self.l().allUnknown & self.r().allUnknown & !self.bloomProof & !self.bloomDisproof & !self.bloomWordsalad & !self.bloomNormal.
+	/** COMMENTEDOUT CUZ ids have both the unknowncolor form and the withcolor form.
+	self.l().allUnknown & self.r().allUnknown & !self.bloomProof & !self.bloomDisproof & !self.bloomWordsalad & !self.bloomNormal.
 	This is like the third cached norm form in axiomforest, just the binary forest shape with no colors here or below.
 	If allNormal or allUnknown then id should differ by only 1 bit (FIXME what about cbt256 literals that dont start with \ ?,
 	should those be excluded from the allnormal vs allunknown optimization, aka allUnknownExceptCbt256sWhichCanBeNormal vs allNormal???
-	*/
+	*
 	allUnknown(1);
+	*/
+	
+	/** distance of this.l.l.l...l to u. This is used in Op.curry and to know height of cbt
+	(since cbt called on anything is a cbt 1 higher and twice as many bits)
+	if that fits in this uint16. TODO is the constant 0 or the max value or what, how to say it doesnt fit?
+	*
+	curriesAllAlreadyIf(16),
+	*/
+	
+	/** total number of curries so far plus curriesUntilIf
+	FIXME If number of curriesAllIf doesnt fit here (as it can be infinite in infcur or any finite number as it counts in unary),
+	then TODO is there a bit in the masks or is that a constant in these bits or what?
+	 */
+	curriesAllIf(16),
+	
+	/** number of curries until eval, such as s.curriesUntilIf is 3, (s x).curriesUntilIf is 2,
+	(s x y).curriesUntilIf is 1, and (s x y z)->(x z (y z)).
+	FIXME If number of curries doesnt fit here (as it can be infinite in infcur or any finite number as it counts in unary),
+	then TODO is there a bit in the masks or is that a constant in these bits or what? 
+	*/
+	curriesUntilIf(16);
 	
 	
 	/*TODO 3 different things for the rest of the bits, depending if its
@@ -100,11 +219,48 @@ public enum HeaderBits{
 	but affects other (func param)->ret if those call wiki such as looping thru all possible funcs by dovetailing.
 	*/ 
 	
-	/** bize means bitstring size */
+	/** bize of this part of header, not of the cbt its part of id of. Bize means bitstring size. */
 	public final int bize;
+	
+	public final int shift;
+	
+	public final long mask;
 	
 	private HeaderBits(int bize){
 		this.bize = bize;
+		//FIXME copy similar code from earlier version, and display them ax 0b00...011100 to verify
+		this.shift = ordinal()-bize;
+		this.mask = ((1<<bize)-1)<<shift;
+	}
+	
+	/** get part of header as long */
+	public long j(long header){
+		return (header&mask)>>>shift;
+	}
+	
+	/** get part of header as byte.
+	Example: byte opbyte = HeaderBits.opbyte.b(someNode.header());
+	*/
+	public byte b(long header){
+		return (byte)j(header);
+	}
+	
+	/** get part of header as char aka java's only uint16 type and is java's only uint_any_size type.
+	You might want to use this instead of short since there are 2 16 bit unsigned numbers in header.
+	Example: char curriesUntilIf = HeaderBits.curriesUntilIf.c(someNode.header());
+	*/
+	public char c(long header){
+		return (char)j(header);
+	}
+	
+	/** its recommended to use i(long), or c(long) to get char instead cuz thats a uint16 */
+	public short s(long header){
+		return (short)j(header);
+	}
+	
+	/** Example: int curriesUntilIf = HeaderBits.curriesUntilIf.i(someNode.header());
+	public int i(long header){
+		return (int)j(header);
 	}
 	
 	
