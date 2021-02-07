@@ -7,7 +7,7 @@ The 2 longs of header and bize are caches of what can be derived from forest sha
 and different implementations of wikibinator105 might want to use different kinds and sizes of cache,
 so the core interface λ does not include these.
 */
-public interface Λ extends λ<Λ>{
+public interface fn extends λ<fn>{
 	
 	public long header();
 	

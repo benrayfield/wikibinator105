@@ -2,6 +2,7 @@
 package wikibinator105.impl;
 import java.util.EnumSet;
 
+import wikibinator105.impl.ids.HeaderBits;
 import wikibinator105.impl.nodes.*;
 import wikibinator105.spec.*;
 
@@ -19,13 +20,13 @@ public class ImportStatic{
 		System.out.println(line);
 	}
 	
-	public static Λ cp(Λ func, Λ param){
+	public static fn cp(fn func, fn param){
 		if(func == ax || func == Ax) throw new RuntimeException("func is ax or Ax: "+func+" so it has to call its param on leaf to know its color proof, color disproof, or if it doesnt halt (which you probably wouldnt know) its color wordsalad. else its color normal.");
-		return cp(λColor.normal, func, param);
+		return cp(λColor.nonaxof1paramcallNormal, func, param);
 	}
 	
 	/** call pair */
-	public static Λ cp(λColor color, Λ func, Λ param){
+	public static fn cp(λColor color, fn func, fn param){
 		
 		//FIXME check for Pairnode and Curnode so dedup works with their lazyEval and use of g(int) funcs,
 		//but maybe do it in a more general way using an int
@@ -38,8 +39,8 @@ public class ImportStatic{
 		return new Simpleλ(color, func, param);
 	}
 	
-	public static Λ cp(Λ... list){
-		Λ x = list[0];
+	public static fn cp(fn... list){
+		fn x = list[0];
 		for(int i=1; i<list.length; i++) x = cp(x,list[i]);
 		return x;
 	}
@@ -48,9 +49,9 @@ public class ImportStatic{
 		throw new RuntimeException(throwMessage);
 	}
 	
-	public static Λ bootOp(Λ... params){
-		Λ x = u;
-		for(Λ param : params) x = cp(x,param);
+	public static fn bootOp(fn... params){
+		fn x = u;
+		for(fn param : params) x = cp(x,param);
 		return x;
 	}
 	
@@ -102,10 +103,10 @@ public class ImportStatic{
 
 	
 	/** the universal function aka the leaf which all paths in binary forest of call pairs lead to */
-	public static final Λ u = Leaf.instance;
+	public static final fn u = Leaf.instance;
 	//There is no dirty u.
 	
-	public static final Λ uu = u.p(u);
+	public static final fn uu = u.p(u);
 	//There is no dirty (u u).
 	
 	//There is no dirty u or dirty (u u), but anything else has 2 forms: clean and dirty,
@@ -129,48 +130,48 @@ public class ImportStatic{
 	//but you can build something similar to occamsfuncer callquads inside calls of Op.ax
 	//(dovetailing may be needed as an abstraction, but compute it procedurally forward efficiently using Evaler/Compiled).
 	
-	public static final Λ wiki      = bootOp(u,	u,	u,	u,	u,	u);
-	public static final Λ Wiki      = wiki.dirty();
+	public static final fn wiki      = bootOp(u,	u,	u,	u,	u,	u);
+	public static final fn Wiki      = wiki.dirty();
 	
-	public static final Λ isleaf    = bootOp(u,	u,	u,	u,	u,	uu);
-	public static final Λ Isleaf    = isleaf.dirty();
+	public static final fn isleaf    = bootOp(u,	u,	u,	u,	u,	uu);
+	public static final fn Isleaf    = isleaf.dirty();
 	
-	public static final Λ l         = bootOp(u,	u,	u,	u,	uu,	u);
-	public static final Λ L         = l.dirty();
+	public static final fn l         = bootOp(u,	u,	u,	u,	uu,	u);
+	public static final fn L         = l.dirty();
 	
-	public static final Λ r         = bootOp(u,	u,	u,	u,	uu,	uu);
-	public static final Λ R         = r.dirty();
+	public static final fn r         = bootOp(u,	u,	u,	u,	uu,	uu);
+	public static final fn R         = r.dirty();
 	
-	public static final Λ t         = bootOp(u,	u,	u,	uu,	u);
-	public static final Λ T         = t.dirty();
+	public static final fn t         = bootOp(u,	u,	u,	uu,	u);
+	public static final fn T         = t.dirty();
 	
-	public static final Λ f        = bootOp(u,	u,	u,	uu,	uu);
-	public static final Λ F        = f.dirty();
+	public static final fn f        = bootOp(u,	u,	u,	uu,	uu);
+	public static final fn F        = f.dirty();
 	
-	public static final Λ curry     = bootOp(u,	u,	uu,	u,	u);
-	public static final Λ Curry     = curry.dirty();
+	public static final fn curry     = bootOp(u,	u,	uu,	u,	u);
+	public static final fn Curry     = curry.dirty();
 	
-	public static final Λ cleancall = bootOp(u,	u,	uu,	u,	uu);
+	public static final fn cleancall = bootOp(u,	u,	uu,	u,	uu);
 	//even though its dirty, it still converts params to clean and returns a clean
-	public static final Λ Cleancall = cleancall.dirty();
+	public static final fn Cleancall = cleancall.dirty();
 	
-	public static final Λ s         = bootOp(u,	u,	uu,	uu);
-	public static final Λ S         = s.dirty();
+	public static final fn s         = bootOp(u,	u,	uu,	uu);
+	public static final fn S         = s.dirty();
 	
-	public static final Λ pair      = bootOp(u,	uu,	u,	u);
-	public static final Λ Pair      = pair.dirty();
+	public static final fn pair      = bootOp(u,	uu,	u,	u);
+	public static final fn Pair      = pair.dirty();
 	
-	public static final Λ typeval   = bootOp(u,	uu,	u,	uu);
-	public static final Λ Typeval   = typeval.dirty();
+	public static final fn typeval   = bootOp(u,	uu,	u,	uu);
+	public static final fn Typeval   = typeval.dirty();
 	
-	public static final Λ ax        = bootOp(u,	uu,	uu);
-	public static final Λ Ax        = ax.dirty();
+	public static final fn ax        = bootOp(u,	uu,	uu);
+	public static final fn Ax        = ax.dirty();
 	
 	
 	
 	/** identityFunc */
-	public static final Λ i       = cp(f,u);
-	public static final Λ I       = i.dirty();
+	public static final fn i       = cp(f,u);
+	public static final fn I       = i.dirty();
 	
 	/** like cleancall except it just has 1 param, the thing to clean,
 	which forkEdits param recursively to have u as all first params of u. There are no nonnormed clean forms.
@@ -179,22 +180,22 @@ public class ImportStatic{
 	in th at first param, such as (u u u u u u u) is cleanwiki and (u (u u) u u u u u) is a dirtywiki,
 	and of course all forms of the wiki opcode use the same wiki.
 	*/
-	public static final Λ cleanone = cleancall.p(i);
+	public static final fn cleanone = cleancall.p(i);
 	//even though its dirty, it still converts param to clean and returns it
-	public static final Λ Cleanone = cleanone.dirty();
+	public static final fn Cleanone = cleanone.dirty();
 	
 	/** counterpart of cleanone and Cleanone. Returns a dirty form of its param,
 	by forkEditing it recursively for all first params (of leaf) to be a nonleaf,
 	and if they are already not a leaf then leaves them as they are else uses (leaf leaf) aka (u u).
 	*/
-	public static final Λ Dirtyonepassive = null; //FIXME not null
+	public static final fn Dirtyonepassive = null; //FIXME not null
 	
 	/** returns the normed dirty form, where all first params (of leaf) are (leaf leaf) aka (u u).
 	Similar to Dirtyonepassive except which nonleaf in first param.
 	*/
-	public static final Λ Dirtyonenorm = null; //FIXME not null
+	public static final fn Dirtyonenorm = null; //FIXME not null
 	
-	public static final Λ callParamOnItself = cp(cp(s,i),i);
+	public static final fn callParamOnItself = cp(cp(s,i),i);
 	
 	/** Called from Op.curry to get funcbody to call on [...linkedlist...] containing that funcbody and its params.
 	The last (displayed on left, as its the [] kind of linkedlist, not <> kind) is comment (which is λ by default).
@@ -212,20 +213,20 @@ public class ImportStatic{
 	Also do that for Secondlast aka secondlast.dirty() so call setCompiled on that too but
 	a different func that does the dirty form of it.
 	*/
-	public static final Λ secondlast = null;
-	public static final Λ Secondlast = null; //FIXME should be secondlast.dirty(), and read comment in that about setCompiled here
+	public static final fn secondlast = null;
+	public static final fn Secondlast = null; //FIXME should be secondlast.dirty(), and read comment in that about setCompiled here
 	
-	public static Λ t(Λ x){ return cp(t,x); }
-	public static Λ T(Λ x){ return cp(T,x); }
+	public static fn t(fn x){ return cp(t,x); }
+	public static fn T(fn x){ return cp(T,x); }
 	
 	/** TODO also create lazig, which is a λfunc.λparam.λignore.(func param).
 	FIXME handle clean vs dirty.
 	*/
-	public static Λ lazy(Λ func, Λ param){
+	public static fn lazy(fn func, fn param){
 		return cp(s,t(func),t(param));
 	}
 	
-	public static Λ Lazy(Λ func, Λ param){
+	public static fn Lazy(fn func, fn param){
 		return cp(S,T(func),T(param));
 	}
 	
@@ -259,9 +260,60 @@ public class ImportStatic{
 		throw new RuntimeException("TODO");
 	}
 	
+	public static long mask(EnumSet<λColor> colors){
+		long ret = 0;
+		for(λColor color : colors){
+			ret |= headerbit(color).mask; //TODO optimize. this long is already in the EnumSet and just needs shift.
+		}
+		return ret;
+	}
+	
+	public static HeaderBits headerbit(λColor color){
+		switch(color){
+		case nonaxof1paramcallLeaf: return HeaderBits.bloomNonaxof1paramcallLeaf;
+		case nonaxof1paramcallNormal: return HeaderBits.bloomNonaxof1paramcallNormal;
+		case nonaxof1paramcallNohalt: return HeaderBits.bloomNonaxof1paramcallNohalt;
+		case axof1paramcallProof: return HeaderBits.bloomAxof1paramcallProof;
+		case axof1paramcallDisproof: return HeaderBits.bloomAxof1paramcallDisproof;
+		case axof1paramcallNohalt: return HeaderBits.bloomAxof1paramcallNohalt;
+		}
+		throw new RuntimeException("this should never happen");
+	}
+	
+	public static final byte magic
+	
 	/** returns long[]{header,bize} */
 	public static long[] parentHeaderAndBize(EnumSet<λColor> colors, long leftHeader, long leftBize, long rightHeader, long rightBize){
-		throw new RuntimeException("TODO");
+		long header = 0;
+		long bize = 0;
+		byte leftMagic = HeaderBits.magic.b(leftHeader);
+		if(leftMagic != (byte)'\\'){ //literal cbt512, so 255/256 of randomly chosen cbt512s are their own id
+			boolean rightIs
+			
+			TODO
+		}else{ //normal id
+			header |= mask(colors);
+			if(colors.size() == 1) {
+				λColor c = colors.iterator().next(); //TODO optimize
+				
+				TODO
+			}
+			//char is java's only uint16
+			char left_curriesAllIf = HeaderBits.curriesAllIf.c(leftHeader);
+			char left_curriesUntilIf = HeaderBits.curriesUntilIf.c(leftHeader);
+		}
+		
+		
+		
+		
+		TODO
+		
+		
+		
+		
+		
+		//FIXME
+		return new long[]{header,bize};
 	}
 
 }

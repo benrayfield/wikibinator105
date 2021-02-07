@@ -13,4 +13,8 @@ public class EightLongs implements Blob{
 		if(data.length != 8) throw new RuntimeException("Wrong size");
 	}
 
+	public long bize(){
+		throw new RuntimeException("TODO");
+	}
+
 }

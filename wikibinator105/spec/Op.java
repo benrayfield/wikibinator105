@@ -385,6 +385,52 @@ ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
 */
 public enum Op{
 	
+	/*ANSWER: No, theres not room in opbyte for a comment param, so just keep it before funcbody in curry op,
+	as you can wrap anything in a curry if you just want its param/return mapping,
+	but if its used in reflection (L R Isleaf) then it would appear different to funcs looking at its internal callpair forest shape.
+	
+	FIXME should every node have a place for comment, vs only in curry, vs only in curry and trecurse?
+	If also in trecurse, make sure the fourth last opbit is anything_except_leaf so can put the comment there
+	and (leaf leaf) be the default comment.
+	*/
+	
+	
+	
+	/* Created isclean and Isclean ops, replacing isColorProof and IsColorProof ops which will be derived instead.
+	
+	
+	FIXME might need to replace the first curry with isCleanVsDirty bit,
+	so a function would be a binary forest shape AND a bit,
+	cuz otherwise it would be complicated to have dirty form of leaf since theres only 1.
+	Or could define (u u) and (u (u u)) as the 2 leafs and adjust l and r and isleaf ops to never be able to get u directly
+	and instead see both of those as leaf, and would need isClean op,
+	and could derive asClean and asDirty ops since all clean funcs can be derived from cleanLeaf,
+	and all dirty funcs can be derived from dirtyLeaf.
+	..
+	Where would the isClean op go?
+	Split the leaf color into 2 colors?
+	Split all colors into 2 colors? Dont want to use that space in header.
+	Merge isLeaf isColorProof and isColorDisproof into a func of 2 params called isSameColor?
+	Since lambda can only see nodes that are 1 specific (observed) color, and same for all nodes below are each some color,
+	the isSameColor op would not compare powerset of colors (like in EnumSet<λColor>), just 1 λColor each.
+	(isSameColor λ) would be the isLeaf op and as it has 6 curries, has a unique opbyte so is efficient,
+	but generalizing that, (isSameColor (u (u u))) vs (isSameColor (u u)) do NOT have their own opbyte,
+	so thats a problem. All ops are prefixed by u vs anything_except_u (different number of those per op)
+	and needs efficient isleaf func. Could keep the isleaf func as it is and merge isColorProof and isColorDisproof
+	to become isSameColor of 2 params. isleaf would be true for cleanLeaf and dirtyLeaf.
+	FIXME it might create a problem to have to check isSameColor by example if its checking for isColorProof or isColorDisproof
+	since some optimizations only apply where theres no calls of ax (which those 2 colors occur at,
+	aka where there arent any of certain colors).
+	
+	Maybe use the fpr op to check isCleanVsDirty? I'd prefer it just be an optimization thats derivable from
+	what ther other ops can see, but technically the design would work to...
+	isCleanLeaf = (fpr identityFunc cleanLeaf)
+	isDirtyLeaf = (fpr identityFunc dirtyLeaf)
+	I dont want to use fpr as equals function. Equals should be derived from forest shape and isleaf.
+	
+	I just need 1 more op space, for an op of 1 param: isCleanVsDirty.
+	*/
+	
 	/*TODO "axOpIsChangingTo2OpsOf2ParamsEach_retsLeafWhenCalledOnLeafVsAnythingelse_(axA x y)->(x (t y))_(axA x)_isHaltedIf_(x u)->u"
 	TODO Create typeOfListOfPrimeSize and typeOfListOfNonprimeSize with it, given a func isPrimeSizeList....
 	and create debugStepOver etc.
@@ -432,8 +478,7 @@ public enum Op{
 	so for it to see other systems it would have to emulate axiomforest such as using
 	(pair cbt16_axiomforestHeader (pair axiomforestLeftChild axiomforestRightChild)) for example.
 	*/
-	deepLazy(null,true,false,0),
-	DeepLazy(null,true,false,0), //dont ever use this one. Use deepLazy instead.
+	deepLazy_isNotCleanOrDirtyCuzIsNotHalted(0b00000000,true,false,0),
 	
 	//First param is λ (aka u aka leaf) for clean, or anything else (such as (λ λ)) for dirty.
 	//
@@ -576,17 +621,39 @@ public enum Op{
 	and if that doesnt work out, try other combos automatically.
 	Everything gets connected to everything if thats what those parts want at the time and context.
 	*/
-	wiki("(λ λ λ λ λ λ λ)",false,false,1),
-	Wiki("(λ (λ λ) λ λ λ λ λ)",false,false,1),
+	wiki(0b01000000,false,false,1),
+	Wiki(0b01000001,false,false,1),
 	
-	/** a/isLeaf. TODO copy comments from wikibinator104 and maybe modify them...
+	/* Created isclean and Isclean ops, replacing isColorProof and IsColorProof ops which will be derived instead. 
+	
+	FIXME maybe λ should be dirty leaf, and (λ λ) be clean leaf?
+	Probably shouldnt, cuz then they'd be different number of curries which would complicate l r isleaf isclean funcs,
+	but it would have a single leaf which is good.
+	Could still use (λ anything_except_λ) as dirty prefix, and λ itself is dirty,
+	but l and r using (λ λ) as leaf causes a problem, and maybe can solve that problem
+	with 3 more funcs of 1 param each metaL metaR metaIsleaf that infloop if called by clean.
+	Also, clean would need to 
+	
+	FIXME rename to iscleanleaf? cuz for opbits shouldnt have to check isleaf and isclean.
+	but that would need an isdirtyleaf func too, if theres an iscleanleaf instead of just isleaf,
+	and if it is just isleaf and isclean ops, could still use the opbyte optimization to mean isleaf&isclean per 0..7 first curries.
+	*/
+	
+	
+	/** FIXME (λ λ) is cleanLeaf and (λ (λ λ)) is dirtyLeaf, and l and r and isleaf and isclean ops must use it that way,
+	such as (L (λ (λ λ))) is IdentityFunc) and (L (λ λ)) is identityFunc)
+	and (R (λ (λ λ))) is (λ (λ λ)) and (R (λ λ)) is (λ λ), cuz forall x (L x (R x)) equals x,
+	and this is to fix the problem of needing 2 leafs (cleanLeaf and dirtyLeaf) cuz clean cant derive dirty
+	but if theres just 1 leaf (λ) then it could. 
+	<br><br>
+	a/isLeaf. TODO copy comments from wikibinator104 and maybe modify them...
 	<br><br>
 	(isLeaf x) is t or f depending if x is the leaf which all paths in the binary forest of call pairs lead to
 	aka the wikibinator104 universal function itself.
 	isLeaf, l, and r make this a "pattern calculus function".
 	*/
-	isLeaf("(λ λ λ λ λ λ (λ λ))",false,false,1),
-	IsLeaf("(λ (λ λ) λ λ λ λ (λ λ))",false,false,1),
+	isLeaf(0b01001000,false,false,1), //todo rename to isleaf and Isleaf (the l is lowercase), to match isclean and Isclean
+	IsLeaf(0b01001001,false,false,1),
 	
 	/*FIXME??? move the wiki and ax ops so that theres only 1 possible isdirty form of them,
 	so that they use u instead of (u u) in their opcodes, or at least that way for wiki
@@ -594,44 +661,87 @@ public enum Op{
 	to be that way cuz its the only nondeterministic thing in the system.
 	*/
 	
-	/** l/getFunc. TODO copy comments from wikibinator104 and maybe modify them...
+	/** FIXME (λ λ) is cleanLeaf and (λ (λ λ)) is dirtyLeaf, and l and r and isleaf and isclean ops must use it that way,
+	such as (L (λ (λ λ))) is IdentityFunc) and (L (λ λ)) is identityFunc)
+	and (R (λ (λ λ))) is (λ (λ λ)) and (R (λ λ)) is (λ λ), cuz forall x (L x (R x)) equals x,
+	and this is to fix the problem of needing 2 leafs (cleanLeaf and dirtyLeaf) cuz clean cant derive dirty
+	but if theres just 1 leaf (λ) then it could.
+	<br><br>
+	l/getFunc. TODO copy comments from wikibinator104 and maybe modify them...
 	<br><br>
 	(l x) is left child of x in the binary forest of call pairs.
 	Not the same as lispCar since pair is the church-pair lambda.
 	isLeaf, l, and r make this a "pattern calculus function".
 	*/
-	getFunc("(λ λ λ λ λ (λ λ) λ)",false,false,1),
-	GetFunc("(λ (λ λ) λ λ λ (λ λ) λ)",false,false,1),
+	getFunc(0b01010000,false,false,1),
+	GetFunc(0b01010001,false,false,1),
 	
-	/** r/getParam. TODO copy comments from wikibinator104 and maybe modify them...
+	/** FIXME (λ λ) is cleanLeaf and (λ (λ λ)) is dirtyLeaf, and l and r and isleaf and isclean ops must use it that way,
+	such as (L (λ (λ λ))) is IdentityFunc) and (L (λ λ)) is identityFunc)
+	and (R (λ (λ λ))) is (λ (λ λ)) and (R (λ λ)) is (λ λ), cuz forall x (L x (R x)) equals x,
+	and this is to fix the problem of needing 2 leafs (cleanLeaf and dirtyLeaf) cuz clean cant derive dirty
+	but if theres just 1 leaf (λ) then it could. 
+	<br><br>
+	r/getParam. TODO copy comments from wikibinator104 and maybe modify them...
 	<br><br>
 	(r x) is right child of x in the binary forest of call pairs.
 	Not the same as lispCdr since pair is the church-pair lambda.
 	isLeaf, l, and r make this a "pattern calculus function".
 	*/
-	getParam("(λ λ λ λ λ (λ λ) (λ λ))",false,false,1),
-	GetParam("(λ (λ λ) λ λ λ (λ λ) (λ λ))",false,false,1),
+	getParam(0b01011000,false,false,1),
+	GetParam(0b01011001,false,false,1),
 	
 	/** is a cbt whose first bit is 1. can only be part of cbt or something containing a cbt.
 	if its param is not a cbt of same size, then calls itself on itself instead,
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
-	one("(λ   λ   (λ λ)   λ     λ     λ     λ)",false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
-	One("(λ (λ λ) (λ λ)   λ     λ     λ     λ)",false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	one(0b01100000,false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	One(0b01100001,false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
 	
 	/** is a cbt whose first bit is 0. can only be part of cbt or something containing a cbt.
 	if its param is not a cbt of same size, then calls itself on itself instead,
 	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
 	TODO copy comments from wikibinator104 and maybe modify them.
 	*/
-	zero("(λ   λ   (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
-	Zero("(λ (λ λ) (λ λ)   λ     λ     λ   (λ λ))",false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	zero(0b01101000,false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	Zero(0b01101001,false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
 	
 	//"fIXME choose an alignment between zero one tru fal isColorAxEven isColorAxOdd thats intuitive to Humans programming using those, considering the order it happens in pair func, u vs (u u), etc."
 	//"Then replace all the strings in the constructors of these enums, as I recently moved many of them."
 	
-	/** since lambdas cant observe λColor.wordsalad
+	isclean(0b01110000,false,false,1),
+	/** the 2 leafs are (λ (λ λ)) dirtyLeaf and (λ λ) cleanleaf, which in L, R, Isleaf, and color appear as leafs
+	and theres no way to get λ which is not a function but just a data structure optimization
+	or vestigial design from when there was 1 leaf instead of 2
+	TODO should there just be 2 symbols for it like λ and Λ?
+	<br><br>
+	isclean (vs Isclean) is useless since it always returns t since it is a clean func so truncates its param to clean before using it.
+	Use Isclean instead. A clean func doesnt need to check for clean cuz its params are always clean after automatic truncation to clean.
+	isclean always returns t (clean true). Isclean always returns T or F (dirty true or dirty false).
+	<br><br>
+	To convert a func to clean, just call i (clean identityFunc, aka (f λ)) on it, for automatic truncation.
+	To convert a func to dirty, that would have to be derived, using L and R recursively to rebuild a func
+	matching the param, starting from cleanLeaf instead of dirtyLeaf,
+	which todo put an Evaler optimization in the VM to check for that specific Asdirty func
+	and just flip the isclean bit recursively, so near as fast as if there was an op to do it,
+	similar to hardware optimized double multiply math will be near as fast in an Evaler optimization
+	despite it being seamlessly useable as lambdas all the way down to cleanLeaf
+	(cbts/blobs should be clean for blob optimizations, else they run in interpreted mode very slowly).
+	*/
+	Isclean(0b01110001,false,false,1),
+	
+	/** UPDATE: keeping the isColorDisproof op, but removing isColorProof op cuz will derive that,
+	to make room for isClean op. The other 3 colors can be derived if you know this one
+	and know that its not the 2 nonhalting colors (which lambda level cant see but nsat level can).
+	<br><br>
+	There 6 colors. 2 are nonhalting so cant be seen at lambda level, only nsat level below it.
+	1 is leaf. 1 is any halted node other than leaf and other than (ax anything), and including ax.
+	The other 2 colors (proof and disproof) are a stored func_param_return_cache that only occur in (ax anything).
+	Theres an op for isleaf, isProof, and isDisproof, to get those.
+	If lambda sees its not those 3, its the other of 4 that lambda can see.
+	<br><br>
+	OLD... since lambdas cant observe λColor.wordsalad
 	(which only happens when the thing of that color is (ax something) and does not halt,
 	even if derive debugStepInto and debugStepOver lambdas and step thru it,
 	you would never reach a proof that it does not halt in any finite number of steps,
@@ -641,13 +751,12 @@ public enum Op{
 	observing !isColorProof and !isColorDisproof proves the color is λColor.normal,
 	but you could also know that by the left child not being ax or Ax...
 	"Color of x where (!x.l().equals((λ)ax) & !x.l().equals((λ)Ax)) is λColor.normal." -- see comment in ax. 
-	*/
+	*
 	isColorProof("TODO",false,false,1),
 	IsColorProof("TODO",false,false,1),
-	
 	/** see comment in isColorProof and in ax */
-	isColorDisproof("TODO",false,false,1),
-	IsColorDisproof("TODO",false,false,1),
+	isColorDisproof(0b01111000,false,false,1),
+	IsColorDisproof(0b01111001,false,false,1),
 	
 	
 	/** returns t or f. Overlaps (typeval λ λ), which is ok since typeval's first param never needs to be λ. *
@@ -675,20 +784,20 @@ public enum Op{
 	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
 	
 	/** λy.λz.y aka true. (pair b c tru) is b. Is the K lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
-	tru("(λ λ λ λ (λ λ) λ)",false,false,2),
-	Tru("(λ (λ λ) λ λ (λ λ) λ)",false,false,2),
+	tru(0b00100000,false,false,2),
+	Tru(0,false,false,2),
 	
 	/** λy.λz.z aka false aka f. (fal λ) is identityFunc aka λz.z. (pair b c fal) is c. */
-	fal("(λ λ λ λ (λ λ) (λ λ))",false,false,2),
-	Fal("(λ (λ λ) λ λ (λ λ) (λ λ))",false,false,2),
+	fal(0/*,"(λ λ λ λ (λ λ) (λ λ))"*/,false,false,2),
+	Fal(0/*"(λ (λ λ) λ λ (λ λ) (λ λ))"*/,false,false,2),
 	
 	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
-	pair("(λ λ λ (λ λ) (λ λ))",false,false,3),
-	Pair("(λ (λ λ) λ (λ λ) (λ λ))",false,false,3),
+	pair(0/*"(λ λ λ (λ λ) (λ λ))"*/,false,false,3),
+	Pair(0/*"(λ (λ λ) λ (λ λ) (λ λ))"*/,false,false,3),
 	
 	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
-	trecurse("(λ λ λ (λ λ) λ)",false,false,3),
-	Trecurse("(λ (λ λ) λ (λ λ) λ)",false,false,3),
+	trecurse(0/*"(λ λ λ (λ λ) λ)"*/,false,false,3),
+	Trecurse(0/*"(λ (λ λ) λ (λ λ) λ)"*/,false,false,3),
 	
 	/** waiting for infinity curries, never evals just keeps accumulating params. A list of anything you want,
 	without the inefficiency of using ((pair x) y). Just call it on y without the pair.
@@ -739,8 +848,8 @@ public enum Op{
 	and ImportStatic.curry will be this curryOrInfcurOrTypeval and only acts as curry if you give it
 	a unarynum thats at least 1u.
 	*/
-	curryOrInfcurOrTypeval("TODO",false,true,2),
-	CurryOrInfcurOrTypeval("TODO",false,true,2),
+	curryOrInfcurOrTypeval(0/*"TODO"*/,false,true,2),
+	CurryOrInfcurOrTypeval(0/*"TODO"*/,false,true,2),
 	
 	
 	//curryOrInfcur("TODO",false,true,3),
@@ -868,8 +977,8 @@ public enum Op{
 	<br><br>
 	Color of x where (!x.l().equals((λ)ax) & !x.l().equals((λ)Ax)) is λColor.normal.
 	*/
-	ax("TODO",false,true,2),
-	Ax("TODO",false,true,2),
+	ax(0/*"TODO"*/,false,true,2),
+	Ax(0/*"TODO"*/,false,true,2),
 	
 	/** (curry unaryNum comment funcbody ...params...)
 	or TODO choose a design, maybe unaryNum other than 0 (u) is the curry op itself?
@@ -907,14 +1016,16 @@ public enum Op{
 	TODO what does (fpr x y z anything_except_λ) return?
 	(ret λ)? (lazig x y)? {,x ,y}? (ax (fpr x y z))? (S I I (S I I))? z?
 	*/
-	fpr("TODO",false,false,4),
-	Fpr("TODO",false,false,4);
+	fpr(0b00010000,false,false,4),
+	Fpr(0b00010001,false,false,4);
 
 	
 	/** after (u u) aka clean or (u anything_except_u) aka dirty,
 	this is "u" for leaf vs "∩" for anything except leaf, which is a binary prefix for each op.
-	*/
+	*
 	public final String prefix;
+	*/
+	public final int opbits;
 	
 	public final boolean isAlwaysEvaling;
 	
@@ -925,19 +1036,48 @@ public enum Op{
 	*/
 	public final int curriesElse0;
 	
+	/** generate this generated from the order of Ops in this enum and their fields,
+	other than deepLazy and Deeplazy.
+	0..127 is the cleans. 128..255 (negatives as byte) are the dirtys.
+	*
+	private static final Op[] opbyteToOp; //opbits which is 8 bits
+	static{
+		opbyteToOp = new Op[256];
+		opbyteToOp[0] = deepLazy;
+		opbyteToOp[128] = DeepLazy;
+		for(int offset=0; offset<256; offset+=128){
+			boolean isClean = offset==0;
+			
+			
+			/*for(Op op : Op.values()){
+				if(Character.isLowerCase(op.name().charAt(0))){
+				if(op.curriesElse0 != 0) sum += 1<<op.curriesElse0;
+				lg("Op."+op+"("+op.curriesElse0+")");
+				} //else skip the clean/dirty mirror, and just double the number in sum *= 2
+			}*
+			TODO
+		}
+	}*/
+	
 	//TODO rename isStrange to isVararg, counting ax as vararg since it evals at 2 specific number of curries,
 	//which is a very weak form of vararg compared to the curry ops and 0 and 1 ops.
 	
 	
-	private Op(String sourceCode, boolean isAlwaysEvaling, boolean isStrange, int curriesElse0){
-		this.prefix = sourceCode;
+	private Op(/*String sourceCode,*/int opbits, boolean isAlwaysEvaling, boolean isVararg, int curriesElse0){
+		//this.prefix = sourceCode;
+		this.opbits = opbits;
 		this.isAlwaysEvaling = isAlwaysEvaling;
-		this.isStrange = isStrange;
+		this.isStrange = isVararg;
 		this.curriesElse0 = curriesElse0;
 	}
 	
 	public static void lg(String line){
 		System.out.println(line);
+	}
+	
+	/** like 00110111 */
+	static String toString(byte b) {
+		return Integer.toBinaryString(256+(b&0xff)).substring(1);
 	}
 	
 	//FIXME need to get rid of some ops so it fits.
@@ -946,8 +1086,9 @@ public enum Op{
 		lg("Ops...");
 		for(Op op : Op.values()){
 			if(Character.isLowerCase(op.name().charAt(0))){
-			if(op.curriesElse0 != 0) sum += 1<<op.curriesElse0;
-			lg("Op."+op+"("+op.curriesElse0+")");
+				if(op.curriesElse0 != 0) sum += 1<<op.curriesElse0;
+				int bits = sum;
+				lg(toString((byte)bits)+" Op."+op+"("+op.curriesElse0+")");
 			} //else skip the clean/dirty mirror, and just double the number in sum *= 2
 		}
 		System.out.println("sumBeforeDoubling="+Integer.toBinaryString(sum));

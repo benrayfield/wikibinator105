@@ -258,10 +258,10 @@ public enum HeaderBits{
 		return (short)j(header);
 	}
 	
-	/** Example: int curriesUntilIf = HeaderBits.curriesUntilIf.i(someNode.header());
+	/** Example: int curriesUntilIf = HeaderBits.curriesUntilIf.i(someNode.header()); */
 	public int i(long header){
 		return (int)j(header);
-	}
+	} 
 	
 	
 	

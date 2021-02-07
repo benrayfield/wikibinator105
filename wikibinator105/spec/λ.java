@@ -158,6 +158,27 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 		return isObserve() && color()==color;
 	}
 	
+	/** this as next bit in opbyte */
+	public default boolean opbit(){
+		return a() && isClean();
+	}
+	
+	/** There are 2 leafs: cleanLeaf and dirtyLeaf.
+	dirty can create clean or dirty.
+	clean can only create clean.
+	If you call clean on dirty, the dirty is truncated to clean first.
+	There is only 1 different ability between dirty and clean,
+	that in clean, (wiki anything) evals to (S I I (S I I)) aka an infinite loop,
+	and in dirty (wiki anything) evals to ret in any (ax (fpr wiki anything ret))
+	that exists and has color λColor.axof1paramcallProof
+	(instead of λColor.axof1paramcallDisproof which can occur
+	if (ax (fpr wiki anything someOtherRet)) has color  λColor.axof1paramcallProof and ret != someOtherRet
+	cuz for the same (func param) lambda call there must be at most 1 unique return value
+	ever across the whole internet, or tries to find in p2p network etc or create an (ax (fpr wiki anything ret))
+	for the requested (wiki anything) call, which creates increasing difficulty of sync described by SyncLevel.
+	*/
+	public boolean isClean();
+	
 	/** OLD...
 	<br><br>
 	normally all TruthValue.yes, but there are 2 Op (typeval u u) and (typeval u (u u))

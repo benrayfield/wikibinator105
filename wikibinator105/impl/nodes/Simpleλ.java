@@ -1,14 +1,14 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impl.nodes;
 import static wikibinator105.impl.ImportStatic.*;
-import wikibinator105.impl.Λ;
+import wikibinator105.impl.fn;
 import wikibinator105.spec.*;
 
-public class Simpleλ extends AbstractΛ{
+public class Simpleλ extends AbstractFn{
 	
 	//TODO a λ which is a Blob, from lazycl's Blob interface
 	
-	public final Λ l, r;
+	public final fn l, r;
 	
 	//public final byte opByte;
 	
@@ -22,7 +22,7 @@ public class Simpleλ extends AbstractΛ{
 	}*/
 	
 	/** nonleaf */
-	public Simpleλ(λColor color, Λ l, Λ r){
+	public Simpleλ(λColor color, fn l, fn r){
 		this.l = l;
 		this.r = r;
 		//this.opByte = parentOpByte(l.opByte(),r.opByte());
@@ -56,9 +56,9 @@ public class Simpleλ extends AbstractΛ{
 	/** false, this is not a leaf */
 	public boolean a(){ return false; }
 
-	public Λ l(){ return l; }
+	public fn l(){ return l; }
 
-	public Λ r(){ return r; }
+	public fn r(){ return r; }
 
 	public long header(){
 		return header;
@@ -74,22 +74,22 @@ public class Simpleλ extends AbstractΛ{
 	}
 
 
-	public Λ g(long binheapIndex){
+	public fn g(long binheapIndex){
 		throw new RuntimeException("TODO");
 	}
 
 
-	public Λ G(long binheapIndex){
+	public fn G(long binheapIndex){
 		throw new RuntimeException("TODO");
 	}
 
 
-	public Λ e(Λ r){
+	public fn e(fn r){
 		throw new RuntimeException("TODO");
 	}
 
 
-	public $λ e(long maxSpend, Λ r){
+	public $λ e(long maxSpend, fn r){
 		throw new RuntimeException("TODO");
 	}
 
@@ -104,7 +104,7 @@ public class Simpleλ extends AbstractΛ{
 	}
 
 
-	public Λ apply(Λ t){
+	public fn apply(fn t){
 		throw new RuntimeException("TODO");
 	}
 

@@ -2,7 +2,7 @@ package wikibinator105.spec;
 
 public enum DedupLevel{
 	
-	/** impractical but the math is well defined,
+	/** impractical but the math is (todo few details to work out 2021-2-5+) well defined,
 	that numberOfBinaryForestShapesAtHeight(n)=numberOfBinaryForestShapesAtHeight(n-1)^2+1
 	and numberOfBinaryForestShapesAtHeight(0)=1, plus you have to count color at each node,
 	so you can for exponential cost have a unique integer for each function. 

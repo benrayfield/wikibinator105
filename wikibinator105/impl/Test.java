@@ -159,12 +159,12 @@ public class Test{
 	
 	public static void testTF(){
 		lg("Starting testTF");
-		Λ t_w = t.e(wiki);
+		fn t_w = t.e(wiki);
 		testEqq("(t wiki).l()->T", t_w.l(), t);
 		testEqq("(t wiki).r()->N", t_w.r(), wiki);
 		testEqq("(t wiki u)->wiki", t_w.e(u), wiki);
 		testEqq("(t wiki pair)->wiki", t_w.e(pair), wiki);
-		Λ f_w = f.e(wiki);
+		fn f_w = f.e(wiki);
 		testEqq("(f wiki).l()->f", f_w.l(), f);
 		testEqq("(f wiki).r()->wiki", f_w.r(), wiki);
 		testEqq("(f wiki u)->u", f_w.e(u), u);

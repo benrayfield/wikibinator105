@@ -51,7 +51,9 @@ public enum SyncLevel{
 	/** wiki behaviors are nondeterministicly chosen by (ax (fpr wiki x y)) to mean (wiki x)->y */ 
 	slDirty,
 	
-	/** if it contains any λColorTruthValue.bull, λColorTruthValue.unknown, or λColorTruthValue.wordsalad,
+	/** if λ.color().size()!=1 (> 1 is Bull, ==0 is Unknown) then it cant be seen at lambda level, only at NSAT level below it.
+	OLD...
+	if it contains any λColorTruthValue.bull, λColorTruthValue.unknown, or λColorTruthValue.wordsalad,
 	then it cant be seen at the lambda level but can be seen at nsat level.
 	Things that contain λColorTruthValue.unknown can be a part of something lambda can see,
 	but lambda can only see things that in l() and r() deeply all the way down to leaf
