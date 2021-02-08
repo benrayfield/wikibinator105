@@ -4,6 +4,68 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.
 
+The MarklarId105b kind of 256 bit ids will uniquely identify a lambda function anywhere in the peer to peer network
+and will be created in 1 millionth of a second each and have 49% binary storage efficiency
+in their simplest form and 99% if you dont store some of the middle nodes,
+and they are the id of a binary forest shape where all paths lead to u/leaf/theUniversalFunction,
+and the axA and axB ops are replacing colors, as (axA statementX) and (axB statementX)
+cant both exist, for any statementX,
+and (axA statementX) is halted if (statementX u) -> u,
+and (axB statementX) is halted if (statementX u) -> anything except u,
+and if (statementX u) does not halt then neither of those things can exist,
+and typed lambda functions (typed return value, untyped param can be anything,
+of an infinite number of turing complete types such as a list of prime size or opencl code
+that doesnt try to read or write outside its allowed memory)...
+Typed lambda functions are done by (axA statementX param)->(statementX (T param))
+and (axB statementX param)->(statementX (F param)),
+both of which often return another call of axA or axB aka another typed function, and so on,
+and efficiently supports bitstrings up to 4 terabytes, and slower for unlimited size bitstrings,
+and bitstrings can be recursed into powOf2 aligned ranges efficiently
+or copied in other alignments slower, and bitstrings may be memory mapped into GPU mem, harddrive,
+float[], long[], java.nio.Buffer, String, remote memory mapping across the internet,
+keeping in mind that everything is immutable, including functions, bitstrings, ax statements,
+so if you want a mutable bitstring you have to allocate a much larger one that
+has a range for each microsecond or nanosecond or use that as a param in a func
+such as (wiki [aUtcTimeInNanoseconds "hello"])->"world" may be true
+(always, about a specific time, but always true if its true ever),
+and to write the wiki you just pretend that you are reading it and it has always been that way
+using (Op.axA (Op.fpr wiki anyParam anyReturnValue)) as long as it doesnt cause
+any 2 functions (which may call (wiki anyParam) and already be known to have a different return value
+that depended on that wiki call returning anyReturn value)... dont create contradictions
+and it wont have to fork the bloom filter
+which is (axA x) vs (axB x) vs neither observed yet but never both.
+The prefix 0xf9 is not a valid utf8 byte so every possible utf8 string of 32 bytes
+is its own id, as are most bitstrings of 32 bytes (any that dont start with 0xf9)...
+
+```
+//Here's the datastruct for MarklarId105b:
+if(first byte is not 0xf9){
+	//is literal cbt256 thats its own id.
+}else{
+	//bit 16 is containsAx. bit 17 is isBitstringUpTo4Terabytes
+	0xf9
+	op8 //is Op.zero or Op.one, the first bit
+	containsAx1 //contains Op.axA or Op.axB deeply in l() and r() recursively?
+	isBitstringUpTo4Terabytes1 //is bitstring up to 2^45-1 bits aka 4 terabytes, else slower
+		//but unlimited size using normal call pairs.
+	if(isBitstringUpTo4Terabytes1){
+		//is cbt of powOf2 number of bits from 1..2^47 bits, and knows the index of the last 1 bit if exists.
+		cbtHeightAndBize46 //high 1 bit tells which powOf2. Bits below that tell wheres the last 1 bit.
+	}else{
+		curriesAll23 //is 2^24-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf16.
+		curriesMoreIf23 //is 2^24-1 if bigger. is 0 if op8 is Op.deepLazy aka is (a snapshot of) evaling.
+	}
+}
+```
+
+the hash192 is the last 192 bits of sha3_256 and comes after the 64 bit header,
+and its either 192 0s for leaf (op9 is (byte)1, so even if theres a hash collision its still a different id)
+(and of course the normal 64 bits of header before that) or is last192Bits(sha3_256(concat(leftId,rightId))).
+
+Also some Op enum changes etc described in HeaderBits_NEW_TODOREPLACEOLDONEMAYBE
+but most of that is what led to this and just comment it out or remove those words.
+
+
 Planned UI, which will have drag-and-droppable functions (colored circles) with colored edges between them showing left child, right child, return value (when called on leaf, especially if its a (lazy x y) call, and various edges to skip over internal tree nodes to make it look like linkedlists, sCurryLists, and human readable, might look something like this, and it will be the game-tree of all possible turing-completeness, at first appearing very basic but as you navigate deeper into the tree you might find a chess board with the chess game tree in it, derived at runtime (including its graphics, just another lambda, and all lambdas are in the game-tree already), the same way you would find pacman, FPS games, GPU optimizations, new kinds of web browsers, music tools. This game-tree is constant, never changes, at least in the CLEAN parts, while the DIRTY parts are for convergence on the agreement of some CONSTANT wiki function (that we agree on more and more parameters what (wiki parameter) returns, such as some parameters might include a time so mutability and immutability dont conflict as long as (wiki [theTime someParam]) never has more than 1 unique return value, but the point is, this is a constant game-tree, like a chess game tree is constant, and millions of people will be able to navigate it together in realtime. Building things is the same as finding them in the space of all possibilities, and I plan to literally display and let you explore the space of all possibilities... I believe the internet can become something similar to https://en.wikipedia.org/wiki/Ralph_Breaks_the_Internet and https://en.wikipedia.org/wiki/The_Emoji_Movie and https://en.wikipedia.org/wiki/Minecraft and jsfiddle such as https://jsfiddle.net/greggman/8djzyjL3/ and wikipedia, among all other possible things that occur in https://en.wikipedia.org/wiki/Mathematical_universe_hypothesis specificly the way apps cross borders into eachother in unexpected openended ways at runtime, but I've worked out the security to do it safely in a p2p network andOr existing clouds andOr GPUs andOr whatever you have.
 
 <img src=https://github.com/benrayfield/wikibinator105/raw/main/data/wikibinator105/pics/todoEdgesUi.png>

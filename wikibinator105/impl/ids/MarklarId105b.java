@@ -44,6 +44,33 @@ It seems similar to how a universal function works. Theres only 1 word but you c
 */
 public final class MarklarId105b implements IdMaker_old_useFuncsDirectlyAsIdmaker{
 	
+	TODO...
+	
+	//Here's the datastruct for MarklarId105b:
+	if(first byte is not 0xf9){
+		//is literal cbt256 thats its own id.
+	}else{
+		//bit 16 is containsAx. bit 17 is isBitstringUpTo4Terabytes
+		0xf9
+		op8 //is Op.zero or Op.one, the first bit
+		containsAx1 //contains Op.axA or Op.axB deeply in l() and r() recursively?
+		isBitstringUpTo4Terabytes1 //is bitstring up to 2^45-1 bits aka 4 terabytes, else slower but unlimited size using normal call pairs.
+		if(isBitstringUpTo4Terabytes1){
+			//is cbt of powOf2 number of bits from 1..2^47 bits, and knows the index of the last 1 bit if exists.
+			cbtHeightAndBize46 //high 1 bit tells which powOf2. Bits below that tell wheres the last 1 bit.
+		}else{
+			curriesAll23 //is 2^24-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf16.
+			curriesMoreIf23 //is 2^24-1 if bigger. is 0 if op8 is Op.deepLazy aka is (a snapshot of) evaling.
+		}
+	}
+	
+	the hash192 is the last 192 bits of sha3_256 and comes after the 64 bit header,
+	and its either 192 0s for leaf (op9 is (byte)1, so even if theres a hash collision its still a different id)
+	(and of course the normal 64 bits of header before that) or is last192Bits(sha3_256(concat(leftId,rightId))).
+	
+	Also some Op enum changes etc described in HeaderBits_NEW_TODOREPLACEOLDONEMAYBE
+	but most of that is what led to this and just comment it out or remove those words.
+	
 	public static final MarklarId105b instance = new MarklarId105b();
 	
 	public static byte firstByte(Blob id){

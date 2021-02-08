@@ -29,6 +29,19 @@ to verify stronger or more sparse for more efficiency.
 */
 public enum SyncLevel{
 	
+	UPDATE: getting rid of color and instead will have 2 (or maybe 3) kinds of Op.ax:
+	(axA x) and (axB x) cant both exist.
+	(axA x) is halted if (x u)->u.
+	(axB x) is halted if (x u) -> anything except u.
+	//Maybe, (axC x) is halted if (x u) does not halt, but I'm unsure if should have an axC.
+	(axA x y) -> (x (T y))
+	(axB x y) -> (x (F y))
+	How would that be detected? A lambda could generate a hash thats the same for (axA x) and (axB x),
+	for any x, but different for axA vs axB, or something like that.
+	(details to work out on whats a normed form)
+	But what to do if theres BULL in it such as (axA (pair s pair)) and (axB (pair s pair)) exist
+	somewhere reachable from the same node?
+	
 	/** forest shape seen deeply thru l() and r() does not contain a call of ax,
 	but can contain ax itself (of 0 params after ax).
 	This is only to measure does a certain node contain any (ax anything) or not.

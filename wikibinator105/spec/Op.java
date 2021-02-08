@@ -385,6 +385,39 @@ ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
 */
 public enum Op{
 	
+	/*UPDATE: getting rid of color and instead will have 2 (or maybe 3) kinds of Op.ax:
+	(axA x) and (axB x) cant both exist.
+	(axA x) is halted if (x u)->u.
+	(axB x) is halted if (x u) -> anything except u.
+	//Maybe, (axC x) is halted if (x u) does not halt, but I'm unsure if should have an axC.
+	(axA x y) -> (x (T y))
+	(axB x y) -> (x (F y))
+	How would that be detected? A lambda could generate a hash thats the same for (axA x) and (axB x),
+	for any x, but different for axA vs axB, or something like that.
+	(details to work out on whats a normed form)
+	But what to do if theres BULL in it such as (axA (pair s pair)) and (axB (pair s pair)) exist
+	somewhere reachable from the same node?
+	..
+	The 2 ax ops need more room. make room by getting rid of isColorDisproof and 1 other 1-param op.
+	*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/*ANSWER: No, theres not room in opbyte for a comment param, so just keep it before funcbody in curry op,
 	as you can wrap anything in a curry if you just want its param/return mapping,
 	but if its used in reflection (L R Isleaf) then it would appear different to funcs looking at its internal callpair forest shape.
@@ -730,6 +763,10 @@ public enum Op{
 	(cbts/blobs should be clean for blob optimizations, else they run in interpreted mode very slowly).
 	*/
 	Isclean(0b01110001,false,false,1),
+	
+	remove 1 1-param op so axB and axA fit.
+	
+	
 	
 	/** UPDATE: keeping the isColorDisproof op, but removing isColorProof op cuz will derive that,
 	to make room for isClean op. The other 3 colors can be derived if you know this one
