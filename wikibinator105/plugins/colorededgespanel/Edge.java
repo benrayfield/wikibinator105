@@ -1,4 +1,4 @@
-package wikibinator105.impl.ui;
+package wikibinator105.plugins.colorededgespanel;
 
 /** is allowed if (ax (fpr type.fn from.fn to.fn)) is λColor.proof, and may optionally exist if so. */
 public class Edge{

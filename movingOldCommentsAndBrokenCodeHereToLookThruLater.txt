@@ -1,0 +1,1131 @@
+/** Ben F Rayfield offers this software opensource MIT license */
+package wikibinator105.spec;
+import java.util.EnumSet;
+import java.util.Set;
+
+import wikibinator105.spec.Blob;
+import wikibinator105.spec.λ;
+
+public interface IdMaker_old_useFuncsDirectlyAsIdmaker{
+	
+	/** The first headerBize() of bize() bits are header, such as in the default kind of id512 its 128
+	which is a HeaderBits long then a bize (of cbt) long.
+	*
+	public short headerBize();
+	*/
+	
+	/** the func which makes the ids.
+	TODO just call λ idMaker on λ whatsMyId to get λ theId,
+	and use Evaler as compiled optimization such as derive sha3_256 or a 192 bit form of it
+	and use that as part of an idMaker func.
+	*/
+	public λ fn();
+	
+	/** bize of Blobs returned */
+	public default short bize(){
+		return (short)idOfLeaf().bize();
+	}
+	
+	//TODO is id always a powOf2 size without header
+	//such as cbt512 as a bitstring is 513 bits so pads to 1024 (in abstract math but could still be stored in 512 bits)???
+	//or should id be a bitstring (include padding)?
+	
+	public Blob idOfLeaf();
+	
+	public Blob idOfBits(Blob bits);
+	
+	public Blob idOfCallPair(Blob funcId, Blob paramId);
+	
+	/** Its an error for there to be more than 1 color, but there can be more to detect those errors aka BULL.
+	If theres 0 colors, its UNKNOWN. At the lambda level theres always exactly 1 color.
+	*
+	public Blob idOfCallPair(EnumSet<λColor> colors, Blob funcId, Blob paramId);
+	
+	public default Blob idOfCallPair(λColor color, Blob funcId, Blob paramId) {
+		return idOfCallPair(color.set, funcId, paramId);
+	}*/
+	
+	//public Blob idOfCallPair(Predicate<λColor> mapOfColorToBit, Blob funcId, Blob paramId);
+
+}
+
+
+/** Ben F Rayfield offers this software opensource MIT license */
+package wikibinator105.spec;
+
+/** I'm undecided if will use this vs just 4 bits for the 4 colors, plus other parts of long header of course. */
+public enum λColorTruthValue{
+	
+	//FIXME redesigning what the λColors are, so need to change them here too 
+	
+	/** λColor.proof */
+	proof,
+	
+	/** λColor.disproof */
+	disproof,
+	
+	/** λColor.wordsalad */
+	wordsalad,
+	
+	/** λColor.normal */
+	normal,
+	
+	/** unknown which of λColor.proof λColor.disproof λColor.wordsalad λColor.normal, similar to TruthValue.unknown.
+	This is used in the normed form, aka λ.superposition(), thats just the binary forest shape without colors,
+	so different merkle forests can be matched node for node to compare their colors and OR the colors into eachother,
+	changing unknown to any of those 4 colors or to bull where theres 2 or more different colors claimed,
+	which would mark the bull bit in the default kind of id256 so anything which contains bull knows instantly in id256.
+	*/
+	unknown,
+	
+	/** claim of at least 2 of λColor.proof λColor.disproof λColor.wordsalad λColor.normal, similar to TruthValue.bull */
+	bull;
+
+}
+
+
+/** Ben F Rayfield offers this software opensource MIT license */
+package wikibinator105.spec;
+
+import java.util.EnumSet;
+
+/** (ax typeandinstance) calls (typeandinstance u) to get an even height or an odd height
+(UPDATE: (typeandinstance u) returns u vs anything_except_u) OLD...
+<br><br>
+return value (so (ax typeandinstance) is colorAxEven or colorAxOdd) or if somehow its known
+that it doesnt halt (mostly its there just for abstract math completeness) then colorAxNonhalt,
+or if the node's left is not ax then its color is colorNormal.
+<br><br>
+"Create typeOfListOfPrimeSize and typeOfListOfNonprimeSize with it, given a func isPrimeSizeList
+and debugStepOver etc" will be done by (ax typeandinstance) that contain typeOfListOfPrimeSize
+or typeOfListOfNonprimeSize and
+(ax typeandinstance x)->(typeandinstance (t x)) which is a normal call
+since (ax typeandinstance) already has its 1 of 4 colors and if it wants to reproduce that
+it just calls ax on itself again and can see itself by being in an op curry.
+<br><br>
+To be an axiomforest.TruthValue it would need 4 bits instead of the usual 2 bits,
+even though the only valid values are 0000 (unknown, in normed form,
+but lambda cant see this, only NSAT layer can, and its not even valid in NSAT but
+will be stored, in some cases, as an optimization to merge maps of node to color
+by ORing in sparse bloomfilter, where such a map is just a binary forest node
+with colors there and everywhere below),
+1000, 0100, 0010, 0001 (so actually only 4 valid values,
+compared to the 2 or 3 valid values in TruthValue).
+*/
+public enum λColor{
+	
+	/* Requirements for choosing number of colors in a lambda system,
+	are that you can uniquely identify every possible lambda only by color here, color at left child, color at right child,
+	and recursively from that, and left and right childs are infinitely deep since (L u) is identityFunc and (R u) is u,
+	and that if something can be proven in finite time theres a color which says that
+	since thats the only kind of proofs available thru dovetailing.
+	I want the fewest number of colors which can do that.
+	Also, the lambda level cant see nonhalting, but the nsat level below it can,
+	in a pigeonholing way that anything the lambdas cant derive is nonhalting.
+	???
+	TODO? "lambda level only needs 1 bit of color the predicate [l is ax and r called on u returns something other than u]"
+		(contradiction between that and the text below)
+		but the NOT of that since normal nodes should be same color as (ax something) where (something u)->u aka proof,
+		so color would be ONLY proof or disproof, and nonhalting goes in disproof,
+		and can make that welldefined at nsat level by also including a doesnthalt color (more general than wordsalad),
+		and maybe also a leaf color so all you need is colors
+	???
+	*/
+	
+	/** ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall. */
+	nonaxof1paramcallLeaf,
+	
+	/** color of anything whose l() is not ax, regardless of if its halted or not.
+	ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall.
+	*/
+	nonaxof1paramcallNormal,
+	//colorNormal;
+	
+	/** ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall. */
+	nonaxof1paramcallNohalt,
+	
+	/** color of halted (ax typeandinstance) IFF (typeandinstance u)->u.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall.
+	*/
+	axof1paramcallProof,
+	//colorAxHaltLeaf,
+	//colorAxEven,
+	
+	/** color of halted (ax typeandinstance) IFF (typeandinstance u) -> anything_except_u.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall.
+	*/
+	axof1paramcallDisproof,
+	//colorAxHaltNonleaf,
+	//colorAxOdd,
+	
+	/** color of nonhalting (ax typeandinstance) IFF (typeandinstance u) does not halt.
+	Also, (ax x y)->(x (t y)), and (Ax x y)->(x (T y)), which is how to use a typed function.
+	ax itself is a nonaxcall. (ax anything) is an axcall. (ax anythingA anythingB) is a nonaxcall.
+	*
+	wordsalad,
+	//colorAxNonhalt,
+	*/
+	axof1paramcallNohalt;
+	
+	public final EnumSet<λColor> set = EnumSet.of(this);
+	
+	public static final EnumSet<λColor> none = EnumSet.noneOf(λColor.class);
+	
+	public static final EnumSet<λColor> all = EnumSet.allOf(λColor.class);
+	
+	//TODO these colors? proof disproof nonhalting leaf normal?
+	
+	
+	
+	
+	/*TODO can it be done with fewer colors?
+	replace normal with proof (proof that its normal, but proof would mean something else if l() is ax)?
+	get rid of wordsalad? its already never going to happen at lambda level but can happen at nsat level.
+	(ax typeandinstance).color would be either proof or disproof,
+		depending if (typeandinstance u)->u vs [-> anything except u, or does not halt, both of thosecould be viewed as disproof?
+		but not halting would never be observed at lambda level only at nsat level in some cases]
+	Problem with that is disproof is a claim that a finite size proof exists,
+		compared to wordsalad which is a math abstraction thats the color of anything
+		thats not in any finite time proven to be the other colors.
+	I could have 2 ax nodes, one that halts if (typeandinstance u)->u
+		and one that halts if (typeandinstance u)->anythingExceptU,
+		and get rid of color completely, but then I wouldnt know how to OR bloomfilters together efficiently
+		as it would have exponential instead of average constant cost per node.
+		But if I could, or ax just having another param thats u vs (u u),
+		such as (ax ret lazy) is halted if (lazy u)->ret (no, thats more complex
+		than ret always meaning to look for u vs anything_except_u),
+		then it would be back to ONLY being a binary forest shape.
+	Or disproof could be in the proof of 2 things that cant both be true at once, x and y,
+	where (x u)->u and (y u)->u cant both be true at once,
+	but that extremely complicates things and (ax typeandinstance) is far simpler, except that it has color.
+	I could view it as a 4-way-tree where 2 childs are pointers and 2 are bits that choose between the 4 colors,
+	and thats still a forest shape, but not all possible forest shapes are allowed in that case
+	since color has to be derived.
+	In clean functions (which cant create dirty functions in any combo of calling them on eachother),
+	there is exactly 1 correct color for each binary forest node,
+	but even then for security we still should compute it as if there could be conflicting colors at the same node
+	such as if data is corrupted or things imported that werent derived by correct math, to detect and merge.
+	I could take impractically long to verify some things, or colorWordsalad costs an average of infinite time to verify,
+	so not every possible function is efficient to share across untrusted borders.
+	..
+	Probably best to keep the colors as they are... proof, disproof, wordsalad, normal.
+	*/
+	
+	/*TODO should there be an isleaf color?
+			
+	TODO should there be an ishaltedandisnormal color?
+			
+	TODO should there be just 1 bit of color whenever something is halted (another bit for not being halted?)
+		that if l() is ax then that bit means proof vs disproof,
+		and if l() is not ax then that bit is always the nand of the 2 childs color bit below it?
+		Problem is, at nsat level, it has to handle nonhalted nodes.
+	
+	isproof
+	isdisproof
+	ishalted
+	isleaf
+	*/
+
+}
+
+
+/*
+	UPDATE: since theres 4 colors per node, axiomforest would have to be modified to have 4-bit truthvalues
+	to hold wikibinator105, OR could use multiple axiomforest nodes per wikibinator node.
+	TODO update axiomforest that way, as the 4 colors (colorAxEven colorAxOdd colorAxNonhalt and colorNormal)
+	are very general and could be used in other systems,
+	and colorAxEven and colorAxOdd are the closest match to what I meant by TruthValue.yes and TruthValue.no,
+	and colorNormal means to ignore truthvalue here, and colorAxNonhalt wont be observed at the lambda level ever
+	since (ax anything) whose color is colorAxNonhalt means (anything u) does not halt
+	so (ax anything) itself does not halt, which could be seen at the NSAT level but not at the lambda level,
+	or maybe generalize axiomforest to n colors.
+	
+	OLD...
+	Can be mounted into axiomforest.
+	
+	FIXME rewrite the below 2 paragraphs cuz i just replaced "wikibinator104" with "wikibinator105"
+	without checking if theres anything different cuz of the vararg redesign,
+	which would only affect how to explain it here cuz its still a 1-to-1 mapping
+	between axiomforest (4-way-forest if you count the 2 bits of TruthValue as 2 childs, and 2 pointers)
+	node and wikibinator105 node (2-way-forest, both are pointers).
+	
+	TODO hook into axiomforest at (a/axiomforestLeaf "wikibinator105"),
+	of course using ((a a) a) as 1 and (a (a a)) as 0 from which bytes and bytestrings can be made
+	like (((0 1)(1 1))((1 0)(0 0))) is the byte 01111000, and ((a a)(a a)) as identityFunc,
+	and (a identityFunc) as axiomforestTypeval and (a 1) as Yes and (a 0) as No
+	and (a "wikibinator105") would be (a (axiomforestTypeval "text/plain" "wikibinator105"))
+	while the first param of typeval is either not a cbt or is interpreted as utf8 string,
+	but other strings or pics videos pdfs or content of any type uses axiomforestTypeval,
+	which is the standard way to use axiomforest between multiple systems, in theory, BUT
+	wikibinator will not be able to see anything outside that namespace
+	and will use (axiomforestLeaf "wikibinator105") as u/wikibinator105Leaf.
+	Other systems built in axiomforest, such as maybe a wikibinator105 someday,
+	or conwaysgameoflife experiments, etc, or tools built specificly for combining things
+	inside the axiomforest, might be able to combine these parts that otherwise
+	cant see outside themself, though you could emulate axiomforest in wikibinator105
+	using pairs etc.
+	
+	A wikibinatorNode is a binary forest node without any data at it
+	(other than caches derivable from that binary forest shape),
+	but not all possible binary forest shapes are allowed cuz only those which are halted are allowed,
+	and when viewed in axiomforest, TruthValue.yes means is halted, TruthValue.no means is not halted,
+	and TruthValue.unknown means dont know if its halted or not (which may take infinite time/memory to know),
+	and TruthValue.bull works as usual. They all work as usual.
+	There will be some duplication of the YES and NO in
+	(wikibinatorOp.ax (wikibinatorLeaf wikibinatorLeaf) wikibinatorLeaf x)
+	and (wikibinatorOp.ax wikibinatorLeaf wikibinatorLeaf x) will never both exist for any x.
+	Other first params of wikibinatorOp are allowed too, but those 2 can emulate all the others in axiomforest way.
+	*/
+
+/** aka axType. see comment of fpr.
+	(ax typeandinstance param) -> (typeandinstance (t param)).
+	(ax typeandinstance) is halted if (typeandinstance λ) halts (after it halts, the (ax typeandinstance) is returned to you).
+	For example, a typed object could be created whose type is a list of prime size,
+	and another type is a list of nonprime size, and those 2,
+	using (ax typeandinstance nextParam) could append nextParam to a linkedlist they contain
+	(by forkEdit as everything is immutable) and return a listOfPrimeSize or a listOfNonprimeSize
+	depending on the size of the contained resulting linkedlist,
+	or could be a type of opencl code strings that dont try to read or write outside allowed memory ranges,
+	or could be a type of 64 normed bits of IEEE754 double or float. 
+	<br><br>
+	Color of (ax typeandinstance) is λColor.proof if (typeandinstance λ)->λ.
+	<br><br>
+	Color of (ax typeandinstance) is λColor.disproof if (typeandinstance λ) -> anything except λ (and does halt).
+	<br><br>
+	Color of (ax typeandinstance) is λColor.wordsalad if (typeandinstance λ) does not halt,
+	and if (ax typeandinstance) is this color then (ax typeandinstance) does not halt,
+	so lambdas will never see this color (except if they form an emulator of it and in some cases know it wont halt),
+	but the NSAT level (below the lambda level) will see all 4 colors at least in abstract math
+	but probably will only solve for the other 3 of 4 colors and leave the others unknown.
+	Every node must have a valid color, even if we dont know what it is, else the whole system would break.
+	<br><br>
+	Color of x where (!x.l().equals((λ)ax) & !x.l().equals((λ)Ax)) is λColor.normal.
+	*
+	axA(0/*"TODO"*,false,true,2),
+	AxA(0/*"TODO"*,false,true,2),
+	axB(0/*"TODO"*,false,true,2),
+	AxB(0/*"TODO"*,false,true,2),
+	*/
+
+	/** is a cbt whose first bit is 1. can only be part of cbt or something containing a cbt.
+	if its param is not a cbt of same size, then calls itself on itself instead,
+	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	*
+	one(0b01100000,false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	One(0b01100001,false,true,1), //one and One do the same thing except viewed thru reflect, and only one is optimized
+	/** is a cbt whose first bit is 0. can only be part of cbt or something containing a cbt.
+	if its param is not a cbt of same size, then calls itself on itself instead,
+	so a cbt called on anything is always a cbt twice as big. Avoids the need for pairs in cbts so is more efficient.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	*
+	zero(0b01101000,false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	Zero(0b01101001,false,true,1), //zero and Zero do the same thing except viewed thru reflect, and only zero is optimized
+	*/
+
+	/** (curry unaryNum comment funcbody ...params...)
+	or TODO choose a design, maybe unaryNum other than 0 (u) is the curry op itself?
+	Avoids the need for pairs, except just 1 pair when it evals,
+	compared to wikibinator104 uses a pair for every curry, and calls curry and a unary number on it,
+	and this will instead cache the unaryNumber (thats deep inside, near funcBody) similar to caching funcBody.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	*
+	curry("(λ   λ   (λ λ) λ (λ λ) (λ λ) (λ λ))",false,true,0),
+	Curry("(λ (λ λ) (λ λ) λ (λ λ) (λ λ) (λ λ))",false,true,0),
+	*
+	infcur_if_next_param_is_leaf_else_curry_if_its_unarynum("(λ   λ   (λ λ)   λ     λ   (λ λ))",false,true,0),
+	Infcur_if_next_param_is_leaf_else_curry_if_its_unarynum("(λ (λ λ) (λ λ)   λ     λ   (λ λ))",false,true,0),
+	*/
+	//FIXME theres more room from changing ax to axType,
+	//so use some of that room to put the numOfCurriesAsUnary, funcBody, and maybe comment in the first 6 params,
+	//but unsure if comment will fit and it might need to go after funcbody instead of before.
+
+	
+	/** (ax ret func param) is halted IFF ret<-(func param),
+	and (ax ret func param x) -> (param x),
+	which will be used as a replacement for TYPEVAL as in
+	(ax u type instance) is a typed instance,
+	and (ax u type instance x) -> (instance x) aka do the same thing the instance would do
+	other than reflection ops (getFunc/l getParam/r isLeaf/a) can still see inside it.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	<br><br>
+	This partly explains it, but needs rewriting and was before i decided what to do...
+	<br><br>
+	use ax as typeval where func is recog of that type and ret of leaf is true.
+	create optimization to check for something like (igfp "double[]" (t u)) as tupe,
+	to not have to check constraints where its certain it always returns u.
+	..
+	change ax so...
+	(ax ret func param x) -> (param x),
+	aka (ax u type instance) is a typed instance, and (ax u type instance x) -> (instance x).
+	
+	put typeval as first param of infcur is "contenttype" or maybe first param is always
+	viewed as a utf8 string bit some types are more generally datastructs?
+	...
+	or just put typeval in the space gained by 0 and 1 having longer prefix?
+	..
+	no, cuz then lose infcur.
+	..
+	i want typeval to have exactly 2 halted params so acts like pair. can do that
+	with curry or a prefix of pair.
+	..
+	could use ax for typeval, viewing a type as a recogfunc, and a type can be designed to contain
+	a string and recog all possible params, like type = (t u) returns u for all possible types.
+	(ax u (t u) instance). (igfp "double[]" (t u)) also rets u for all possible params. (ax uu )
+	or (ax anythingexceptu) means its not that type, but never halting also means that.
+	<br><br>
+	OLD, before merged typeval with ax[
+	λx.λy.λz.zxy, same as pair except with the semantic like (typeval "image/jpeg" ...bytesOfJpg...).
+	Other funcs can see the difference between typeval and pair using isLeaf, l, r, and a derived equals function.
+	]
+	<br><br>
+	OLD, from wikibinator104 which has the same behaviors of the first 3 params of ax but not its 4th/last param[
+		λret.λfunc.λparam.(λret.λfunc.λparam.(λret.λfunc.λparam.(...))) is halted if (func param)->ret,
+		else evals to (S I I (S I I)) aka an infinite loop. 1 more param and it does...
+		λret.λfunc.λparam.λignore.(S I I (S I I)) aka an infinite loop, to complete the 7 params of the universal func,
+		but we dont normally call it all the way to λignore, just use the first 3.
+		TODO explain λret.λfunc.λparam.(λret.λfunc.λparam.(λret.λfunc.λparam.(...))) differently
+		cuz that way of writing it makes it appear that it takes 3 more params, instead of the 3 params already given.
+		<br><br> 
+		Theres a !isDirty and isDirty form of this. Theres nothing dirty about it, other than possibly its params.
+		(ax ret param func) will eventually halt (and cache that) if (func param)->ret (use derived equals func).
+		(ax ret param func ignore) does infloop, which completes the 7 params of the universal func.
+		<br><br>
+		Axiom op, such as (ax (leaf leaf) leaf) can only halt on params that (ax leaf leaf) cant halt on,
+		(cuz same func and param can have at most 1 returnVal, but theres 2 in that case: leaf and (leaf leaf)),
+		which together are similar to axiomforest's TruthValue.yes and TruthValue.no and together would TruthValue.bull,
+		and if neither are observed then thats TruthValue.unknown. But in this software, theres only binary forest shape
+		with no TruthValue or other data at nodes, except caches of what can be derived only from binary forest shape,
+		but "can be mounted into axiomforest" (search for that) as explained in comment near end of this class.
+		<br><br>
+		This will normally be used with dovetailing of fntape to search all possible axioms provable in finite steps,
+		and if that does not find the axiom you're requesting (by calling it on ret param func)
+		then it infloops by not finding that or appears to infloop cuz it takes longer than the universe --> heatdeath,
+		aka it calls (func param) then checks if what it returns (if it ever returns) equals ret,
+		and the dovetailing would be implemented inside that func, in some cases,
+		as axiomforest-like bloom-filter of accumulating true statements in (ax (leaf leaf) leaf)
+		and accumulating false statements in (ax leaf leaf), and checking for overlap between those 2.
+		That dovetailing, which will be derived at user level (see "fntape" in occamsfuncer readme),
+		is just an abstract math description of what it must do and will actually be
+		computed exponentially faster in many cases using Compiled.java manually written optimizations,
+		and later deriving some of those optimizations automatically (to gpu, javassist, etc).
+		Its easy to make something exponentially faster if you already know what you want it to do
+		but it just happens to take exponential time and memory to write it in the form of dovetailing
+		as a recognizer function of the the thing which a Compiled.java would compute procedurally forward,
+		those things being the various axiom-like statements or their outputs like in earlier wikibinator versions
+		where that got too complex and I redesigned it to only need this one ax op with exponential optimizations.
+		<br><br>
+		OLD...
+		Ok, updated comments (changed from λret.λparam.λfunc) for...
+		should it be (ax func ret param) is halted if (func param)->ret?
+			cuz that way ret could be leaf and func is like a type,
+			such as (ax ifItsACatPicThenReturnLeaf leaf aPossibleCatPic) would be halted
+			only if (ifItsACatPicThenReturnLeaf aPossibleCatPic)->leaf,
+			and it could hook into axiomforest similar as the other way like
+			(ifItsACatPicThenReturnLeafElseLeafofleaf aPossibleCatPic)->(leaf leaf)
+				if its certainly not a cat pic, and any return other than leaf or (leaf leaf) could mean unknown
+				and if it never halts thats also unknown.
+			Its still the same 3 params as (ax func ret param), or (ax ret func param) would also work,
+			but func cant be the last one cuz func has control.
+		Similarly func could be something that calls its param on another func, if you want it to do some other order.
+	]
+	*
+	ax("(λ λ (λ λ) (λ λ))",false,true,4),
+	Ax("(λ (λ λ) (λ λ) (λ λ))",false,true,4);
+	*/
+	
+
+	
+	//curryOrInfcur("TODO",false,true,3),
+	//curry("TODO",false,true,4),
+	//Curry("TODO",false,true,4),
+
+
+	
+	
+	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
+	
+	/** λy.λz.y aka true. (pair b c tru) is b. Is the K lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
+	tru(0b00100000,false,false,2),
+	Tru(0,false,false,2),
+	
+	/** λy.λz.z aka false aka f. (fal λ) is identityFunc aka λz.z. (pair b c fal) is c. */
+	fal(0/*,"(λ λ λ λ (λ λ) (λ λ))"*/,false,false,2),
+	Fal(0/*"(λ (λ λ) λ λ (λ λ) (λ λ))"*/,false,false,2),
+	
+	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
+	pair(0/*"(λ λ λ (λ λ) (λ λ))"*/,false,false,3),
+	Pair(0/*"(λ (λ λ) λ (λ λ) (λ λ))"*/,false,false,3),
+	
+	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
+	trecurse(0/*"(λ λ λ (λ λ) λ)"*/,false,false,3),
+	Trecurse(0/*"(λ (λ λ) λ (λ λ) λ)"*/,false,false,3),
+	
+	/** waiting for infinity curries, never evals just keeps accumulating params. A list of anything you want,
+	without the inefficiency of using ((pair x) y). Just call it on y without the pair.
+	No funcbody or unaryNumber of curries left to cache. Just create a halted callpair for each next curry.
+	TODO copy comments from wikibinator104 and maybe modify them.
+	<br><br>
+	Counting this as having 1 curry, even though its infinite,
+	so in the counting of opcodes it takes as much space as a func of 1 param.
+	*
+	infcur("(λ   λ   (λ λ) λ (λ λ) (λ λ) λ)",false,true,1),
+	Infcur("(λ (λ λ) (λ λ) λ (λ λ) (λ λ) λ)",false,true,1),
+	*/
+	
+	//DONE, by putting in in infcur: need typeval back. can let something be in (typeval λ)
+	//or could put typeval in infcur
+	//typeval("TODO",false,false,3),
+	//Typeval("TODO",false,false,3),
+	
+	/** λtype.λval.λparam.(val param), like (typeval "image/jpeg" bytesOfJpg),
+	except type cant be leaf cuz then it means getTruthvalueYesPart or getTruthvalueNoPart.
+	Similar to (ax ret func param x)->(param x) and (ax ret func param) is halted only if (func param)->ret,
+	except typeval is an informal way of saying a type, more of a semantic,
+	which you could do the same thing in (ax λ) if its next param is a func that returns λ for all possible params.
+	*
+	typeval_butTypeIsNotLeaf("(λ   λ   (λ λ) λ (λ λ))",false,true,3),
+	Typeval_butTypeIsNotLeaf("(λ (λ λ) (λ λ) λ (λ λ))",false,true,3),
+	*/
+
+	/** returns t or f. Overlaps (typeval λ λ), which is ok since typeval's first param never needs to be λ. *
+	getTruthvalueYesPart("(λ   λ   (λ λ) λ (λ λ) λ λ)",false,false,1),
+	GetTruthvalueYesPart("(λ (λ λ) (λ λ) λ (λ λ) λ λ)",false,false,1),
+	/** returns t or f. Overlaps (typeval λ (λ λ)), which is ok since typeval's first param never needs to be λ. *
+	getTruthvalueNoPart("(λ   λ   (λ λ) λ (λ λ) λ (λ λ))",false,false,1),
+	GetTruthvalueNoPart("(λ (λ λ) (λ λ) λ (λ λ) λ (λ λ))",false,false,1),
+	*/
+	//getColor TODO since theres 4 colors should this be 2 funcs to get 1 bit each, or return a cbt2 or a cbt4 or 4 funcs of bit?
+	
+	/*isColorAxEven("TODO",false,false,1),
+	IsColorAxEven("TODO",false,false,1),
+	
+	isColorAxOdd("TODO",false,false,1),
+	IsColorAxOdd("TODO",false,false,1),
+	"TODO choose should it be isColorAxLeaf vs isColorAxNonleaf instead of even vs odd?"
+	"or does even odd help with turingCompleteChallengeResponse since theres an infinite number of each vs only 1 leaf?"
+	
+	"TODO should the 2 isColor ops give these 2 bits?: the NSAT on the combo of every possible binary forest node having 2 bits that tell 1 of 4 colors. Of so, both of them being t could mean colorAxNonhalt, and both being f could mean colorNormal. Of course they would never both return t at the lambda level cuz the call of ax would not halt, but they can be any of those 4 ways at the NSAT level which is below the lambda level."
+	"TODO for better turingCompleteChallengeResponse, should id256 contain nand of its 2 nands of the childs, and leaf has nand of 0 (todo verify if thats true of leafs 2 childs being identityfunc and leaf, and move those if they dont), so colorAxNandIs1 vs colorAxNandIs0 vs colorAxNonhalt vs colorNormal. Its an easily fakeable 1-bit hash but viewed in many combos at once it adds to security a little at a time. u vs (u u) have opposite nand values so can still use those 2 constants as the normed form."
+	*/
+
+	
+	
+	/** UPDATE: keeping the isColorDisproof op, but removing isColorProof op cuz will derive that,
+	to make room for isClean op. The other 3 colors can be derived if you know this one
+	and know that its not the 2 nonhalting colors (which lambda level cant see but nsat level can).
+	<br><br>
+	There 6 colors. 2 are nonhalting so cant be seen at lambda level, only nsat level below it.
+	1 is leaf. 1 is any halted node other than leaf and other than (ax anything), and including ax.
+	The other 2 colors (proof and disproof) are a stored func_param_return_cache that only occur in (ax anything).
+	Theres an op for isleaf, isProof, and isDisproof, to get those.
+	If lambda sees its not those 3, its the other of 4 that lambda can see.
+	<br><br>
+	OLD... since lambdas cant observe λColor.wordsalad
+	(which only happens when the thing of that color is (ax something) and does not halt,
+	even if derive debugStepInto and debugStepOver lambdas and step thru it,
+	you would never reach a proof that it does not halt in any finite number of steps,
+	and each such step halts but is at a lower "debug level"
+	which "pattern calculus function" aka getfunc/l getparam/r isleaf/a ops allow you to build)...
+	since lambdas cant observe λColor.wordsalad,
+	observing !isColorProof and !isColorDisproof proves the color is λColor.normal,
+	but you could also know that by the left child not being ax or Ax...
+	"Color of x where (!x.l().equals((λ)ax) & !x.l().equals((λ)Ax)) is λColor.normal." -- see comment in ax. 
+	*
+	isColorProof("TODO",false,false,1),
+	IsColorProof("TODO",false,false,1),
+	/** see comment in isColorProof and in ax *
+	isColorDisproof(0b01111000,false,false,1),
+	IsColorDisproof(0b01111001,false,false,1),
+	*/
+
+
+	//"fIXME choose an alignment between zero one tru fal isColorAxEven isColorAxOdd thats intuitive to Humans programming using those, considering the order it happens in pair func, u vs (u u), etc."
+	//"Then replace all the strings in the constructors of these enums, as I recently moved many of them."
+
+	/*FIXME??? move the wiki and ax ops so that theres only 1 possible isdirty form of them,
+	so that they use u instead of (u u) in their opcodes, or at least that way for wiki
+	since they cant both have all u's as their prefix. the wiki is the most important
+	to be that way cuz its the only nondeterministic thing in the system.
+	*/
+
+	
+	/* Created isclean and Isclean ops, replacing isColorProof and IsColorProof ops which will be derived instead. 
+	
+	FIXME maybe λ should be dirty leaf, and (λ λ) be clean leaf?
+	Probably shouldnt, cuz then they'd be different number of curries which would complicate l r isleaf isclean funcs,
+	but it would have a single leaf which is good.
+	Could still use (λ anything_except_λ) as dirty prefix, and λ itself is dirty,
+	but l and r using (λ λ) as leaf causes a problem, and maybe can solve that problem
+	with 3 more funcs of 1 param each metaL metaR metaIsleaf that infloop if called by clean.
+	Also, clean would need to 
+	
+	FIXME rename to iscleanleaf? cuz for opbits shouldnt have to check isleaf and isclean.
+	but that would need an isdirtyleaf func too, if theres an iscleanleaf instead of just isleaf,
+	and if it is just isleaf and isclean ops, could still use the opbyte optimization to mean isleaf&isclean per 0..7 first curries.
+	*/
+
+
+	
+	
+	/*
+	UPDATING again...
+	ukuuuuw? //wiki
+	ukuuuua? //is param leaf
+	ukuuu∩l? //getfunc/l
+	ukuuu∩r? //getparam/r
+	ukuu∩u1? //cbt whose first bit is 1
+	ukuu∩u0? //cbt whose first bit is 0
+	ukuu∩∩e? //is param colorAxEven
+	ukuu∩∩o? //is param colorAxOdd
+	uku∩ut?? //tru aka the K lambda of SKI calculus
+	uku∩uf?? //fal. (fal u) is identityFunc.
+	uk∩up??? //pair
+	uk∩uv??? //typeval
+	uk∩us??? //the S lambda of SKI Calculus
+	ukuuuu∞? //infcur
+	ukuc???? //(curry unarynumOtherThanU comment funcBody ...params...), where last param calls (funcBody [(curry...) lastParam)])
+	uku3???? //fpr
+	ukuuux?? //ax aka axType
+	
+	(fpr func param ret u)->u if (func param)->ret,
+	or ->(u u) if (func param) returns something else,
+	or not halts if (func param) not halts. Used with ax.
+	
+	curry, where the c in that is a unarynum other than u, such as (t (t (t u))) is 3unary aka 3u.
+	
+	0 and 1 are cbt size 1 and can only form into cbts,
+	as it replaces any param thats not a cbt of its own height with itself.
+	
+	v means typeval, a loose kind of type such as for "image/jpeg" or "text/plain",
+	which allows every possible value for every possible type,
+	and if you want turingCompleteTypes then use ax. You could even use them together
+	such as wrapping a (typeval "image/jpeg" bytesOfJpg) in something then put that in ax to verify
+	whatever that wrapper is claiming about it.
+	
+	x means ax (the only kind of ax remaining as of 2021-2-1 is axType, used with the 4 colors,
+	only 3 of which you ever see at lambda level, but see all 4 at NSAT level.
+	
+	UPDATING 2021-1-29... (todo rewrite this...)
+	ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+	ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+	ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+	ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+	ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+	ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+	ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+	ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+	XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ     λ)    ? //1
+	XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ   (λ λ))  ? //0
+	XXXXXXXX (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //infcur_if_next_param_is_leaf_else_curry_if_its_unarynum
+	XXXXXXXX (λ   λ   (λ λ)   λ   (λ λ))  ?     ?     ? //typeval_and_the_2_get_truthval_ops
+	ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+	
+	
+	OLD:
+	ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+	ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+	ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+	ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+	ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+	ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+	ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+	ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+	ukƱuu1?? (λ   λ   (λ λ)   λ     λ     λ)    ?     ? //1
+	ukƱuu0?? (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //0
+	ukƱu∩∞?? (λ   λ   (λ λ)   λ   (λ λ)   λ)    ?     ? //infcur/∞
+	ukƱu∩c?? (λ   λ   (λ λ)   λ   (λ λ) (λ λ))  ?     ? //curry/c
+	ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+	*/
+
+	
+	//First param is λ (aka u aka leaf) for clean, or anything else (such as (λ λ)) for dirty.
+	//
+	//OLD...
+	//
+	//First param chooses isClean vs !isClean. In choosing opcodes, leaf is 0, and anything else is 1.
+	//isClean = !isDirty.
+	//Wiki is the first opcode, so dirtyWiki = (λ λ λ λ λ λ λ),
+	//and (dirtyWiki x) = (λ λ λ λ λ λ λ x) which has 7 params so must eval,
+	//such as (λ λ λ λ λ λ λ "hello")->"world" might be in the dirtyWiki.
+	//A cleanWiki is (λ (λ λ) λ λ λ λ λ), but cleanWiki is practically unuseable
+	//cuz clean means deterministic, so no wiki edits are allowed,
+	//so the wiki is the function (S (T (S I I)) (T (S I I))) which infinite loops for all possible params,
+	//so (λ (λ λ) λ λ λ λ λ "hello") -> (S I I (S I I)) aka never responds to the statement "hello".
+	//
+	//Similarly, if cleanS or cleanPair etc tries to create a dirty, it evals to (S I I (S I I)).
+	//Dirty can create clean, but clean cant create dirty. If a call starts as clean, it ends as clean,
+	//but if that was started by a dirty then when the clean is returned to the dirty,
+	//it can continue as dirty which contains some clean parts (still dirty as a whole).
+	//
+	//Theres a clean/deterministic vs dirty/nondeterministic form of everything.
+	//(aClean bClean) -> thing_that_clean.
+	//(aDirty bDirty) -> thing_that_clean_or_dirty.
+	//(aDirty bClean) -> thing_that_clean_or_dirty.
+	//(aClean bDirty) -> (aClean (recursivelyChangeFirstParamsToClean bDirty)) -> (aClean bClean) -> thing_that_clean.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*ANSWER: No, theres not room in opbyte for a comment param, so just keep it before funcbody in curry op,
+	as you can wrap anything in a curry if you just want its param/return mapping,
+	but if its used in reflection (L R Isleaf) then it would appear different to funcs looking at its internal callpair forest shape.
+	
+	FIXME should every node have a place for comment, vs only in curry, vs only in curry and trecurse?
+	If also in trecurse, make sure the fourth last opbit is anything_except_leaf so can put the comment there
+	and (leaf leaf) be the default comment.
+	*/
+	
+	
+	
+	/* Created isclean and Isclean ops, replacing isColorProof and IsColorProof ops which will be derived instead.
+	
+	
+	FIXME might need to replace the first curry with isCleanVsDirty bit,
+	so a function would be a binary forest shape AND a bit,
+	cuz otherwise it would be complicated to have dirty form of leaf since theres only 1.
+	Or could define (u u) and (u (u u)) as the 2 leafs and adjust l and r and isleaf ops to never be able to get u directly
+	and instead see both of those as leaf, and would need isClean op,
+	and could derive asClean and asDirty ops since all clean funcs can be derived from cleanLeaf,
+	and all dirty funcs can be derived from dirtyLeaf.
+	..
+	Where would the isClean op go?
+	Split the leaf color into 2 colors?
+	Split all colors into 2 colors? Dont want to use that space in header.
+	Merge isLeaf isColorProof and isColorDisproof into a func of 2 params called isSameColor?
+	Since lambda can only see nodes that are 1 specific (observed) color, and same for all nodes below are each some color,
+	the isSameColor op would not compare powerset of colors (like in EnumSet<λColor>), just 1 λColor each.
+	(isSameColor λ) would be the isLeaf op and as it has 6 curries, has a unique opbyte so is efficient,
+	but generalizing that, (isSameColor (u (u u))) vs (isSameColor (u u)) do NOT have their own opbyte,
+	so thats a problem. All ops are prefixed by u vs anything_except_u (different number of those per op)
+	and needs efficient isleaf func. Could keep the isleaf func as it is and merge isColorProof and isColorDisproof
+	to become isSameColor of 2 params. isleaf would be true for cleanLeaf and dirtyLeaf.
+	FIXME it might create a problem to have to check isSameColor by example if its checking for isColorProof or isColorDisproof
+	since some optimizations only apply where theres no calls of ax (which those 2 colors occur at,
+	aka where there arent any of certain colors).
+	
+	Maybe use the fpr op to check isCleanVsDirty? I'd prefer it just be an optimization thats derivable from
+	what ther other ops can see, but technically the design would work to...
+	isCleanLeaf = (fpr identityFunc cleanLeaf)
+	isDirtyLeaf = (fpr identityFunc dirtyLeaf)
+	I dont want to use fpr as equals function. Equals should be derived from forest shape and isleaf.
+	
+	I just need 1 more op space, for an op of 1 param: isCleanVsDirty.
+	*/
+	
+	/*TODO "axOpIsChangingTo2OpsOf2ParamsEach_retsLeafWhenCalledOnLeafVsAnythingelse_(axA x y)->(x (t y))_(axA x)_isHaltedIf_(x u)->u"
+	TODO Create typeOfListOfPrimeSize and typeOfListOfNonprimeSize with it, given a func isPrimeSizeList....
+	and create debugStepOver etc.
+	
+	todo op(s) to get λColor, instead of to get the 2 truthvalue bits which color replaces.
+	*/
+	
+	/*FIXME change all strings to only use those 2 chars instead of the more chars I used while designing it,
+	or actually write it like "(λ λ (λ λ) λ)" etc of how to write the normed form of the op in the default syntax,
+	then rename (String)Op.prefix to Op.sourceCode,
+	therefore it will need twice as many ops (except Op.deepLazy and maybe Op.one and Op.zero).
+	FIXME choose between Op.curry being a unaryNumber (other than u aka 0u)
+	vs being a specific op whose next param is a unaryNumber.
+	*/
+	
+	
+	
+
+
+/** TODO rewrite disorganized text...
+<br><br>
+<br><br>
+
+UPDATING 2021-1-29... (todo rewrite this...)
+ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ     λ)    ? //1
+XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ   (λ λ))  ? //0
+XXXXXXXX (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //infcur_if_next_param_is_leaf_else_curry_if_its_unarynum
+XXXXXXXX (λ   λ   (λ λ)   λ   (λ λ))  ?     ?     ? //typeval_and_the_2_get_truthval_ops
+ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+
+UPDATE 2021-1-28[
+ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+ukƱuu1?? (λ   λ   (λ λ)   λ     λ     λ)    ?     ? //1
+ukƱuu0?? (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //0
+ukƱu∩∞?? (λ   λ   (λ λ)   λ   (λ λ)   λ)    ?     ? //infcur/∞
+ukƱu∩c?? (λ   λ   (λ λ)   λ   (λ λ) (λ λ))  ?     ? //curry/c
+ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+]
+
+<br><br>
+
+use ax as typeval where func is recog of that type and ret of leaf is true. create optimization to check for something like (igfp "double[]" (t u)) as tupe, to not have to check constraints where its certain it always returns u.
+..
+change ax so...
+(ax ret func param x) -> (param x),
+aka (ax u type instance) is a typed instance, and (ax u type instance x) -> (instance x).
+
+put typeval as first param of infcur is "contenttype" or maybe first param is always viewed as a utf8 string bit some types are more generally datastructs?
+...
+or just put typeval in the space gained by 0 and 1 having longer prefix?
+..
+no, cuz then lose infcur.
+..
+i want typeval to have exactly 2 halted params so acts like pair. can do that with curry or a prefix of pair.
+..
+could use ax for typeval, viewing a type as a recogfunc, and a type can be designed to contain a string and recog all possible params, like type = (t u) returns u for all possible types. (ax u (t u) instance). (igfp "double[]" (t u)) also rets u for all possible params. (ax uu ) or (ax anythingexceptu) means its not that type, but never halting also means that.
+<br><br>
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+ukƱuuu0
+ukƱuuu1
+ukƱuu∞
+ukƱuc??
+ukƱx???
+
+
+---
+
+<br><br>
+<br><br>
+<br><br>
+
+Most of the opcodes in wikibinator104 will be kept but move ax and curry,
+and the first 2 params choose clean/dirty and isStrange.
+Strange ops are vararg andOr eval on multiple numbers of args. Nonstrange ops all have the same number of curries.
+This will make it easier to dovetail and emulate itself etc.
+I'm abbreving each op and some things that arent ops (param indexs in the op prefixs) with 1 char each
+so I can organize them. This should be viewed in any monospaced font.
+
+x - (ax ret func param ignore)
+c - (curry ,,,u comment funcbody)
+//∞ - infcur
+0 - 0cbtofsamesizeonlyElseReplaceParamWithSelfAndBeHalted
+1 - 1cbtofsamesizeonlyElseReplaceParamWithSelfAndBeHalted
+//2 - iscbt
+s
+t
+f - fi
+l
+r
+a - isleaf
+p - pair
+v - typeval
+//e - cleancall
+w - wiki
+
+u - the leaf aka the universal function.
+i - identityFunc, derived as (f u).
+k - clean: first bit thats leaf for clean, any nonleaf for dirty.
+ʞ - dirty: first bit thats leaf for clean, any nonleaf for dirty.
+Ω - not isStrange
+Ʊ - isStrainge
+∩ - anything except u
+. - u or ∩
+? - anything, param of an op
+_ - ignore
+
+
+ukΩ...l?
+ukΩ...r?
+ukΩ...a?
+ukΩ...w?
+ukΩ..t??
+ukΩ..f??
+//ukΩ..e??
+ukΩ.s???
+ukΩ.p???
+//ukΩ.v???
+ukƱ..0?......
+ukƱ..1?......
+ukƱ.c??......
+ukƱx???.
+
+Remove e/cleancall and derive it as some clean func of λfunc.λparam.(func param). Dirty can call that on 2 dirty params and they'll automatically become clean,
+but will still have to derive func to recursively truncate its param to clean by forkEditing its first param, then of course Evaler.java optimize those. It will be near equally fast as if it was an op, so no problem.
+
+ukΩ...l?
+ukΩ...r?
+ukΩ...a?
+ukΩ...w?
+ukΩ..t??
+ukΩ..f??
+ukΩ.s???
+ukΩ.p???
+ukƱ..0(1 0)0001(1(0 0))
+ukƱ..1(1 0)0001(1(0 0))
+ukƱ.c //next param is unaryNum, and any params after that are ok to hang off the end as its vararg
+ukƱx???
+
+But how to replace v/typeval? If I want to keep the Ω/normal at max 6 params when halted (eval on 7)
+and the Ʊ as storing enough in them to know [their num of curries and to know ret_func_param cache] in 6 params,
+then need to either accept the lack of typeval (which I'm not going to accept, it has to go somewhere)
+or find a place to fit it in...
+
+If theres a comment param, I could put typeval in pair. but comment maybe should just go in params of c/curry???
+
+If comment is only in c/curry, then could still use the opbit just before p/pair as a semantic, that it has to be some nonleaf
+to mean pair, and could use 2 different nonleafs for pair vs typeval, but I dont want to complicate it.
+
+Could put typeval in a curry whose comment says "typeval".
+
+Unrelated to typeval, but I might want 0 and 1 to come earlier, considering that there is ONLY a clean form of them...
+
+
+Do the ops fit....
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+ukƱuu0(1 0)0001(1(0 0))
+ukƱuu1(1 0)0001(1(0 0))
+ukƱuc //next param is unaryNum, and any params after that are ok to hang off the end as its vararg
+ukƱx???
+
+Yes, the ops fit, but I want a typeval op (and am planning to derive cleancall).
+Ok, derive typeval in c/curry.
+
+
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+ukƱuu0(1 0)0001(1(0 0))
+ukƱuu1(1 0)0001(1(0 0))
+ukƱuc //next param is unaryNum, and any params after that are ok to hang off the end as its vararg
+ukƱx???
+
+
+/ - comment param
+
+ukΩuuul/?
+ukΩuuur/?
+ukΩuu∩a/?
+ukΩuu∩w/?
+ukΩu∩t/??
+ukΩu∩f/??
+ukΩ∩s/??? 
+ukΩ∩p/??? //comment of pair tells if its typeval or not, by comment being a certain constant?
+ukƱuu0/(1 0)0001(1(0 0))
+ukƱuu1/(1 0)0001(1(0 0))
+ukƱuc/??? //unaryNum funcBody, and any params after that are ok to hang off the end as its vararg
+ukƱx/????
+
+Some things naturally should not have comments, like 0 and 1 and cbts of them as its just a blob and should be optimized that way,
+and x/ax is for proofs or cache about ret<-(func param),
+and w/wiki is where all nondeterminism goes and should be a func of 1 param instead of 2 including comment.
+
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+ukƱuu0(1 0)0001(1(0 0))
+ukƱuu1(1 0)0001(1(0 0))
+ukƱuc //c itself is unaryNum at least 1 (,u), and any params after that are ok to hang off the end as its vararg
+ukƱx???
+
+If c is replaced by a unaryNumber such as (t (t (t u))) aka ,,,u for 3u, and never use u in its param (as that means 0 or 1)
+then can fit 1 more param...
+
+u k Ʊ u u 0 (1 0)0001(1(0 0))
+u k Ʊ u u 1 (1 0)0001(1(0 0))
+u k Ʊ u 3u "fibonacci" {funcbody} ...params...
+u k Ʊ x_as_u ret func param ignore
+
+Theres room for more ops as 0 and 1 could each lose a param, but that wouldnt fit well with Ω vs Ʊ,
+and it does leave room for cbt2 in the first 6 params being halted, which might be useful for truthvalue being part of opByte.
+
+Cleancall will be derived.
+
+Where does typeval go?
+
+
+Or maybe put typeval in ∞/infcur?
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+ukƱuuu0(1 0)0001(1(0 0))
+ukƱuuu1(1 0)0001(1(0 0))
+ukƱuu∞ //(∞ type) fits in the 6 params, but val is first to push into infcur range aka normally things halt
+ukƱuc //c itself is unaryNum at least 1 (,u), and any params after that are ok to hang off the end as its vararg
+ukƱx???
+
+c/curry and ∞/infcur are both same kind of thing IF you view [0u (unaryNum0) aka u] as infinite number of curries.
+So put those together???
+No c lacks enuf params for that.
+
+use ax as typeval where func is recog of that type and ret of leaf is true. create optimization to check for something like (igfp "double[]" (t u)) as tupe, to not have to check constraints where its certain it always returns u.
+..
+change ax so...
+(ax ret func param x) -> (param x),
+aka (ax u type instance) is a typed instance, and (ax u type instance x) -> (instance x).
+
+put typeval as first param of infcur is "contenttype" or maybe first param is always viewed as a utf8 string bit some types are more generally datastructs?
+...
+or just put typeval in the space gained by 0 and 1 having longer prefix?
+..
+no, cuz then lose infcur.
+..
+i want typeval to have exactly 2 halted params so acts like pair. can do that with curry or a prefix of pair.
+..
+could use ax for typeval, viewing a type as a recogfunc, and a type can be designed to contain a string and recog all possible params, like type = (t u) returns u for all possible types. (ax u (t u) instance). (igfp "double[]" (t u)) also rets u for all possible params. (ax uu ) or (ax anythingexceptu) means its not that type, but never halting also means that.
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+ukƱuuu0
+ukƱuuu1
+ukƱuu∞
+ukƱuc??
+ukƱx???
+
+FIXME i want c and ∞ to align at the same opbit prefix len.
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+ukƱuuu0
+ukƱuuu1
+ukƱu∞    FIXME this conflicts with ukƱuu since the last opbit of ∞ is u and thats a prefix of 0 and 1.
+ukƱuc??
+ukƱx???
+
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+ukƱuuu0
+ukƱuuu1
+ukƱu∩∞ 
+ukƱu∩c? FIXME i want 2 curries after c to fit in the first 6 curries, those being comment and funcbody.
+ukƱx???
+
+ukƱu∩∞ 
+
+---
+
+
+
+ukΩuuul?
+ukΩuuur?
+ukΩuu∩a?
+ukΩuu∩w?
+ukΩu∩t??
+ukΩu∩f??
+ukΩ∩s???
+ukΩ∩p???
+
+ukƱuu0??
+ukƱuu1??
+ukƱu∩∞??
+ukƱu∩c??
+ukƱx????
+
+ukƱuu0??
+ukƱuu1??
+ukƱuc???
+ukƱx????
+
+ukƱuuu0?
+ukƱuuu1?
+ukƱuu∩??
+ukƱu∩∞??
+ukƱu∩c??
+ukƱx????
+
+ukƱuuu0?
+ukƱuuu1?
+ukƱuu∩∞?
+ukƱuu∩@? //anothe constant can go at @?
+ukƱu∩c??
+ukƱx????
+
+//opByte can tell 0 vs 00 vs 01 vs 1 vs 10 vs 11 (so can do truthvalue efficiently), other than the prefixes of 0 and 1.
+ukƱuu0??
+ukƱuu1??
+ukƱu∩∞?? 
+ukƱu∩c?? //c/curry's first param is unaryNumber of curries, and is the 6th param of u. Its important that fit in the first 6.
+ukƱx???? //x/ax's first 3 params are the fourth fifth and sixth params of u. checks constraint at sixth. evals at 7.
+
+ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
+ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
+ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
+ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
+ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
+ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
+ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
+ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
+ukƱuu1?? (λ   λ   (λ λ)   λ     λ     λ)    ?     ? //1
+ukƱuu0?? (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //0
+ukƱu∩∞?? (λ   λ   (λ λ)   λ   (λ λ)   λ)    ?     ? //infcur/∞
+ukƱu∩c?? (λ   λ   (λ λ)   λ   (λ λ) (λ λ))  ?     ? //curry/c
+ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
+*/

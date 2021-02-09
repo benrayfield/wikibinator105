@@ -1,7 +1,12 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
 
-/** sync levels in order of increasing difficulty of sync,
+/** UPDATE: redesigned colors so lambdea level can only see color halted,
+and theres axA and axB which use forest shape instead of color, but nsat level still sees color.
+<br><br>
+OLD...
+<br><br>
+sync levels in order of increasing difficulty of sync,
 slCleanAxless being easiest and most reliable, then slCleanWithAx,
 then slDirty is hardest to sync but also needed for wiki to do anything nontrivial.
 Work up the levels gradually, in experiments, both in single computer and sync in p2p network,
@@ -29,7 +34,7 @@ to verify stronger or more sparse for more efficiency.
 */
 public enum SyncLevel{
 	
-	UPDATE: getting rid of color and instead will have 2 (or maybe 3) kinds of Op.ax:
+	/*UPDATE: getting rid of color and instead will have 2 (or maybe 3) kinds of Op.ax:
 	(axA x) and (axB x) cant both exist.
 	(axA x) is halted if (x u)->u.
 	(axB x) is halted if (x u) -> anything except u.
@@ -56,7 +61,7 @@ public enum SyncLevel{
 	slCleanAxless,
 	
 	/** Clean but allows (ax param) seen deeply thru l() and r(),
-	such as (ax (fpr (pair x y) T x)) meaning (pair x y T)->x
+	such as (ax λ (fpr (pair x y) T x)) meaning (pair x y T)->x
 	In clean, all calls of wiki eval to (S I I (S I I)) which is an infinite loop.
 	*/
 	slCleanWithAx,

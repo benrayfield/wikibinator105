@@ -4,8 +4,6 @@ import java.lang.ref.WeakReference;
 import java.util.EnumSet;
 import java.util.function.UnaryOperator;
 
-import wikibinator105.spec.err.NotObserve;
-
 /** TODO rewrite code and comments cuz copied alot from wikibinator104 to this wikibinator105.
 immutable. binary forest node, defined ONLY by its forest shape, with no data in each node
 except caches which can be derived from that shape.
@@ -22,7 +20,7 @@ which is similar to occamsfuncerV2's curry op which used its second last param f
 As of 2021-1-21 github.com/benrayfield/occamsfuncer is version 3 but doesnt say what its version is,
 and it doesnt have that infloop in curry behavior cuz its an axiom related thing thats hard to prove things about. 
 */
-public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
+public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob*/{
 	
 	/*Here's the plan: see λColor and superposition()
 	TODO merge wikibinator105 node with axiomforest node, but how much can they merge?
@@ -53,7 +51,14 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	/** param/R child, of the 2 childs in binary forest. Self is 1. left of x is x*2. right of x is x*2+1. */
 	public default Subclass r(){ return g(3); }
 	
-	/** UPDATE: This is 1 of the 2 192 bit hashes in id512, so do keep this comment here,
+	/** UPDATE: superposition() will be done in user level code
+	which generates an id thats intentionally designed to be the same bits for (axA x) and (axB x)
+	but different bits for axA vs axB by itself, for the purpose of verifying
+	theres at most 1 of (axA x) vs (axB x) forall x.
+	<br><br>
+	OLD...
+	<br><br>
+	UPDATE: This is 1 of the 2 192 bit hashes in id512, so do keep this comment here,
 	but dont return it as a λ. This is only visible at the NSAT level and in some kinds of ids.
 	Old...
 	UPDATE: use as many bits of bloomfilter per node as λColor,
@@ -133,19 +138,19 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	so different merkle forests can be matched node for node to compare their colors and OR the colors into eachother,
 	changing unknown to any of those 4 colors or to bull where theres 2 or more different colors claimed,
 	which would mark the bull bit in the default kind of id256 so anything which contains bull knows instantly in id256.
-	*/
+	*
 	public default boolean isUnknown(){
 		//return tv()==λColorTruthValue.unknown;
 		return colors().isEmpty();
 	}
 	
-	/** claim of at least 2 of λColor.proof λColor.disproof λColor.wordsalad λColor.normal, similar to TruthValue.bull */
+	/** claim of at least 2 of λColor.proof λColor.disproof λColor.wordsalad λColor.normal, similar to TruthValue.bull *
 	public default boolean isBull(){
 		//return tv()==λColorTruthValue.bull;
 		return colors().size()>1;
 	}
 	
-	/** has exactly 1 color? At lambda level, everything does, but at NSAT level, it can be any in powerset of colors per node. */
+	/** has exactly 1 color? At lambda level, everything does, but at NSAT level, it can be any in powerset of colors per node. *
 	public default boolean isObserve(){
 		return colors().size()==1;
 	}
@@ -156,7 +161,7 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	
 	public default boolean is(λColor color){
 		return isObserve() && color()==color;
-	}
+	}*/
 	
 	/** this as next bit in opbyte */
 	public default boolean opbit(){
@@ -224,12 +229,12 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	
 	/** powerset of λColors per node. empty set is Unknown. If colors().size()>1 thats Bull. Either way thats NotObserve.
 	At lambda level each node has exactly 1 color, but at NSAT level it can be any in the powerset of colors per node.
-	*/
+	*
 	public EnumSet<λColor> colors();
 	
 	/** TODO override for efficiency, else it creates iterator of colors() to get first.
 	At lambda level each node has exactly 1 color, but at NSAT level it can be any in the powerset of colors per node.
-	*/
+	*
 	public default λColor color() throws NotObserve{
 		EnumSet<λColor> colors = colors();
 		if(colors.size() != 1){
@@ -237,7 +242,7 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 			//throw NotObserve.instance; //TODO new NotObserve() so get stacktrace but is much slower?
 		}
 		return colors().iterator().next();
-	}
+	}*/
 	
 	
 	/** same as l().r() but may be more efficient, such as in the optimization used in Pair.java
@@ -279,8 +284,11 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	but in occamsfuncer its top down it creates l() or r() then recurses, which is inefficient
 	compared to creating the one you want directly at a binheapIndex
 	but I'm unsure if going directly to it might create dedup problems.
-	*/
+	*
 	public default boolean isSkip(int binheapIndex){ return false; }
+	*/
+	
+	
 	
 	/*
 	public default boolean isLoaded_g(int binheapIndex){ return isLoaded_g((long)binheapIndex); }
@@ -377,7 +385,9 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	
 	public void setCompiled(EvalerChain c);
 	
-	/** If this is a cbt (complete binary tree of pair of pair... of t vs f),
+	/** FIXME should λ implement Blob instead of returning one, and Blob have a function to say if it is or is not a Blob?
+	<br><br>
+	If this is a cbt (complete binary tree of pair of pair... of t vs f),
 	either as pure interpreted lambdas or a wrapper of a byte, long, float, array, nio Buffer, etc,
 	then view it as Blob (immutable).
 	TODO can this be null?
@@ -386,9 +396,9 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>{
 	
 	/** WeakReference to this λ. TODO should this be a field in Simpleλ vs created every time this is called?
 	The default implementation of this creates a new WeakReference each time.
-	*/
+	*
 	public default WeakReference<λ> weakref(){
 		return new WeakReference(this);
-	}
+	}*/
 
 }

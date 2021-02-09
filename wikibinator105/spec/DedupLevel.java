@@ -32,8 +32,8 @@ public enum DedupLevel{
 	*/
 	dlPerfectUnlessHashCollision,
 	
-	"TODO what about 'A lambda could generate a hash thats the same for (axA x) and (axB x),\n"
-	+ "	for any x, but different for axA vs axB, or something like that"
+	//TODO what about 'A lambda could generate a hash thats the same for (axA x) and (axB x),
+	//for any x, but different for axA vs axB, or something like that.
 	
 	/** Things will be as efficient as RandomAccessMachine on average,
 	times a large constant for hashtable cache misses. The normal DedupLevel that

@@ -1,5 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl.ui;
+package wikibinator105.plugins.colorededgespanel;
 import java.util.*;
 
 import wikibinator105.spec.λ;
