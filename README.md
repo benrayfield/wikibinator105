@@ -57,6 +57,20 @@ public static void play_float64_2Speakers_1Microphone_44100Fps(λ soundstream){
 }
 ```
 
+Since all possible state is in Wiki, and a wiki is naturally public, such a sound stream is potentially a competition for VoIP, Skype, etc,
+though things will only be broadcast if someone wants to receive it and if you want to send it as there should (TODO) be
+some kind of settings in Wikibinator105 VM to specify which things to share and searching and caching in p2p network etc.
+(AxA (Fpr Wiki [1612969561952000000L "user3345346547453e45345345.microphoneX"] -.563345634)) is not specific to any one computer.
+Its a statement that at time 1612969561952000000L (nanoseconds utc) that microphone had that wave amplitude,
+and could just as easily been userSSDFADSFG45 or not have the word "user" in the parameter of Wiki at all,
+as its generally a system of lambdas, and float64 or int16 wave amplitudes (or compressions of them) are just kinds of lambdas.
+It will support turing complete compression so you dont have to literally send every individual wave amplitude
+as an id256 including the AxA and Fpr statements about it.
+You could instead, something like this... send a double[] and an AxA and Fpr statement that
+loops over the block and implies those individual statements,
+or you could port various other compression formats (video, 7z, zip, jpg, etc) to user level code
+(derive them by calling λ on itself in various combos, as its a universal combinator).
+
 The MarklarId105b kind of 256 bit ids will uniquely identify a lambda function anywhere in the peer to peer network
 and will be created in 1 millionth of a second each and have 49% binary storage efficiency
 in their simplest form and 99% if you dont store some of the middle nodes,
