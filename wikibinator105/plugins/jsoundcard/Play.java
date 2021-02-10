@@ -4,19 +4,21 @@ import jsoundcard.SoundFunc;
 import wikibinator105.spec.*;
 
 public class Play{
+	private Play(){}
 	
-	/** soundstream.e(double[1]).e(Fal).d(0) and .d(1) are next 2 speaker outputs,
+	/** soundstream.e(double[1]).e(Tru).d(0) and .d(1) are next 2 speaker outputs,
 	and the double[1] is microphone input, all in range -1 to 1 (else truncates into that range),
-	and soundstream.e(double[1]).e(Tru) is next soundstream (a stateless snapshot of its next state),
+	and soundstream.e(double[1]).e(Fal) is next soundstream (a stateless snapshot of its next state),
 	though it can have a tiny amount of state in the Op.Wiki function,
 	in the way that (Wiki x)->y and (Wiki x)->z cant both be true unless y==z
 	aka the infinite space inside Wiki can each part only be written once ever,
-	and maybe (Wiki [timeUtcNanoseconds "user3345346547453e45345345.microphoneX"])->float64Amplitude
+	and maybe (Wiki [timeUtcNanoseconds "user3345346547453e45345345.microphoneX"])->2_float64Amplitudes
 	which soundstream might know to look in that, and externally you create
-	(AxA (Fpr Wiki [1612969561952000000L "user3345346547453e45345345.microphoneX"] -.563345634)),
+	(AxA (Fpr Wiki [1612969561952000000L "user3345346547453e45345345.microphoneX"] cbtOf_-.563345634_.77889)),
 	though that might need some adjustments to this play_float64_2Speakers_1microphone_44100fps
 	function to sync the time better, such as maybe timeUtcNanoseconds should be 1 of the params
-	of the λ soundstream???
+	or in the cbt as the first double (can only have microsecond precision if double, or still use it as long?)
+	as 1 of the sound channels of the λ soundstream??? or just another param of the soundstream?
 	<br><br>
 	TODO test this. The code isnt even compiling as of 2021-2-10 but occamsfuncer works
 	and this is a variant of occamsfuncer. Will get it working soon, and this will fit in,
@@ -32,13 +34,14 @@ public class Play{
 			final λ F = soundstream.op(Op.Fal);
 			public double[] apply(double[] ins){
 				//TODO use e(maxSpend,param) to avoid infiniteloops etc, considering its limited to 0.9/fps seconds.
-				λ pairOfNextStateAndOuts = state.e(ins);
-				λ outs = pairOfNextStateAndOuts.e(F); //same as lispCdr if its a pair
-				state = pairOfNextStateAndOuts.e(T); //same as lispCar if its a pair
-				return new double[]{
-					state.d(0), //speaker
-					state.d(1)  //speaker
+				λ pairOfOutsAndNextState = state.e(ins);
+				λ outs = pairOfOutsAndNextState.e(T); //same as lispCar if its a pair
+				double[] ret = new double[]{
+					outs.d(0), //speaker
+					outs.d(1)  //speaker
 				};
+				state = pairOfOutsAndNextState.e(F); //same as lispCdr if its a pair
+				return ret;
 			}
 			public int outs(){
 				return 2;
