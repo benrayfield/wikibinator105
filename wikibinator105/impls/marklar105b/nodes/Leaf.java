@@ -1,10 +1,6 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl.nodes;
-import static wikibinator105.impl.ImportStatic.*;
-
-import java.util.EnumSet;
-
-import wikibinator105.impl.*;
+package wikibinator105.impls.marklar105b.nodes;
+import static wikibinator105.impls.marklar105b.ImportStatic.*;
 import wikibinator105.spec.*;
 
 public class Leaf extends AbstractFn{
@@ -52,10 +48,6 @@ public class Leaf extends AbstractFn{
 	}
 
 	public Blob blob(){
-		throw new RuntimeException("TODO");
-	}
-
-	public EnumSet<λColor> colors(){
 		throw new RuntimeException("TODO");
 	}
 

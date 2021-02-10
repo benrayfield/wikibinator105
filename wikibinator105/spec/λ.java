@@ -313,6 +313,42 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	*/
 	public Subclass g(long binheapIndex);
 	
+	/** 0 if not a cbt. get bits n*8..n*8+7 if this is a cbt.
+	TODO throw vs represent it as 0s outside that range or partially outside.
+	This is efficient for wrappers of byte[] etc.
+	*/
+	public byte b(int n);
+	
+	/** 0 if not a cbt. get bits n*16..n*16+15 if this is a cbt.
+	TODO throw vs represent it as 0s outside that range or partially outside.
+	This is efficient for wrappers of short[] or char[] or String etc.
+	*/
+	public short s(int n);
+	
+	public default char c(int n){
+		return (char)s(n);
+	}
+	
+	/** 0 if not a cbt. get bits n*32..n*32+31 if this is a cbt.
+	TODO throw vs represent it as 0s outside that range or partially outside.
+	This is efficient for wrappers of int[] or float[] etc.
+	*/
+	public int i(int n);
+	
+	public default float f(int n){
+		return Float.intBitsToFloat(i(n));
+	}
+	
+	/** 0 if not a cbt. get bits n*64..n*64+63 if this is a cbt.
+	TODO throw vs represent it as 0s outside that range or partially outside.
+	This is efficient for wrappers of long[] or double[] etc.
+	*/
+	public long j(int n);
+	
+	public default double d(int n){
+		return Double.longBitsToDouble(j(n));
+	}
+	
 	/** each bit in binheapIndex chooses lr() vs r() which is useful for pairs and cbts.
 	Self is 1. left.right of x is x*2. right of x is x*2+1.
 	g(...) can do the same as about half as deep in G(...) in cbt. g can do a gigabit. G an exabit.
@@ -333,6 +369,15 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	/** lambda call (eval this on) by eager eval. For lazy eval (todo choose a design?) use this.p(λ)??? */
 	public Subclass e(Subclass r);
 	
+	public default Subclass e(Object r){
+		return e(w(r));
+	}
+	
+	/** wrap. Does not depend on (this) instance, other than maybe which optimizations it might use
+	varies by implementation of wikibinator105. TODO move this to a VM.java instance etc?
+	*/
+	public Subclass w(Object wrapMe);
+	
 	/** Returns the same return as e(λ),
 	if it has enough gas (compute resources such as time and memory and num of compiles),
 	and the $λ.gas is how much of that maxSpend remains (was not spent).
@@ -351,11 +396,21 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	*/
 	public $λ<Subclass> e(long maxSpend, Subclass r);
 	
+	public default $λ<Subclass> e(long maxSpend, Object r){
+		return e(maxSpend,w(r));
+	}
+	
 	/** lambda call (eval this on) by eager eval. For lazy eval (todo choose a design?) use this.p(λ)??? 
 	UnaryOperator<λ>, but I want the func names used very often to have short names like e(λ) instead of apply(λ).
+	TODO generalize to Object param and use w(Object) like e(Object) and e(long,Object) do?
 	*/
 	public default Subclass apply(Subclass r){
 		return e(r);
+	}
+	
+	
+	public default λ op(Op o){
+		throw new RuntimeException("TODO derive it from forest shape, and let subclasses use a switch to return a constant such as ImportStatic.s is Op.s");
 	}
 	
 	/** cache of 8 of (isLeaf this) .. (isLeaf this.l.l.l.l.l.l.l)

@@ -1,7 +1,7 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl.nodes;
-import static wikibinator105.impl.ImportStatic.*;
-import wikibinator105.impl.fn;
+package wikibinator105.impls.marklar105b.nodes;
+import static wikibinator105.impls.marklar105b.ImportStatic.*;
+import wikibinator105.impls.marklar105b.fn;
 import wikibinator105.spec.*;
 
 public class Simpleλ extends AbstractFn{
@@ -22,14 +22,16 @@ public class Simpleλ extends AbstractFn{
 	}*/
 	
 	/** nonleaf */
-	public Simpleλ(λColor color, fn l, fn r){
+	public Simpleλ(fn l, fn r){
+	//public Simpleλ(λColor color, fn l, fn r){
 		this.l = l;
 		this.r = r;
 		//this.opByte = parentOpByte(l.opByte(),r.opByte());
 		//this.opByte = parentOpByte(l.opByte(),r.opByte());
-		long[] headerAndBize = parentHeaderAndBize(color, l.header(), l.bize(), r.header(), r.bize()); //TODO optimize by not creating long[2]?
-		this.header = headerAndBize[0];
-		this.bize = headerAndBize[1];
+		this.header = MarklarId105b.parentHeader(l.marklar105bHeader(), r.marklar105bHeader());
+		//long[] headerAndBize = parentHeaderAndBize(color, l.header(), l.bize(), r.header(), r.bize()); //TODO optimize by not creating long[2]?
+		//this.header = headerAndBize[0];
+		//this.bize = headerAndBize[1];
 		
 		// |1 cuz this is not a leaf, cuz this has 2 childs.
 		//The 2 childs of leaf are identityFunc and leaf, but that would eval instantly and return leaf

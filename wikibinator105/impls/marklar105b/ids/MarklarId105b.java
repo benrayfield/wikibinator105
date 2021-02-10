@@ -44,6 +44,10 @@ It seems similar to how a universal function works. Theres only 1 word but you c
 */
 public final class MarklarId105b implements IdMaker_old_useFuncsDirectlyAsIdmaker{
 	
+	public static long parentHeader(long leftHeader, long rightHeader){
+		TODO
+	}
+	
 	TODO...
 	
 	//Here's the datastruct for MarklarId105b:`

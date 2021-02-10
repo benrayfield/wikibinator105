@@ -132,6 +132,24 @@ public enum Op{
 	*/
 	getParam(0b01011000,false,false,1),
 	GetParam(0b01011001,false,false,1),
+	
+	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
+	
+	/** λy.λz.y aka true. (pair b c tru) is b. Is the K lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
+	tru(0b00100000,false,false,2),
+	Tru(0,false,false,2),
+	
+	/** λy.λz.z aka false aka f. (fal λ) is identityFunc aka λz.z. (pair b c fal) is c. */
+	fal(0/*,"(λ λ λ λ (λ λ) (λ λ))"*/,false,false,2),
+	Fal(0/*"(λ (λ λ) λ λ (λ λ) (λ λ))"*/,false,false,2),
+	
+	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
+	pair(0/*"(λ λ λ (λ λ) (λ λ))"*/,false,false,3),
+	Pair(0/*"(λ (λ λ) λ (λ λ) (λ λ))"*/,false,false,3),
+	
+	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
+	trecurse(0/*"(λ λ λ (λ λ) λ)"*/,false,false,3),
+	Trecurse(0/*"(λ (λ λ) λ (λ λ) λ)"*/,false,false,3),
 
 	
 	/** If its param is λ, its 1, vs if its param is anything except λ, its 0,

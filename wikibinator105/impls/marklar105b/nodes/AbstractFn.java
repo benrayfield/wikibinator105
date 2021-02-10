@@ -1,9 +1,8 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl.nodes;
-import static wikibinator105.impl.ImportStatic.*;
-
-import wikibinator105.impl.fn;
-import wikibinator105.impl.evalers.InterpretedMode;
+package wikibinator105.impls.marklar105b.nodes;
+import static wikibinator105.impls.marklar105b.ImportStatic.*;
+import wikibinator105.impls.marklar105b.fn;
+import wikibinator105.impls.marklar105b.evalers.InterpretedMode;
 import wikibinator105.spec.*;
 
 public abstract class AbstractFn implements fn{

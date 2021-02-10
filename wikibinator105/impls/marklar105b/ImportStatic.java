@@ -21,11 +21,16 @@ public class ImportStatic{
 	}
 	
 	public static fn cp(fn func, fn param){
+		//FIXME use hashtable for instant partial dedup (and ids for lazy perfect dedup)
+		return new Simpleλ(func, param);
+	}
+	
+	/*public static fn cp(fn func, fn param){
 		if(func == ax || func == Ax) throw new RuntimeException("func is ax or Ax: "+func+" so it has to call its param on leaf to know its color proof, color disproof, or if it doesnt halt (which you probably wouldnt know) its color wordsalad. else its color normal.");
 		return cp(λColor.nonaxof1paramcallNormal, func, param);
 	}
 	
-	/** call pair */
+	/** call pair *
 	public static fn cp(λColor color, fn func, fn param){
 		
 		//FIXME check for Pairnode and Curnode so dedup works with their lazyEval and use of g(int) funcs,
@@ -37,7 +42,7 @@ public class ImportStatic{
 		
 		//FIXME use hashtable for instant partial dedup (and ids for lazy perfect dedup)
 		return new Simpleλ(color, func, param);
-	}
+	}*/
 	
 	public static fn cp(fn... list){
 		fn x = list[0];
@@ -282,7 +287,7 @@ public class ImportStatic{
 	
 	public static final byte magic
 	
-	/** returns long[]{header,bize} */
+	/** returns long[]{header,bize} *
 	public static long[] parentHeaderAndBize(EnumSet<λColor> colors, long leftHeader, long leftBize, long rightHeader, long rightBize){
 		long header = 0;
 		long bize = 0;
@@ -314,6 +319,6 @@ public class ImportStatic{
 		
 		//FIXME
 		return new long[]{header,bize};
-	}
+	}*/
 
 }

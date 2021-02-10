@@ -4,7 +4,9 @@ package wikibinator105.spec;
 
 
 /** λColor was redesigned 2021-2-9 in the then-incomplete wikibinator105 universal function,
-so the lambda level can only see 1 color, and the nsat level below it can also see nonhalted colors.
+so the lambda level can only see 1 color (2 if you count leaf, but thats only 1 other node),
+so color doesnt need to be stored in ids of lambdas (so can use 256 bit instead of 512 bit ids),
+and the nsat level below it can also see nonhalted colors.
 For example, the color of (S I I pair) is evalingAndWillHalt since it evals to (pair pair),
 but everything is immutable/stateless so (S I I pair) is a specific node aka (((S I) I) pair)
 which can be looked into deeper using L and R all the way down to λ/u/leaf/theUniversalFunction.
@@ -18,11 +20,14 @@ Or both may be evalingAndWontHalt which happens if (x λ) will never halt.
 */
 public enum λColor{
 	
+	/* λ/u/leaf/theUniversalFunction. */
+	coLeaf(true,true,true),
+	
 	/** See comments in Op enum for what is and is not halted, based only on its forest shape,
 	which can be known in bigO(1) if certain caches are used or bigO(numberOfNodesReachableBelow) without those caches.
 	Its not a question of will it halt or not. Its a snapshot of computing state that is or is not halted already.
 	*/
-	halted(true,true),
+	coHaltedNonleaf(false,true,true),
 	
 	/** See comment of λColor.halted. If its not halted, its 1 of evalingAndWillHalt or evalingAndWontHalt.
 	To know which of those, you need an average of infinite time and memory at the nsat level,
@@ -34,14 +39,15 @@ public enum λColor{
 	and numberOfNodesAtOrBelowHeight(n)=numberOfNodesAtOrBelowHeight(n-1)^2+1,
 	and numberOfNodesAtHeight(n)=numberOfNodesAtOrBelowHeight(n)-numberOfNodesAtOrBelowHeight(n-1).
 	*/
-	evalingAndWillHalt(false,true),
+	coWillHalt(false,false,true),
 	
-	/** see comment of evalingAndWillHalt */
-	evalingAndWontHalt(false,false);
+	/** wont halt. see comment of evalingAndWillHalt */
+	coWontHalt(false,false,false);
 	
-	public final boolean isHalted, willHalt;
+	public final boolean isLeaf, isHalted, willHalt;
 	
-	private λColor(boolean isHalted, boolean willHalt){
+	private λColor(boolean isLeaf, boolean isHalted, boolean willHalt){
+		this.isLeaf = isLeaf;
 		this.isHalted = isHalted;
 		this.willHalt = willHalt;
 	}
