@@ -4,18 +4,6 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.
 
-(TODO) Spreadsheet with an infinite number of columns and an infinite number of rows, which is already 100% filled out
-as it contains every possible column and every possible row and every possible spreadsheet already,
-so when you type into it, you are actually just looking through those possible rows,
-and when you create a column, its just finding that column as it already exists,
-and everyone in the p2p network using spreadsheets will be in the same spreadsheet
-and a million people could "edit it" together, forking and merging like a blockchain/sidechains
-but actually they are just navigating the space of all possible blockchains/sidechains.
-For example, a colum which sums 2 other specific columns, already will have an id256 of that column,
-and if 2 different people create that column, they will deterministicly generate the same id256 of it.
-Its simply func_param_return caches in the spreadsheet, where column is func, row is param, and cell value is return.
-https://github.com/benrayfield/wikibinator105/blob/main/wikibinator105/plugins/spreadsheet/SpreadsheetJTable.java
-
 (TODO) Evolvable musical instruments will work like this, using this plugin:
 https://github.com/benrayfield/wikibinator105/blob/main/wikibinator105/plugins/jsoundcard/Play.java
 ```
@@ -82,6 +70,19 @@ You could instead, something like this... send an int16[] and an AxA and Fpr sta
 loops over the block and implies those individual statements,
 or you could port various other compression formats (video, 7z, zip, jpg, etc) to user level code
 (derive them by calling λ on itself in various combos, as its a universal combinator).
+
+
+(TODO) Spreadsheet with an infinite number of columns and an infinite number of rows, which is already 100% filled out
+as it contains every possible column and every possible row and every possible spreadsheet already,
+so when you type into it, you are actually just looking through those possible rows,
+and when you create a column, its just finding that column as it already exists,
+and everyone in the p2p network using spreadsheets will be in the same spreadsheet
+and a million people could "edit it" together, forking and merging like a blockchain/sidechains
+but actually they are just navigating the space of all possible blockchains/sidechains.
+For example, a colum which sums 2 other specific columns, already will have an id256 of that column,
+and if 2 different people create that column, they will deterministicly generate the same id256 of it.
+Its simply func_param_return caches in the spreadsheet, where column is func, row is param, and cell value is return.
+https://github.com/benrayfield/wikibinator105/blob/main/wikibinator105/plugins/spreadsheet/SpreadsheetJTable.java
 
 (TODO) The MarklarId105b kind of 256 bit ids will uniquely identify a lambda function anywhere in the peer to peer network
 and will be created in 1 millionth of a second each and have 49% binary storage efficiency
