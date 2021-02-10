@@ -4,19 +4,18 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.
 
-```
 Evolvable musical instruments will work like this, using this plugin:
 https://github.com/benrayfield/wikibinator105/blob/main/wikibinator105/plugins/jsoundcard/Play.java
-
+```
 /** soundstream.e(double[1]).e(Tru).d(0) and .d(1) are next 2 speaker outputs,
 and the double[1] is microphone input, all in range -1 to 1 (else truncates into that range),
 and soundstream.e(double[1]).e(Fal) is next soundstream (a stateless snapshot of its next state),
 though it can have a tiny amount of state in the Op.Wiki function,
 in the way that (Wiki x)->y and (Wiki x)->z cant both be true unless y==z
 aka the infinite space inside Wiki can each part only be written once ever,
-and maybe (Wiki [timeUtcNanoseconds "user3345346547453e45345345.microphoneX"])->2_float64Amplitudes
+and maybe (Wiki [timeUtcNanoseconds "user3345346547453e45345345.microphoneX"])->float64Amplitude
 which soundstream might know to look in that, and externally you create
-(AxA (Fpr Wiki [1612969561952000000L "user3345346547453e45345345.microphoneX"] cbtOf_-.563345634_.77889)),
+(AxA (Fpr Wiki [1612969561952000000L "user3345346547453e45345345.microphoneX"] -.563345634)),
 though that might need some adjustments to this play_float64_2Speakers_1microphone_44100fps
 function to sync the time better, such as maybe timeUtcNanoseconds should be 1 of the params
 or in the cbt as the first double (can only have microsecond precision if double, or still use it as long?)

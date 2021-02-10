@@ -12,9 +12,9 @@ public class Play{
 	though it can have a tiny amount of state in the Op.Wiki function,
 	in the way that (Wiki x)->y and (Wiki x)->z cant both be true unless y==z
 	aka the infinite space inside Wiki can each part only be written once ever,
-	and maybe (Wiki [timeUtcNanoseconds "user3345346547453e45345345.microphoneX"])->2_float64Amplitudes
+	and maybe (Wiki [timeUtcNanoseconds "user3345346547453e45345345.microphoneX"])->float64Amplitude
 	which soundstream might know to look in that, and externally you create
-	(AxA (Fpr Wiki [1612969561952000000L "user3345346547453e45345345.microphoneX"] cbtOf_-.563345634_.77889)),
+	(AxA (Fpr Wiki [1612969561952000000L "user3345346547453e45345345.microphoneX"] -.563345634)),
 	though that might need some adjustments to this play_float64_2Speakers_1microphone_44100fps
 	function to sync the time better, such as maybe timeUtcNanoseconds should be 1 of the params
 	or in the cbt as the first double (can only have microsecond precision if double, or still use it as long?)
