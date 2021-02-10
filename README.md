@@ -66,7 +66,7 @@ and could just as easily been userSSDFADSFG45 or not have the word "user" in the
 as its generally a system of lambdas, and float64 or int16 wave amplitudes (or compressions of them) are just kinds of lambdas.
 It will support turing complete compression so you dont have to literally send every individual wave amplitude
 as an id256 including the AxA and Fpr statements about it.
-You could instead, something like this... send a double[] and an AxA and Fpr statement that
+You could instead, something like this... send an int16[] and an AxA and Fpr statement that
 loops over the block and implies those individual statements,
 or you could port various other compression formats (video, 7z, zip, jpg, etc) to user level code
 (derive them by calling λ on itself in various combos, as its a universal combinator).
