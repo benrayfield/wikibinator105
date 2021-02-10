@@ -4,10 +4,9 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.
 
-```
 Evolvable musical instruments will work like this, using this plugin:
 https://github.com/benrayfield/wikibinator105/blob/main/wikibinator105/plugins/jsoundcard/Play.java
-
+```
 /** soundstream.e(double[1]).e(Tru).d(0) and .d(1) are next 2 speaker outputs,
 and the double[1] is microphone input, all in range -1 to 1 (else truncates into that range),
 and soundstream.e(double[1]).e(Fal) is next soundstream (a stateless snapshot of its next state),
