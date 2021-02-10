@@ -26,7 +26,7 @@ public class Play{
 	of 16 frames (wave amplitudes per speaker/microphone) or 256 of them like WebAudioAPI does etc,
 	but since its only called 44100 times per second, that shouldnt be the bottleneck.
 	*/
-	public static void play_float64_2Speakers_1microphone_44100fps(λ soundstream){
+	public static void play_float64_2Speakers_1Microphone_44100Fps(λ soundstream){
 		if(soundstream == null) play(null);
 		else play(new SoundStreamFloat64() {
 			λ state = soundstream;
