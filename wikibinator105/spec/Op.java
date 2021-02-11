@@ -2,9 +2,267 @@
 package wikibinator105.spec;
 
 
+/** Generated in Op.atOpbyte(byte), and if change any of these enums, just run that again and copy it here,
+and of course that would be a different function than wikibinator105...
+<br><br>
+op00000000: _deeplazy
+op00000001: _root
+op00000010: _chooser
+op00000011: _Chooser
+op00000100: _chooser
+op00000101: _chooser
+op00000110: _Chooser
+op00000111: _Chooser
+op00001000: _chooser
+op00001001: _chooser
+op00001010: _chooser
+op00001011: fpr
+op00001100: _Chooser
+op00001101: _Chooser
+op00001110: _Chooser
+op00001111: Fpr
+op00010000: _chooser
+op00010001: _chooser
+op00010010: pair
+op00010011: trecurse
+op00010100: _chooser
+op00010101: ax
+op00010110: fpr
+op00010111: fpr
+op00011000: _Chooser
+op00011001: _Chooser
+op00011010: Pair
+op00011011: Trecurse
+op00011100: _Chooser
+op00011101: Ax
+op00011110: Fpr
+op00011111: Fpr
+op00100000: _chooser
+op00100001: _chooser
+op00100010: tru
+op00100011: fal
+op00100100: pair
+op00100101: pair
+op00100110: trecurse
+op00100111: trecurse
+op00101000: _chooser
+op00101001: curryOrInfcurOrTypeval
+op00101010: ax
+op00101011: ax
+op00101100: fpr
+op00101101: fpr
+op00101110: fpr
+op00101111: fpr
+op00110000: _Chooser
+op00110001: _Chooser
+op00110010: Tru
+op00110011: Fal
+op00110100: Pair
+op00110101: Pair
+op00110110: Trecurse
+op00110111: Trecurse
+op00111000: _Chooser
+op00111001: CurryOrInfcurOrTypeval
+op00111010: Ax
+op00111011: Ax
+op00111100: Fpr
+op00111101: Fpr
+op00111110: Fpr
+op00111111: Fpr
+op01000000: wiki
+op01000001: isLeaf
+op01000010: getFunc
+op01000011: getParam
+op01000100: tru
+op01000101: tru
+op01000110: fal
+op01000111: fal
+op01001000: pair
+op01001001: pair
+op01001010: pair
+op01001011: pair
+op01001100: trecurse
+op01001101: trecurse
+op01001110: trecurse
+op01001111: trecurse
+op01010000: bit
+op01010001: isclean
+op01010010: curryOrInfcurOrTypeval
+op01010011: curryOrInfcurOrTypeval
+op01010100: ax
+op01010101: ax
+op01010110: ax
+op01010111: ax
+op01011000: fpr
+op01011001: fpr
+op01011010: fpr
+op01011011: fpr
+op01011100: fpr
+op01011101: fpr
+op01011110: fpr
+op01011111: fpr
+op01100000: Wiki
+op01100001: IsLeaf
+op01100010: GetFunc
+op01100011: GetParam
+op01100100: Tru
+op01100101: Tru
+op01100110: Fal
+op01100111: Fal
+op01101000: Pair
+op01101001: Pair
+op01101010: Pair
+op01101011: Pair
+op01101100: Trecurse
+op01101101: Trecurse
+op01101110: Trecurse
+op01101111: Trecurse
+op01110000: Bit
+op01110001: Isclean
+op01110010: CurryOrInfcurOrTypeval
+op01110011: CurryOrInfcurOrTypeval
+op01110100: Ax
+op01110101: Ax
+op01110110: Ax
+op01110111: Ax
+op01111000: Fpr
+op01111001: Fpr
+op01111010: Fpr
+op01111011: Fpr
+op01111100: Fpr
+op01111101: Fpr
+op01111110: Fpr
+op01111111: Fpr
+op10000000: wiki
+op10000001: wiki
+op10000010: isLeaf
+op10000011: isLeaf
+op10000100: getFunc
+op10000101: getFunc
+op10000110: getParam
+op10000111: getParam
+op10001000: tru
+op10001001: tru
+op10001010: tru
+op10001011: tru
+op10001100: fal
+op10001101: fal
+op10001110: fal
+op10001111: fal
+op10010000: pair
+op10010001: pair
+op10010010: pair
+op10010011: pair
+op10010100: pair
+op10010101: pair
+op10010110: pair
+op10010111: pair
+op10011000: trecurse
+op10011001: trecurse
+op10011010: trecurse
+op10011011: trecurse
+op10011100: trecurse
+op10011101: trecurse
+op10011110: trecurse
+op10011111: trecurse
+op10100000: bit
+op10100001: bit
+op10100010: isclean
+op10100011: isclean
+op10100100: curryOrInfcurOrTypeval
+op10100101: curryOrInfcurOrTypeval
+op10100110: curryOrInfcurOrTypeval
+op10100111: curryOrInfcurOrTypeval
+op10101000: ax
+op10101001: ax
+op10101010: ax
+op10101011: ax
+op10101100: ax
+op10101101: ax
+op10101110: ax
+op10101111: ax
+op10110000: fpr
+op10110001: fpr
+op10110010: fpr
+op10110011: fpr
+op10110100: fpr
+op10110101: fpr
+op10110110: fpr
+op10110111: fpr
+op10111000: fpr
+op10111001: fpr
+op10111010: fpr
+op10111011: fpr
+op10111100: fpr
+op10111101: fpr
+op10111110: fpr
+op10111111: fpr
+op11000000: Wiki
+op11000001: Wiki
+op11000010: IsLeaf
+op11000011: IsLeaf
+op11000100: GetFunc
+op11000101: GetFunc
+op11000110: GetParam
+op11000111: GetParam
+op11001000: Tru
+op11001001: Tru
+op11001010: Tru
+op11001011: Tru
+op11001100: Fal
+op11001101: Fal
+op11001110: Fal
+op11001111: Fal
+op11010000: Pair
+op11010001: Pair
+op11010010: Pair
+op11010011: Pair
+op11010100: Pair
+op11010101: Pair
+op11010110: Pair
+op11010111: Pair
+op11011000: Trecurse
+op11011001: Trecurse
+op11011010: Trecurse
+op11011011: Trecurse
+op11011100: Trecurse
+op11011101: Trecurse
+op11011110: Trecurse
+op11011111: Trecurse
+op11100000: Bit
+op11100001: Bit
+op11100010: Isclean
+op11100011: Isclean
+op11100100: CurryOrInfcurOrTypeval
+op11100101: CurryOrInfcurOrTypeval
+op11100110: CurryOrInfcurOrTypeval
+op11100111: CurryOrInfcurOrTypeval
+op11101000: Ax
+op11101001: Ax
+op11101010: Ax
+op11101011: Ax
+op11101100: Ax
+op11101101: Ax
+op11101110: Ax
+op11101111: Ax
+op11110000: Fpr
+op11110001: Fpr
+op11110010: Fpr
+op11110011: Fpr
+op11110100: Fpr
+op11110101: Fpr
+op11110110: Fpr
+op11110111: Fpr
+op11111000: Fpr
+op11111001: Fpr
+op11111010: Fpr
+op11111011: Fpr
+op11111100: Fpr
+op11111101: Fpr
+op11111110: Fpr
+op11111111: Fpr
+*/
 public enum Op{
-	
-	
 	
 	/** opByte0. The other 255 opBytes are for each of the first 7 params being λ vs anything_except_λ,
 	then pad a high 1 bit after however many params it is 0..7 if its at most 7 params,
@@ -36,7 +294,63 @@ public enum Op{
 	so for it to see other systems it would have to emulate axiomforest such as using
 	(pair cbt16_axiomforestHeader (pair axiomforestLeftChild axiomforestRightChild)) for example.
 	*/
-	deepLazy_isNotCleanOrDirtyCuzIsNotHalted(0b00000000,true,false,0),
+	_deeplazy(false,false,true,false,0),
+	
+	/** This is like _chooser and _Chooser except its the first one (has 0 curries so far),
+	and its next param chooses cleanLeaf vs dirtyLeaf.
+	This node never occurs in wikibinator105 except maybe to mount it into other systems like axiomforest
+	or used in optimizations.
+	*/
+	_root(false,false,false,true,0),
+	
+	/** UPDATE FIXME: The one with 0 params doesnt exist, since its just there to branch cleanLeaf vs dirtyLeaf,
+	so its actually 0..6 params (or say it as 1..7),
+	and the reflect ops (l r isleaf isclean, which theres 2 forms of each as clean/dirty)
+	never return the one with 0 params.
+	That root node may still be a useful place to mount the system into other systems such as axiomforest,
+	but as far as wikibinator105 can see, theres 2 universal functions: cleanLeaf and dirtyLeaf,
+	and cleanLeaf can create only clean things (even if it sees a dirty thing it gets truncated to clean first),
+	and dirty is a layer above clean and can create clean and dirty things.
+	They are mostly mirrors of eachother except dirty can use the wiki and in clean every call of wiki is nonhalting. 
+	cleanLeaf is actually universal. You dont have to use dirtyLeaf, and can still create all possible lambdas,
+	but the dirty layer is an optimization to avoid having to observe every part of Wiki function before calling it,
+	which is useful since Wiki is potentially an infinite size function that accumulates
+	(AxA (Fpr Wiki param returnValue)) vs (AxB (Fpr Wiki param returnValue)) as a bloomFilter
+	of you can have AxA (Ax leaf x) or AxB (Ax (leaf leaf) x) but not both, for each x.
+	<br><br>
+	All nontrivial logic happens in params 0..7, which is described by opbyte,
+	as there are 255 combos of each of those 0..7 params being leaf vs anything_except_leaf,
+	and opbyte 0 is deeplazy. The position of the high 1 bit chooses a bitstring of 0..7 bits.
+	Each (int)Op.curriesElse0 is 1..4 and goes at the end of that 0..7.
+	Of the 128 negative opbytes (or as unsigned, the high 128),
+	each op whose curriesElse0!=0 gets 1<<curriesElse0 of those 128 opbytes,
+	in the order they occur in Op enum (FIXME that would require all the clean ops to come after all the dirty ops,
+	or all before, instead of them occurring right next to eachother).
+	After that, loop over the 64 indexs under those 128, then the 32, then 16, 8, 4, 2, 1,
+	(descending order of uint8 from 127 to 1),
+	and for index x, if Op.atOpbyte(x*2)==Op.atOpbyte(x*2+1) then copy Op.atOpbyte(x*2) to Op.atOpbyte(x),
+	else put Op.chooser at Op.atOpbyte(x).
+	Put Op.deepLazy_isNotCleanOrDirtyCuzIsNotHalted at Op.atOpbyte(0).
+	That completes the mapping of byte->Op.
+	<br><br>
+	If a node x has more than 7 params and is halted, x.opbyte==x.l.opbyte.
+	<br><br>
+	If a node y has more than 7 params and is not halted (yet?),
+	or if y.l.opbyte==0 or y.r.opbyte==0, then y.opbyte==0 aka Op.deepLazy,
+	and no lambda can see it until it halts,
+	which is a problem I plan to solve inside the sandbox by using the VM
+	instead of redesigning the VM, by deriving debugStepOver and debugStepInto lambdas
+	and a few related lambdas, which use the pattern-calculus ability (l r isleaf isclean)
+	to basically emulate small parts of universal function so they always halt
+	after doing a bigO(1) amount of work, and when called in a loop are turingComplete,
+	and can push and pop emulator levels using various combos of such derived lambdas.
+	<br><br>
+	The node whose opbyte is 1 (aka leaf/u/theUniversalFunction),
+	its left child is (fal leaf) aka identityFunc, and its right child is leaf/itself.
+	That completes the opbyte for all possible sequences of l and r and all callpairs of them.
+	*/
+	_chooser(true,false,false,true,0),
+	_Chooser(false,true,false,true,0),
 
 	
 	/** all nondeterminism goes here. TODO copy comments from wikibinator104 and maybe modify them...
@@ -84,8 +398,8 @@ public enum Op{
 	and if that doesnt work out, try other combos automatically.
 	Everything gets connected to everything if thats what those parts want at the time and context.
 	*/
-	wiki(0b01000000,false,false,1),
-	Wiki(0b01000001,false,false,1),
+	wiki(true,false,false,false,1),
+	Wiki(false,true,false,false,1),
 	
 	
 	/** FIXME (λ λ) is cleanLeaf and (λ (λ λ)) is dirtyLeaf, and l and r and isleaf and isclean ops must use it that way,
@@ -100,8 +414,8 @@ public enum Op{
 	aka the wikibinator104 universal function itself.
 	isLeaf, l, and r make this a "pattern calculus function".
 	*/
-	isLeaf(0b01001000,false,false,1), //todo rename to isleaf and Isleaf (the l is lowercase), to match isclean and Isclean
-	IsLeaf(0b01001001,false,false,1),
+	isLeaf(true,false,false,false,1), //todo rename to isleaf and Isleaf (the l is lowercase), to match isclean and Isclean
+	IsLeaf(false,true,false,false,1),
 	
 	/** FIXME (λ λ) is cleanLeaf and (λ (λ λ)) is dirtyLeaf, and l and r and isleaf and isclean ops must use it that way,
 	such as (L (λ (λ λ))) is IdentityFunc) and (L (λ λ)) is identityFunc)
@@ -115,8 +429,8 @@ public enum Op{
 	Not the same as lispCar since pair is the church-pair lambda.
 	isLeaf, l, and r make this a "pattern calculus function".
 	*/
-	getFunc(0b01010000,false,false,1),
-	GetFunc(0b01010001,false,false,1),
+	getFunc(true,false,false,false,1),
+	GetFunc(false,true,false,false,1),
 	
 	/** FIXME (λ λ) is cleanLeaf and (λ (λ λ)) is dirtyLeaf, and l and r and isleaf and isclean ops must use it that way,
 	such as (L (λ (λ λ))) is IdentityFunc) and (L (λ λ)) is identityFunc)
@@ -130,26 +444,26 @@ public enum Op{
 	Not the same as lispCdr since pair is the church-pair lambda.
 	isLeaf, l, and r make this a "pattern calculus function".
 	*/
-	getParam(0b01011000,false,false,1),
-	GetParam(0b01011001,false,false,1),
+	getParam(true,false,false,false,1),
+	GetParam(false,true,false,false,1),
 	
 	//l/getFunc and r/getParam differ by only 1 opcode bit (being leaf vs anything_except_leaf*)
 	
 	/** λy.λz.y aka true. (pair b c tru) is b. Is the K lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
-	tru(0b00100000,false,false,2),
-	Tru(0,false,false,2),
+	tru(true,false,false,false,2),
+	Tru(false,true,false,false,2),
 	
 	/** λy.λz.z aka false aka f. (fal λ) is identityFunc aka λz.z. (pair b c fal) is c. */
-	fal(0/*,"(λ λ λ λ (λ λ) (λ λ))"*/,false,false,2),
-	Fal(0/*"(λ (λ λ) λ λ (λ λ) (λ λ))"*/,false,false,2),
+	fal(true,false,false,false,2),
+	Fal(false,true,false,false,2),
 	
 	/** λx.λy.λz.zxy. Is the church-pair lambda and lispCons. */
-	pair(0/*"(λ λ λ (λ λ) (λ λ))"*/,false,false,3),
-	Pair(0/*"(λ (λ λ) λ (λ λ) (λ λ))"*/,false,false,3),
+	pair(true,false,false,false,3),
+	Pair(false,true,false,false,3),
 	
 	/** λx.λy.λz.xz(yz) aka ((xz)(yz)). Is the S lambda of https://en.wikipedia.org/wiki/SKI_combinator_calculus */
-	trecurse(0/*"(λ λ λ (λ λ) λ)"*/,false,false,3),
-	Trecurse(0/*"(λ (λ λ) λ (λ λ) λ)"*/,false,false,3),
+	trecurse(true,false,false,false,3),
+	Trecurse(false,true,false,false,3),
 
 	
 	/** If its param is λ, its 1, vs if its param is anything except λ, its 0,
@@ -159,11 +473,11 @@ public enum Op{
 	and if a cbt is called on a cbt of a different height it returns (itself itself) instead,
 	else just creates a halted call pair of itself and the param.
 	*/
-	bit(0b01100000,false,true,1),
-	Bit(0b01100001,false,true,1),
+	bit(true,false,false,true,1),
+	Bit(false,true,false,true,1),
 	
 	
-	isclean(0b01110000,false,false,1),
+	isclean(true,false,false,false,1),
 	/** the 2 leafs are (λ (λ λ)) dirtyLeaf and (λ λ) cleanleaf, which in L, R, Isleaf, and color appear as leafs
 	and theres no way to get λ which is not a function but just a data structure optimization
 	or vestigial design from when there was 1 leaf instead of 2
@@ -182,7 +496,7 @@ public enum Op{
 	despite it being seamlessly useable as lambdas all the way down to cleanLeaf
 	(cbts/blobs should be clean for blob optimizations, else they run in interpreted mode very slowly).
 	*/
-	Isclean(0b01110001,false,false,1),
+	Isclean(false,true,false,false,1),
 	
 	
 	
@@ -207,8 +521,8 @@ public enum Op{
 	and ImportStatic.curry will be this curryOrInfcurOrTypeval and only acts as curry if you give it
 	a unarynum thats at least 1u.
 	*/
-	curryOrInfcurOrTypeval(0/*"TODO"*/,false,true,2),
-	CurryOrInfcurOrTypeval(0/*"TODO"*/,false,true,2),
+	curryOrInfcurOrTypeval(true,false,false,true,2),
+	CurryOrInfcurOrTypeval(false,true,false,true,2),
 	
 	//cleancall will be derived at user level, not an op.
 	
@@ -234,7 +548,8 @@ public enum Op{
 	..
 	The 2 ax ops need more room. make room by getting rid of isColorDisproof and 1 other 1-param op.
 	*/
-	ax(0/*TODO*/,false,true,3),
+	ax(true,false,false,true,3),
+	Ax(false,true,false,true,3),
 	
 	/** (fpr func param ret λ) -> λ if (func param)->ret,
 	and (fpr func param ret λ) -> (λ λ) if (func param) -> something other than ret (but it still returns),
@@ -255,16 +570,21 @@ public enum Op{
 	TODO what does (fpr x y z anything_except_λ) return?
 	(ret λ)? (lazig x y)? {,x ,y}? (ax (fpr x y z))? (S I I (S I I))? z?
 	*/
-	fpr(0b00010000,false,false,4),
-	Fpr(0b00010001,false,false,4);
+	fpr(true,false,false,false,4),
+	Fpr(false,true,false,false,4);
 
 	
 	/** after (u u) aka clean or (u anything_except_u) aka dirty,
 	this is "u" for leaf vs "∩" for anything except leaf, which is a binary prefix for each op.
 	*
 	public final String prefix;
-	*/
+	*
 	public final int opbits;
+	*/
+	
+	public final boolean isCertainlyClean;
+	
+	public final boolean isCertainlyDirty;
 	
 	public final boolean isAlwaysEvaling;
 	
@@ -275,36 +595,58 @@ public enum Op{
 	*/
 	public final int curriesElse0;
 	
-	/** generate this generated from the order of Ops in this enum and their fields,
-	other than deepLazy and Deeplazy.
-	0..127 is the cleans. 128..255 (negatives as byte) are the dirtys.
-	*
-	private static final Op[] opbyteToOp; //opbits which is 8 bits
+	
+	public static Op atOpbyte(byte opbyte){
+		return atOpbyte[opbyte&0xff];
+	}
+	
+	/** unsigned */
+	public static Op atOpbyte(int opbyte){
+		return atOpbyte[opbyte];
+	}
+	
+	
+	/** see comment of Op._chooser */
+	private static final Op[] atOpbyte;
 	static{
-		opbyteToOp = new Op[256];
-		opbyteToOp[0] = deepLazy;
-		opbyteToOp[128] = DeepLazy;
-		for(int offset=0; offset<256; offset+=128){
-			boolean isClean = offset==0;
-			
-			
-			/*for(Op op : Op.values()){
-				if(Character.isLowerCase(op.name().charAt(0))){
-				if(op.curriesElse0 != 0) sum += 1<<op.curriesElse0;
-				lg("Op."+op+"("+op.curriesElse0+")");
-				} //else skip the clean/dirty mirror, and just double the number in sum *= 2
-			}*
-			TODO
+		atOpbyte = new Op[256];
+		atOpbyte[0] = _deeplazy;
+		atOpbyte[1] = _root; //chooser of chooser
+		atOpbyte[2] = _chooser; //clean chooser, in this case cleanLeaf is at opbyte 2
+		atOpbyte[3] = _Chooser; //dirty chooser, in this case dirtyLeaf is at opbyte 3.
+		for(int opbyte=4; opbyte<128; opbyte++){ //some of these will be replaced
+			atOpbyte[opbyte] = atOpbyte[opbyte>>1];
 		}
-	}*/
+		int opbyteAt7Curries = 128;
+		for(int c=0; c<2; c++){
+			boolean clean = c==0;
+			for(Op op : Op.values()){
+				if(op.isCertainlyClean==clean && op.curriesElse0!=0){
+					for(int i=0; i<(1<<op.curriesElse0); i++){
+						//lg("op "+toString((byte)opbyteAt7Curries)+" "+op);
+						atOpbyte[opbyteAt7Curries++] = op;
+					}
+				}
+			}
+		}
+		for(int opbyte=127; opbyte>=0; opbyte--){
+			Op ifNextCurryIsLeaf = atOpbyte[opbyte*2]; //FIXME is this backward?
+			Op ifNextCurryIsAnythingButLeaf = atOpbyte[opbyte*2+1]; //FIXME is this backward?
+			if(ifNextCurryIsLeaf == ifNextCurryIsAnythingButLeaf){
+				//If its the same Op regardless of next param
+				atOpbyte[opbyte] = ifNextCurryIsLeaf;
+			} //else leave it as _Chooser, _chooser, _root, or _deepLazy
+		}
+	}
 	
 	//TODO rename isStrange to isVararg, counting ax as vararg since it evals at 2 specific number of curries,
 	//which is a very weak form of vararg compared to the curry ops and 0 and 1 ops.
 	
 	
-	private Op(/*String sourceCode,*/int opbits, boolean isAlwaysEvaling, boolean isVararg, int curriesElse0){
-		//this.prefix = sourceCode;
-		this.opbits = opbits;
+	private Op(boolean isCertainlyClean, boolean isCertainlyDirty,
+			boolean isAlwaysEvaling, boolean isVararg, int curriesElse0){
+		this.isCertainlyClean = isCertainlyClean;
+		this.isCertainlyDirty = isCertainlyDirty;
 		this.isAlwaysEvaling = isAlwaysEvaling;
 		this.isStrange = isVararg;
 		this.curriesElse0 = curriesElse0;
@@ -330,13 +672,17 @@ public enum Op{
 				lg(toString((byte)bits)+" Op."+op+"("+op.curriesElse0+")");
 			} //else skip the clean/dirty mirror, and just double the number in sum *= 2
 		}
-		System.out.println("sumBeforeDoubling="+Integer.toBinaryString(sum));
+		lg("sumBeforeDoubling="+Integer.toBinaryString(sum));
 		sum *= 2; //cuz first of 7 params chooses !isDirty (leaf) vs isDirty (anything except leaf)
-		System.out.println("sum="+Integer.toBinaryString(sum));
+		lg("sum="+Integer.toBinaryString(sum));
 		if(sum > 1<<7) throw new RuntimeException(
 			"Opcodes dont fit in 7 params. 0..7 curries each being leaf vs nonleaf fits in a byte,"
 			+" as a bitstring size 0..7 then a high 1 bit, aka the byte opcode"
 			+" used in an earlier version of SimpleFn.interpretedMode's switch statement.");
+		
+		for(int opbyte=0; opbyte<256; opbyte++){
+			lg("op"+toString((byte)opbyte)+": "+atOpbyte(opbyte));
+		}
 	}
 
 }
