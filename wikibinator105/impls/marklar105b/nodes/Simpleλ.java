@@ -1,7 +1,8 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impls.marklar105b.nodes;
 import static wikibinator105.impls.marklar105b.ImportStatic.*;
-import wikibinator105.impls.marklar105b.fn;
+import wikibinator105.impls.marklar105b.ids.MarklarId105b;
+import wikibinator105.impls.marklar105b.*;
 import wikibinator105.spec.*;
 
 public class Simpleλ extends AbstractFn{
@@ -10,11 +11,7 @@ public class Simpleλ extends AbstractFn{
 	
 	public final fn l, r;
 	
-	//public final byte opByte;
-	
 	public final long header;
-	
-	public final long bize;
 	
 	/** leaf *
 	public Simpleλ(){
@@ -66,16 +63,6 @@ public class Simpleλ extends AbstractFn{
 		return header;
 	}
 
-
-	public long bize(){
-		return bize;
-	}
-
-	public λColorTruthValue tv(){
-		throw new RuntimeException("TODO");
-	}
-
-
 	public fn g(long binheapIndex){
 		throw new RuntimeException("TODO");
 	}
@@ -96,7 +83,7 @@ public class Simpleλ extends AbstractFn{
 	}
 
 
-	public byte opByte(){
+	public byte opbyte(){
 		throw new RuntimeException("TODO");
 	}
 
@@ -107,6 +94,46 @@ public class Simpleλ extends AbstractFn{
 
 
 	public fn apply(fn t){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public long marklar105bHeader(){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public boolean isclean(){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public byte b(int n){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public short s(int n){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public int i(int n){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public long j(int n){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public fn w(Object wrapMe){
+		throw new RuntimeException("TODO");
+	}
+
+
+	public boolean containsAxOf2Params(){
 		throw new RuntimeException("TODO");
 	}
 

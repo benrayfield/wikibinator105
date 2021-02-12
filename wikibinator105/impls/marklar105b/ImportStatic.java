@@ -1,9 +1,7 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl;
-import java.util.EnumSet;
-
-import wikibinator105.impl.ids.HeaderBits;
-import wikibinator105.impl.nodes.*;
+package wikibinator105.impls.marklar105b;
+import wikibinator105.impls.marklar105b.evalers.AxfprCache;
+import wikibinator105.impls.marklar105b.nodes.*;
 import wikibinator105.spec.*;
 
 public class ImportStatic{
@@ -20,9 +18,19 @@ public class ImportStatic{
 		System.out.println(line);
 	}
 	
+	/** returns a halted call pair without evaling. If you call this on something that should eval,
+	it may break lots of stuff that depends on that evalling as the func_param_return cache
+	will answer this afterward, at least until uncached, and in further caches affected by that, and so on.
+	This should only be called by VM code,
+	and others use λ.e(λ) or λ.e(long,λ) instead which are safe to call in any combos.
+	*/
 	public static fn cp(fn func, fn param){
-		//FIXME use hashtable for instant partial dedup (and ids for lazy perfect dedup)
-		return new Simpleλ(func, param);
+		fn ret = AxfprCache.getOrNull(func, param);
+		if(ret == null){
+			ret = new Simpleλ(func, param);
+			AxfprCache.put(func, param, ret);
+		}
+		return ret;
 	}
 	
 	/*public static fn cp(fn func, fn param){
@@ -107,8 +115,23 @@ public class ImportStatic{
 	
 
 	
-	/** the universal function aka the leaf which all paths in binary forest of call pairs lead to */
-	public static final fn u = Leaf.instance;
+	/** the clean universal function aka the leaf which all paths in binary forest of call pairs lead to.
+	Theres also a dirty form of it, which is a different universal function. The dirty layer is above the clean layer.
+	The clean layer is universal by itself and cant see or create dirty objects,
+	and if you call a clean on a dirty, the dirty is truncated to clean before its used,
+	but dirty can use and create clean or dirty and combos of them.
+	The difference between clean and dirty is when clean calls wiki its always nonhalting, and dirty can use Wiki,
+	which is important since Wiki is where all nondeterminism andOr nonstandard andOr hard to sync (SyncLevel.slDirty) things go,
+	and if something goes wrong, which it will trillions of times per second in the p2p network,
+	sync will fork and merge blockchain-like (but actually web of merkle forest which syncs extremely faster)
+	toward agreement of calling what on what returns what based on constraints like (L x (R x)) equals x forall x.
+	In the clean layer, there is at most 1 correct answer to every question,
+	so if something goes wrong in the dirty layer, the clean layer will keep working and can be used
+	in various new experimental ways created at runtime by people and AIs in the system to experiment with
+	what may have gone wrong and come up with theories and processes how to fix it,
+	or just retreat to the clean layer and use just that for a while or permanently.
+	*/
+	public static final fn u = CleanLeaf.instance;
 	//There is no dirty u.
 	
 	public static final fn uu = u.p(u);
@@ -261,11 +284,11 @@ public class ImportStatic{
 		}
 	}*/
 	
-	public static byte parentOpByte(byte leftOpByte, byte rightOpByte){
+	/*public static byte parentOpByte(byte leftOpByte, byte rightOpByte){
 		throw new RuntimeException("TODO");
 	}
 	
-	public static long mask(EnumSet<λColor> colors){
+	/*public static long mask(EnumSet<λColor> colors){
 		long ret = 0;
 		for(λColor color : colors){
 			ret |= headerbit(color).mask; //TODO optimize. this long is already in the EnumSet and just needs shift.
@@ -283,9 +306,9 @@ public class ImportStatic{
 		case axof1paramcallNohalt: return HeaderBits.bloomAxof1paramcallNohalt;
 		}
 		throw new RuntimeException("this should never happen");
-	}
+	}*/
 	
-	public static final byte magic
+	//public static final byte magic
 	
 	/** returns long[]{header,bize} *
 	public static long[] parentHeaderAndBize(EnumSet<λColor> colors, long leftHeader, long leftBize, long rightHeader, long rightBize){

@@ -7,6 +7,7 @@ package wikibinator105.spec;
 so the lambda level can only see 1 color (2 if you count leaf, but thats only 1 other node),
 so color doesnt need to be stored in ids of lambdas (so can use 256 bit instead of 512 bit ids),
 and the nsat level below it can also see nonhalted colors.
+Also, λ.opbyte() maybe should outerjoin these colors so theres 256 times more of them?
 For example, the color of (S I I pair) is evalingAndWillHalt since it evals to (pair pair),
 but everything is immutable/stateless so (S I I pair) is a specific node aka (((S I) I) pair)
 which can be looked into deeper using L and R all the way down to λ/u/leaf/theUniversalFunction.

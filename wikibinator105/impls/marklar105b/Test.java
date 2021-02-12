@@ -1,5 +1,5 @@
-package wikibinator105.impl;
-import static wikibinator105.impl.ImportStatic.*;
+package wikibinator105.impls.marklar105b;
+import static wikibinator105.impls.marklar105b.ImportStatic.*;
 
 /** FIXME make the tests independent of implementation, other than you cant call java from javascript,
 but put it in spec instead of impl, and just call it on impl with param of a DIRTY instance of leaf

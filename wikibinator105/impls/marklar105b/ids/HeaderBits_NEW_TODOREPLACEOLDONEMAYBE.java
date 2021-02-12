@@ -1,12 +1,8 @@
-package wikibinator105.impl.ids;
-
-import org.w3c.dom.css.Counter;
-
-import wikibinator105.spec.Op;
+package wikibinator105.impls.marklar105b.ids;
 
 public enum HeaderBits_NEW_TODOREPLACEOLDONEMAYBE{ //todo rename to HeaderBits_NEW_TODOREPLACEOLDONEMAYBE_256
 	
-	magic8 op8 curryAllIf24 curryMoreIf24 - magic8 op8 cbtHeightAndBizeIf48_butNotIfAll0s - magic8 31OtherLiteralBytes
+	/*magic8 op8 curryAllIf24 curryMoreIf24 - magic8 op8 cbtHeightAndBizeIf48_butNotIfAll0s - magic8 31OtherLiteralBytes
 	
 	FIXME cbtHeightAndBizeIf48_butNotIfAll0s handles bitstrings size 0 to 2^47-1 bits, but does not handle cbts of all 0s.
 
@@ -102,7 +98,7 @@ public enum HeaderBits_NEW_TODOREPLACEOLDONEMAYBE{ //todo rename to HeaderBits_N
 			//is cbt of powOf2 number of bits from 1..2^47 bits, and knows the index of the last 1 bit if exists.
 			cbtHeightAndBize46 //high 1 bit tells which powOf2. Bits below that tell wheres the last 1 bit.
 		}else{
-			curriesAll23 //is 2^24-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf16.
+			curriesAllIf23 //is 2^24-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf16.
 			curriesMoreIf23 //is 2^24-1 if bigger. is 0 if op8 is Op.deepLazy aka is (a snapshot of) evaling.
 		}
 	}
@@ -118,7 +114,7 @@ public enum HeaderBits_NEW_TODOREPLACEOLDONEMAYBE{ //todo rename to HeaderBits_N
 		//	//while they might use these bits for something else.
 		curriesAll16 //is 2^16-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf16.
 		curriesMoreIf16 //is 2^16-1 if bigger. is 0 if op8 is Op.deepLazy aka is (a snapshot of) evaling.
-	}*/
+	}*
 	
 	
 	

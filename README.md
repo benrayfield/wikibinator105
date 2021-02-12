@@ -4,6 +4,21 @@ a very simple kind of self-aware living number, where 2 numbers combine to creat
 and a number can be anything such a word, video, game, simulation, publicKey, GPU optimization, music tools,
 way to use multiple clouds together, etc.
 
+TODO make first few testcases (copied and modifying from occamsfuncer, which is a similar universal function that already works) work in
+https://github.com/benrayfield/wikibinator105/blob/main/wikibinator105/impls/marklar105b/Test.java main(String[]) function.
+Exception in thread "main" java.lang.ExceptionInInitializerError
+	at wikibinator105.impls.marklar105b.Test.testTF(Test.java:161)
+	at wikibinator105.impls.marklar105b.Test.main(Test.java:19)
+Caused by: java.lang.RuntimeException: TODO
+	at wikibinator105.impls.marklar105b.ids.MarklarId105b.parentHeader(MarklarId105b.java:65)
+	at wikibinator105.impls.marklar105b.nodes.Simpleλ.<init>(Simpleλ.java:28)
+	at wikibinator105.impls.marklar105b.ImportStatic.cp(ImportStatic.java:30)
+	at wikibinator105.impls.marklar105b.nodes.AbstractFn.p(AbstractFn.java:17)
+	at wikibinator105.impls.marklar105b.nodes.AbstractFn.p(AbstractFn.java:1)
+	at wikibinator105.impls.marklar105b.ImportStatic.<clinit>(ImportStatic.java:137)
+	... 2 more
+
+
 (TODO) Evolvable musical instruments will work like this, using this plugin:
 https://github.com/benrayfield/wikibinator105/blob/main/wikibinator105/plugins/jsoundcard/Play.java
 ```

@@ -466,15 +466,30 @@ public enum Op{
 	Trecurse(false,true,false,false,3),
 
 	
-	/** If its param is λ, its 1, vs if its param is anything except λ, its 0,
+	/** (renamed Op.bit to Op.blob).
+	Its a cbt if its clean and its (7th) param (of _root) is cleanLeaf or (cleanLeaf cleanLeaf).
+	If its just Op.blob (is a 6 param call of _root) that is not a cbt.
+	(blob cleanLeaf) is the bit 1.
+	(blob (cleanLeaf cleanLeaf)) is the bit 0.
+	(blob (cleanLeaf cleanLeaf) (blob (cleanLeaf cleanLeaf))) is 11.
+	(blob (cleanLeaf cleanLeaf) (blob cleanLeaf)) is 10.
+	(10 11) is 1011.
+	(1011 (0 0 10)) is 10110010.
+	In the marklar105b prototype of wikibinator105, it will efficiently support blobs up to 2^45-1 bits,
+	and up to 2^80 blobs and other objects at any one time excluding those garbcoled (garbage collected),
+	where a blob viewed as a bitstring is padded with 1 then 0s until the next powOf2,
+	like 10110010 is the bitstring 101100, and 1 is the empty bitstring,
+	and 10110011 is the bitstring 1011001.
+	<br><br>
+	If its param is λ, its 1, vs if its param is anything except λ, its 0,
 	and either way it takes an infinite number of params (like infcur) aka is halted after each next curry,
 	and at and after its first param (to choose 0 vs 1) its a cbt,
 	and a cbt called on anything is a cbt twice as big and 1 higher,
 	and if a cbt is called on a cbt of a different height it returns (itself itself) instead,
 	else just creates a halted call pair of itself and the param.
 	*/
-	bit(true,false,false,true,1),
-	Bit(false,true,false,true,1),
+	blob(true,false,false,true,1),
+	Blob(false,true,false,true,1),
 	
 	
 	isclean(true,false,false,false,1),
@@ -528,7 +543,8 @@ public enum Op{
 	
 
 	
-	/*UPDATE: getting rid of color and instead will have 2 (or maybe 3) kinds of Op.ax:
+	/*UPDATE: getting rid of color (no, just changing which colors, and lambdas dont need them, but nsat level does)
+	and instead will have 2 (or maybe 3) kinds of Op.ax:
 	(No, dont do 3 kinds of ax at the lambda level,
 	but the third kind would be for nonhalters at nsat level below the lambda level).
 	The first param of ax is λ to choose axA, and is anything except λ to choose axB,
@@ -588,7 +604,7 @@ public enum Op{
 	
 	public final boolean isAlwaysEvaling;
 	
-	public final boolean isStrange;
+	public final boolean isVararg;
 	
 	/** is 0 if isStrange, cuz number of curries isnt a single number,
 	may be vararg or may eval at 2 specific numbers of curries.
@@ -605,6 +621,15 @@ public enum Op{
 		return atOpbyte[opbyte];
 	}
 	
+	/** unsigned */
+	public static byte minUint8Of(Op o){
+		return minUint8OfOp[o.ordinal()];
+	}
+	
+	/** index is Op.ordinal().
+	counterpart of atOpbyte, but is not unitary since thats a map of byte->Op where the same Op is multiple places.
+	*/
+	private static final byte[] minUint8OfOp;
 	
 	/** see comment of Op._chooser */
 	private static final Op[] atOpbyte;
@@ -637,6 +662,42 @@ public enum Op{
 				atOpbyte[opbyte] = ifNextCurryIsLeaf;
 			} //else leave it as _Chooser, _chooser, _root, or _deepLazy
 		}
+		minUint8OfOp = new byte[Op.values().length];
+		for(int opbyte=255; opbyte>=0; opbyte--){
+			minUint8OfOp[atOpbyte(opbyte).ordinal()] = (byte)opbyte;
+		}
+	}
+	
+	/** min uint8 opbyte of the Op. Most Ops have multiple opbytes.
+	This is the one with the most params remaining (fewest params so far),
+	like this is opbyte for trecurse instead of
+	(treecurse u) or (trecurse anything_except_u) or (trecurse u u u),
+	or for blob instead of (blob u) aka 1 or (blob (u u)) aka 0.
+	*/
+	public static byte opbyte(Op o){
+		return minUint8OfOp[o.ordinal()];
+	}
+	
+	/** If is already cleanLeaf/u or dirtyLeaf/U, stays as that.
+	_root can go forward to either of those, but this wont go backward to it
+	cuz the reflect ops (L R Isleaf Isclean) wrap around at leaf to "close the loop"
+	to make (L x (R x)).equals(x) be true forall x,
+	and that happens by (L u)==i and (L U)==I and (R u)==u and (R U)==U.
+	If this is already _deeplazy or _root, stays as those.
+	*/
+	public static byte opbyteBefore(byte opbyte){
+		//opbyte&0xff is unsigned and is 0 if _deeplazy, is 1 if _root, is 2 if cleanLeaf/u, is 3 if dirtyLeaf/U.
+		return (opbyte&0xff)<4 ? opbyte : (byte)(opbyte>>1);
+	}
+	
+	/** If already has 7 params, its the same opbyte, else shifts and puts a 1 */
+	public static byte opbyteConcatCleanleaf(byte opbyte){
+		return opbyte<0 ? opbyte : (byte)((opbyte<<1)|1); 
+	}
+	
+	/** If already has 7 params, its the same opbyte, else shifts and puts a 0 */
+	public static byte opbyteConcatAnythingButCleanleaf(byte opbyte){
+		return opbyte<0 ? opbyte : (byte)(opbyte<<1);
 	}
 	
 	//TODO rename isStrange to isVararg, counting ax as vararg since it evals at 2 specific number of curries,
@@ -648,7 +709,7 @@ public enum Op{
 		this.isCertainlyClean = isCertainlyClean;
 		this.isCertainlyDirty = isCertainlyDirty;
 		this.isAlwaysEvaling = isAlwaysEvaling;
-		this.isStrange = isVararg;
+		this.isVararg = isVararg;
 		this.curriesElse0 = curriesElse0;
 	}
 	

@@ -1,10 +1,7 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl.ids;
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.function.Predicate;
+package wikibinator105.impls.marklar105b.ids;
 
-import wikibinator105.spec.*;
+import wikibinator105.spec.Op;
 
 /** The default kind of id of a wikibinator105 node. More kinds of ids can be created at runtime,
 as any lambda that returns a cbt512 or cbt256 or cbt1024 etc when called on another lambda to create the id of,
@@ -42,13 +39,101 @@ somehow able to tell each other apart and address each other as Marklar without 
 -- https://southpark.fandom.com/wiki/Marklar
 It seems similar to how a universal function works. Theres only 1 word but you can say anything as combos of it.  
 */
-public final class MarklarId105b implements IdMaker_old_useFuncsDirectlyAsIdmaker{
+public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdmaker*/{
+	
+	/*
+	//Here's the datastruct for MarklarId105b:
+	if(first byte is not 0xf9){
+		//is literal cbt256 thats its own id.
+	}else{
+		//bit 16 is containsAx. bit 17 is isBitstringUpTo4Terabytes
+		0xf9
+		op8 //is Op.zero or Op.one, the first bit
+		containsAxOf2Params1 //contains Op.axA or Op.axB deeply in l() and r() recursively?
+		isBitstringUpTo4Terabytes1 //is bitstring up to 2^45-1 bits aka 4 terabytes, else slower but unlimited size using normal call pairs.
+		if(isBitstringUpTo4Terabytes1){
+			//is cbt of powOf2 number of bits from 1..2^47 bits, and knows the index of the last 1 bit if exists.
+			cbtHeightAndBize46 //high 1 bit tells which powOf2. Bits below that tell wheres the last 1 bit.
+		}else{
+			curriesAllIf23 //is 2^24-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf16.
+			curriesMoreIf23 //is 2^24-1 if bigger. is 0 if op8 is Op.deepLazy aka is (a snapshot of) evaling.
+		}
+	}
+	*/
 	
 	public static long parentHeader(long leftHeader, long rightHeader){
-		TODO
+		throw new RuntimeException("TODO");
 	}
 	
-	TODO...
+	public static final int mask23 = (1<<23)-1;
+	
+	public static final long mask46 = (1L<<46)-1;
+	
+	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, int curriesAllIf23, int curriesMoreIf23){
+		return 0xf900000000000000L | ((opbyte&0xffL)<<48) | (containsAxOf2Params?(1L<<47):0L)
+			| ((curriesAllIf23&mask23)<<23) | (curriesMoreIf23&mask23);
+	}
+	
+	public static long headerOfBlobUpTo4tBThatsNotALiteralCbt256(byte opbyte, long cbtHeightAndBize46){
+		return 0xf900400000000000L | ((opbyte&0xffL)<<48) | (cbtHeightAndBize46&mask46);
+	}
+	
+	public static long headerOfLiteralCbt256(long header, long b, long c, long d){
+		if(!isLiteralCbt256(header)) throw new RuntimeException("Not a literal cbt256");
+		return header;
+	}
+	
+	/** Op._deeplazy */
+	public static final long headerOfDeeplazy = headerOfFuncall((byte)0, false, 0, 0);
+	
+	/** Op._root. This never occurs, at least in this prototype,
+	but may occur when mounting wikibinator105 in other systems like axiomforest.
+	*/
+	public static final long headerOfRoot = headerOfFuncall((byte)1, false, 0, 7);
+	
+	/** (Op._root u) */
+	public static final long headerOfCleanLeaf = headerOfFuncall((byte)2, false, 1, 6);
+	
+	/** (Op._root anything_except_u) such as (Op._root u) */
+	public static final long headerOfDirtyLeaf = headerOfFuncall((byte)3, false, 1, 6);
+	
+	/** bize is bitstring size, which is stored in header if its up to 2^45-1 bits (4 terabytes).
+	TODO return what if its not a blob/cbt or is bigger than that? For now at least, returns -1 for that. 
+	*/
+	public static long bizeUpTo4tBElseNegOne(long header){
+		if(isLiteralCbt256(header)) throw new RuntimeException("need the whole 256 bits to know where last 1 bit (if exists) is");
+		if((header&(1L<<46))!=0){ //the isBitstringUpTo4Terabytes bit. Will be 0 if is not a blob or if too big for header.
+			long cbtHeightAndBize46 = header&((1L<<46)-1);
+			//If cbtHeightAndBize46 is 0 then then it may or may not lack the 1 0000... padding.
+			//If bize > 0 then that padding exists, and the bitstring is whatevers before that last 1 in the content.
+			//The following code works either way, and is about the header not the content it describes size of:
+			int leadingZeros = Long.numberOfLeadingZeros(cbtHeightAndBize46);
+			return cbtHeightAndBize46^(1L<<(63-leadingZeros)); //remove high 1 bit (which tells cbt height)
+		}
+		return -1;
+	}
+	
+	/** is 256 bits that is its own id if its first byte is not (byte)'\\'. Most possible 256 bits are. */
+	public static boolean isLiteralCbt256(long header){
+		return header>>>56 != 0xf9;
+	}
+	
+	public static final byte opByteOfBlobStartingWith1 = Op.opbyteConcatCleanleaf(Op.opbyte(Op.blob));
+	
+	public static final byte opByteOfBlobStartingWith0 = Op.opbyteConcatAnythingButCleanleaf(Op.opbyte(Op.blob));
+	
+	public static byte opbyte(long header){
+		return isLiteralCbt256(header)
+			? (header<0 ? opByteOfBlobStartingWith1 : opByteOfBlobStartingWith0)
+			: (byte)(header>>>48);
+	}
+	
+	/*public static long bizeIsKnown(){
+		
+		return (1L<<(63-17))
+	}*/
+	
+	/*TODO...
 	
 	//Here's the datastruct for MarklarId105b:`
 	if(first byte is not 0xf9){
@@ -69,12 +154,13 @@ public final class MarklarId105b implements IdMaker_old_useFuncsDirectlyAsIdmake
 		}
 	}
 	
-	the hash192 is the last 192 bits of sha3_256 and comes after the 64 bit header,
+	/*the hash192 is the last 192 bits of sha3_256 and comes after the 64 bit header,
 	and its either 192 0s for leaf (op9 is (byte)1, so even if theres a hash collision its still a different id)
 	(and of course the normal 64 bits of header before that) or is last192Bits(sha3_256(concat(leftId,rightId))).
 	
 	Also some Op enum changes etc described in HeaderBits_NEW_TODOREPLACEOLDONEMAYBE
 	but most of that is what led to this and just comment it out or remove those words.
+	*
 	
 	public static final MarklarId105b instance = new MarklarId105b();
 	
@@ -86,7 +172,7 @@ public final class MarklarId105b implements IdMaker_old_useFuncsDirectlyAsIdmake
 	/** If true, this is both the 512 bit content and the id of that content. The only other kinds
 	of literal (that fit in an id) are cbt256 cbt128 cbt64 cbt32 cbt16 cbt8 cbt4 cbt2 cbt1 and leaf/u.
 	Anything else is a call pair as usual.
-	*/
+	*
 	public static boolean isLiteral512(Blob id){
 		return firstByte(id)!='\\';
 	}
@@ -99,12 +185,12 @@ public final class MarklarId105b implements IdMaker_old_useFuncsDirectlyAsIdmake
 		throw new RuntimeException("TODO");
 	}
 
-	public Blob idOfCallPair(EnumSet<λColor> colors, Blob funcId, Blob paramId){
+	/*public Blob idOfCallPair(EnumSet<λColor> colors, Blob funcId, Blob paramId){
 		throw new RuntimeException("TODO");
-	}
+	}*
 
 	public λ fn(){
 		throw new RuntimeException("TODO");
-	}
+	}*/
 
 }

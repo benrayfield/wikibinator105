@@ -1,5 +1,6 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impls.marklar105b;
+import wikibinator105.impls.marklar105b.ids.MarklarId105b;
 import wikibinator105.spec.*;
 
 /** The main object type in wikibinator105.impls.marklar105b. The long header is
@@ -29,5 +30,13 @@ forall function idMaker and forall function x to deterministicly create an id fo
 public interface fn extends λ<fn>{
 	
 	public long marklar105bHeader();
+	
+	public default long bizeUpTo4tBElseNegOne(){
+		return MarklarId105b.bizeUpTo4tBElseNegOne(marklar105bHeader());
+	}
+	
+	public default byte opbyte(){
+		return MarklarId105b.opbyte(marklar105bHeader());
+	}
 
 }

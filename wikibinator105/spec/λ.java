@@ -1,6 +1,6 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.spec;
-import java.lang.ref.WeakReference;
+//import java.lang.ref.WeakReference;
 import java.util.EnumSet;
 import java.util.function.UnaryOperator;
 
@@ -50,6 +50,18 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	
 	/** param/R child, of the 2 childs in binary forest. Self is 1. left of x is x*2. right of x is x*2+1. */
 	public default Subclass r(){ return g(3); }
+	
+	/** You can probably ignore this, unless you're creating types of λ at the NSAT level.
+	"λColor was redesigned 2021-2-9 in the then-incomplete wikibinator105 universal function,
+	so the lambda level can only see 1 color (2 if you count leaf, but thats only 1 other node),
+	so color doesnt need to be stored in ids of lambdas (so can use 256 bit instead of 512 bit ids),
+	and the nsat level below it can also see nonhalted colors.
+	Also, λ.opbyte() maybe should outerjoin these colors so theres 256 times more of them?"
+	--λColor.java comment 2021-2-12. Read more there.
+	*/
+	public default λColor color(){
+		return a() ? λColor.coLeaf : λColor.coHaltedNonleaf;
+	}
 	
 	/** UPDATE: superposition() will be done in user level code
 	which generates an id thats intentionally designed to be the same bits for (axA x) and (axB x)
@@ -163,9 +175,9 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 		return isObserve() && color()==color;
 	}*/
 	
-	/** this as next bit in opbyte */
+	/** this as next bit in opbyte which has 0..7 bits for the first 0..7 params of Op._root being u vs anything_except_u. */
 	public default boolean opbit(){
-		return a() && isClean();
+		return a() && isclean();
 	}
 	
 	/** There are 2 leafs: cleanLeaf and dirtyLeaf.
@@ -182,7 +194,12 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	ever across the whole internet, or tries to find in p2p network etc or create an (ax (fpr wiki anything ret))
 	for the requested (wiki anything) call, which creates increasing difficulty of sync described by SyncLevel.
 	*/
-	public boolean isClean();
+	public default boolean isclean(){
+		//FIXME what if this is called where op().isCertainlyClean and op().isCertainlyDirty are both false
+		//such as in Op._deeplazy or Op._root. Those should never occur in this prototype,
+		//ut TODO check test cases, security, etc.
+		return op().isCertainlyClean;
+	}
 	
 	/** OLD...
 	<br><br>
@@ -408,6 +425,14 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 		return e(r);
 	}
 	
+	/** If this.isclean, returns (t this), else returns (T this).
+	(T this) would work either way but be less efficient when its param of a clean
+	cuz that would truncateToClean before the clean sees it.
+	*/
+	public default λ tOfMe(){
+		return op(isclean() ? Op.tru : Op.Tru).e(this);
+	}
+	
 	
 	public default λ op(Op o){
 		throw new RuntimeException("TODO derive it from forest shape, and let subclasses use a switch to return a constant such as ImportStatic.s is Op.s");
@@ -423,10 +448,45 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	public byte isLeafsByte();
 	*/
 	
-	/** similar to isLeafsByte (obsoleted) except its 0..7 bits then a high 1 bit like a binheapIndex,
-	for is each param of leaf, is it leaf vs any nonleaf (default is (leaf leaf)).
+	/** This is a bitstring of 0..7 bits, for the first 0..7 params of Op._root,
+	where 1 means that param is λ/cleanLeaf, and 0 means that param is anything except λ/cleanLeaf.
+	For params 8 and higher, copy opbyte from l().opByte() aka left child's opbyte,
+	unless the right child is 0/_deeplazy then its 0/_deeplazy
+	cuz a node is nonhalted if either child is nonhalted,
+	and its _deeplazy if thats the last param such as (Op.trecurse x y z) evals to (x z (y z)).
 	*/
-	public byte opByte();
+	public byte opbyte();
+	
+	/** See SyncLevel for why you'd want to know this */
+	public boolean containsAxOf2Params();
+	
+	/** what to name this func? cbt? todo rename to "cob" meaning is Clean blOB? isCleanBlob()? blob()?
+	Only Op.blob (clean), not Op.Blob (dirty), cuz
+	only clean blob is optimized to wrap bitstrings, such as megaflops vs teraflops in GPU,
+	wrappers of float[], byte[], java.nio.Buffer, lwjgl opencl CLMem, java.lang.String, char[],
+	memory mapping, RandomAccessFile, remote file systems, bittorrent or ipfs remote memory mapping, etc,
+	whatever people might want to hook in as long as its constant even if its a deterministic lazyeval.
+	*/
+	public default boolean isblob(){
+		return op()==Op.blob;
+	}
+	
+	/** returns the first 3 SyncLevels but never the fourth cuz this is a lambda and thats for
+	things lambdas cant see such as NSAT, neuralnet, or bayesnet calculation of combos of λColor.
+	FIXME: lambdas cant see nonhalted nodes either, but theres still Op.deeplazy which is nonhalted.
+	*/
+	public default SyncLevel sl(){
+		//written in order of increasing difficulty of sync...
+		if(isclean()){
+			return !containsAxOf2Params() ? SyncLevel.slCleanAxless : SyncLevel.slCleanWithAx;
+		}else{
+			return SyncLevel.slDirty;
+		}
+	}
+	
+	public default Op op(){
+		return Op.atOpbyte(opbyte());
+	}
 	
 	public default Subclass clean(){
 		throw new RuntimeException("TODO returns a forkEdit of this where first param after leaf is leaf, unless it already is. TODO optimize this in Simpleλ by each keeping a ptr to the opposite clean/dirty.");
@@ -446,8 +506,9 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	either as pure interpreted lambdas or a wrapper of a byte, long, float, array, nio Buffer, etc,
 	then view it as Blob (immutable).
 	TODO can this be null?
-	*/
+	*
 	public Blob blob();
+	*/
 	
 	/** WeakReference to this λ. TODO should this be a field in Simpleλ vs created every time this is called?
 	The default implementation of this creates a new WeakReference each time.

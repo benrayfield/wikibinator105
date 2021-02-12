@@ -1,5 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
-package wikibinator105.impl.ids;
+package wikibinator105.impls.marklar105b.ids;
 
 /** defines 64 header bits.
 The default kind of id512 has these header bits, 64 bits of bize (bitstring size),
@@ -7,7 +7,7 @@ and 2 192 bit hashes that are 192 bits of sha3 (todo sha3_224? sha3_256, is ther
 and those 2 hashes are of the unknowncolor and withcolor forms,
 to use to align nodes/bloomfilters to OR them together.
 */
-public enum HeaderBits{
+public enum HeaderBits_OLD{
 	
 	/*containsAnyAxCalls (could be known by !allNormal color)
 	
@@ -37,7 +37,7 @@ public enum HeaderBits{
 	of those literal 256 bits, a literal cbt256 that is its own id.
 	All other kinds of ids, in the "default id system" (which you may derive other idMakers instead or use both)...
 	If it starts with \ then its a normal id, such as of a call pair or cbt128 or cbt4096 etc.
-	*/ 
+	*
 	magic(8),
 	magic_ignore7(0),
 	magic_ignore6(0),
@@ -53,7 +53,7 @@ public enum HeaderBits{
 	or maybe it would have a multihash/multicoded header or at least the varint datastruct that uses,
 	or could be anything.
 	If 1, then this is an id, normally 512 bits but this 64 bit header could go in other sizes of id.
-	*/
+	*
 	isId(1),
 	
 	/** a unary is λ or (t aUnary), such as (t (t (t λ))) aka ,,,λ aka 3u.
@@ -63,7 +63,7 @@ public enum HeaderBits{
 	There is no isCbt bit cuz that can be known by opbyte being 1 of 4 specific values,
 	2 of which are for Op.zero and 2 of which are for Op.one,
 	each at 6 curries and 7_or_more curries.
-	*/
+	*
 	isUnary(1),
 	
 	/** If 1, then number of curries doesnt fit in curriesAllIf andOr curriesUntilIf, so dont use those optimizations,
@@ -75,35 +75,36 @@ public enum HeaderBits{
 	An optimization of the first (few less than) 2^16 unary numbers might go in a λ[1<<16]
 	and call it with ImportState.unary(int), and put that in an Evaler of a function to get the nth unary number
 	when given a cbt16 and another such func for cbt64 of unarynumber, etc.
-	*/
+	*
 	isBigCurry(1),
 	
 	/** Is curriesAllIf infinity, which happens when opbyte is infcur? If !isBigCurry then !isInfcur.
 	Remember, opbyte is always copied from l.opbyte if number of curries > 7.
-	*/
+	*
 	isInfcur(1),
 	
 	/** bloomfilter bit λColor.nonaxof1paramcallLeaf.
 	λColor.leaf is when opbyte is 1, but have a bit for it here anyways to keep the bloom filter simple??
-	*/
+	*
 	bloomNonaxof1paramcallLeaf(1),
 	
-	/** bloomfilter bit λColor.nonaxof1paramcallNormal. */
+	/** bloomfilter bit λColor.nonaxof1paramcallNormal. *
 	bloomNonaxof1paramcallNormal(1),
 	
-	/** bloomfilter bit λColor.nonaxof1paramcallNohalt. */
+	/** bloomfilter bit λColor.nonaxof1paramcallNohalt. *
 	bloomNonaxof1paramcallNohalt(1),
 	
-	/** bloomfilter bit λColor.axof1paramcallProof. */
+	/** bloomfilter bit λColor.axof1paramcallProof. *
 	bloomAxof1paramcallProof(1),
 	
-	/** bloomfilter bit λColor.axof1paramcallDisproof. */
+	/** bloomfilter bit λColor.axof1paramcallDisproof. *
 	bloomAxof1paramcallDisproof(1),
 	
-	/** bloomfilter bit λColor.axof1paramcallNohalt. */
+	/** bloomfilter bit λColor.axof1paramcallNohalt. *
 	bloomAxof1paramcallNohalt(1),
 	
-	/** self.l().anyBull | self.r().anyBull | [self.isBull() aka self has more than 1 of the 4 colorsL proof disproof wordsalad normal] */
+	/** self.l().anyBull | self.r().anyBull | [self.isBull() aka self has more than 1 of the 4 colorsL proof disproof wordsalad normal]
+	*
 	anyBull(1),
 	
 	/** SyncLevel is known from this bit with opByte. This could be named notAllColorNormal,
@@ -112,7 +113,7 @@ public enum HeaderBits{
 	If allNormal or allUnknown then id should differ by only 1 bit (FIXME what about cbt256 literals that dont start with \ ?,
 	should those be excluded from the allnormal vs allunknown optimization, aka allUnknownExceptCbt256sWhichCanBeNormal vs allNormal???
 	(UPDATE: allUnknown is "COMMENTEDOUT CUZ ids have both the unknowncolor form and the withcolor form.").
-	*/
+	*
 	anyAxof1paramcall(1),
 	
 	/** Since the colors λColor.bloomAxof1paramcallNohalt and λColor.bloomNonaxof1paramcallNohalt
@@ -121,15 +122,15 @@ public enum HeaderBits{
 	to solve the halting problem which fits with the fact of math that halting-oracles are impossible,
 	while some calls such as (S I I (S I I)) could be proven to not halt quickly. For example,
 	bloomAxof1paramcallNohalt happens when (ax anything) does not halt, caused by (anything λ) not halting.
-	*/
+	*
 	anyNohalt(1),
 	
 	/** If 1 then here and deeply in l() and r() below, there exists at least 1 node where
 	its 6 bloom* bits (such as bloomNonaxof1paramcallLeaf) are all 0.
-	*/
+	*
 	anyUnknown(1),
 
-	/** If 1 then here and deeply in l() and r() below, the 6 bloom* bits (such as bloomNonaxof1paramcallLeaf) are all 0. */
+	/** If 1 then here and deeply in l() and r() below, the 6 bloom* bits (such as bloomNonaxof1paramcallLeaf) are all 0. *
 	allUnknown(1),
 	
 	/** when allUnknownBelow and exactly 1 of the colors is here (such as bloomAxof1paramcallProof),
@@ -137,7 +138,7 @@ public enum HeaderBits{
 	compared to normally all nodes reachable deeply thru l() and r() have 1 color each,
 	but you might instead want to use this like a Map.Entry<λ,λColor>
 	which may be useful in the NSAT level (which is below the lambda level).
-	*/
+	*
 	allUnknownBelow(1),
 	
 	/** opByte has 0..7 bits for the first 0..7 curries being u vs anything_except_u, then pad a high 1 bit.
@@ -145,7 +146,7 @@ public enum HeaderBits{
 	and deepLazy's opByte becomes 1 of the other 255 values when or if the eval finishes.
 	All the interesting logic happens in the first 7 curries,
 	and past that, any node which is 8 curries or more copies opByte from its l().
-	*/
+	*
 	opbyte(8),
 	opbyte_ignore7(0),
 	opbyte_ignore6(0),
@@ -193,14 +194,14 @@ public enum HeaderBits{
 	/** total number of curries so far plus curriesUntilIf
 	FIXME If number of curriesAllIf doesnt fit here (as it can be infinite in infcur or any finite number as it counts in unary),
 	then TODO is there a bit in the masks or is that a constant in these bits or what?
-	 */
+	*
 	curriesAllIf(16),
 	
 	/** number of curries until eval, such as s.curriesUntilIf is 3, (s x).curriesUntilIf is 2,
 	(s x y).curriesUntilIf is 1, and (s x y z)->(x z (y z)).
 	FIXME If number of curries doesnt fit here (as it can be infinite in infcur or any finite number as it counts in unary),
 	then TODO is there a bit in the masks or is that a constant in these bits or what? 
-	*/
+	*
 	curriesUntilIf(16);
 	
 	
@@ -217,9 +218,9 @@ public enum HeaderBits{
 	proofofstake being that they know what is likely to fit in with the existing claims of (func param)->ret
 	considering the wiki func is the only nondeterministic func in the whole system
 	but affects other (func param)->ret if those call wiki such as looping thru all possible funcs by dovetailing.
-	*/ 
+	*
 	
-	/** bize of this part of header, not of the cbt its part of id of. Bize means bitstring size. */
+	/** bize of this part of header, not of the cbt its part of id of. Bize means bitstring size. *
 	public final int bize;
 	
 	public final int shift;
@@ -233,14 +234,14 @@ public enum HeaderBits{
 		this.mask = ((1<<bize)-1)<<shift;
 	}
 	
-	/** get part of header as long */
+	/** get part of header as long *
 	public long j(long header){
 		return (header&mask)>>>shift;
 	}
 	
 	/** get part of header as byte.
 	Example: byte opbyte = HeaderBits.opbyte.b(someNode.header());
-	*/
+	*
 	public byte b(long header){
 		return (byte)j(header);
 	}
@@ -248,17 +249,17 @@ public enum HeaderBits{
 	/** get part of header as char aka java's only uint16 type and is java's only uint_any_size type.
 	You might want to use this instead of short since there are 2 16 bit unsigned numbers in header.
 	Example: char curriesUntilIf = HeaderBits.curriesUntilIf.c(someNode.header());
-	*/
+	*
 	public char c(long header){
 		return (char)j(header);
 	}
 	
-	/** its recommended to use i(long), or c(long) to get char instead cuz thats a uint16 */
+	/** its recommended to use i(long), or c(long) to get char instead cuz thats a uint16 *
 	public short s(long header){
 		return (short)j(header);
 	}
 	
-	/** Example: int curriesUntilIf = HeaderBits.curriesUntilIf.i(someNode.header()); */
+	/** Example: int curriesUntilIf = HeaderBits.curriesUntilIf.i(someNode.header()); *
 	public int i(long header){
 		return (int)j(header);
 	} 
