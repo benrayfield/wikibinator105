@@ -46,23 +46,77 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	if(first byte is not 0xf9){
 		//is literal cbt256 thats its own id.
 	}else{
-		//bit 16 is containsAx. bit 17 is isBitstringUpTo4Terabytes
+		//bit 16 is containsAx. bit 17 is isBitstringUpTo32Terabits
 		0xf9
-		op8 //is Op.zero or Op.one, the first bit
-		containsAxOf2Params1 //contains Op.axA or Op.axB deeply in l() and r() recursively?
-		isBitstringUpTo4Terabytes1 //is bitstring up to 2^45-1 bits aka 4 terabytes, else slower but unlimited size using normal call pairs.
-		if(isBitstringUpTo4Terabytes1){
-			//is cbt of powOf2 number of bits from 1..2^47 bits, and knows the index of the last 1 bit if exists.
-			cbtHeightAndBize46 //high 1 bit tells which powOf2. Bits below that tell wheres the last 1 bit.
+		op8 //see Op enum
+		containsAx1 //contains Op.axA or Op.axB deeply in l() and r() recursively?
+		isBitstringUpTo32Terabits1 //is bitstring up to 2^45-1 bits aka 4 terabytes, else slower
+			//but unlimited size using normal call pairs.
+		if(isBitstringUpTo32Terabits1){
+			//is cbt of powOf2 number of bits from 1..2^46 bits, and knows the index of the last 1 bit if exists.
+			cbtHeightAndBize46 //high 1 bit tells which powOf2. Bits below that tell wheres the last 1 bit (if it exists).
 		}else{
-			curriesAllIf23 //is 2^24-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf16.
-			curriesMoreIf23 //is 2^24-1 if bigger. is 0 if op8 is Op.deepLazy aka is (a snapshot of) evaling.
+			curriesAllIf23 //is 2^23-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf23.
+			curriesMoreIf23 //curries until eval. is 2^23-1 if bigger. is 0 if op8 is Op.deepLazy aka is (a snapshot of) evaling.
 		}
 	}
 	*/
 	
-	public static long parentHeader(long leftHeader, long rightHeader){
-		throw new RuntimeException("TODO");
+	/** FIXME are all 8 longs needed? Use parentHeaderIfLeftIsALiteralCbt256(long,long,short) instead? */
+	public static long parentHeaderIfLeftIsALiteralCbt256(
+			long leftHeader, long leftB, long leftC, long leftD,
+			long rightHeader, long rightB, long rightC, long rightD){
+		TODO call parentHeaderIfLeftIsALiteralCbt256(long,long,short) using these.
+	}
+	
+	/** resultingBize is range 0..511 and must be given since its not derivable from the 2 headers
+	in all possible cases, since its a compression for 256 to be their own id in most cases (when doesnt start with 0xf9).
+	<br><br>
+	Bize is always the number of bits before the last 1 in cbt content, or 0 if its all 0s,
+	and to know the difference between all 0s and the first bit being 1 then all the others are 0s
+	(which are both bize 0), those have 2 different opbytes cuz in a blob the opbyte knows the first bit.
+	<br><br>
+	Bize ranges 0(inclusive)..infinity(exclusive) regardless of how its stored in what kinds of ids,
+	and if a certain data type cant hold enough bits you can still use interpreted mode of lambdas for unlimited bize,
+	which it will retreat to in cases thats asked but the local optimizations dont have enough bits,
+	because otherwise it would not be a correct implementation of the wikibinator105 universal function.
+	<br><br>
+	That simple definition gets complex depending on optimizations such as trying to compute it
+	using only the first 64 bits of each of 2 id256s that are lazyevaled ids
+	and considering that if 256 bits dont start with the byte 0xf9 then they are their own id,
+	so in that case you need all 256 bits to look for that last 1 bit, or to know the bize which is the short param here.
+	<br><br>
+	If right is a cbt256 of 256 0s, then resultingBize is bize of left.
+	If left is not all 0s and right is not a cbt256 then resultingBize is 256 + bize of left,
+	cuz its (leftCbt leftCbt).
+	If right is a cbt256 that is not all 0s, then bize is 256 + bize of right.
+	If both are all 0s, then bize is 0.
+	*/
+	public static long parentHeaderIfLeftIsALiteralCbt256(long leftHeader, long rightHeader, short resultingBize){
+		TODO
+	}
+	
+	public static long parentHeaderIfLeftIsNotALiteralCbt256(long leftHeader, long rightHeader){
+		
+		if(isLiteralCbt256(leftHeader)){
+			FIXME also need cbtHeightAndBize46 (of left andOr right?), so parentHeader of 2 longs and 2 ubytes in that case?
+			TODO
+		}else{
+			TODO cbt1..128. In that case its leafHeader with its curriesAllIf23++
+			cuz a cbt called on anything is a cbt twice as big
+			and moving up the high 1 bit in cbtHeightAndBize46 (like adding 1 to curriesAllIf23 doubles the cbt size,
+			if its a bitstring bigger than fits in cbtHeightAndBize46).
+			But if leftHeader is already a literal cbt256 thats a problem cuz dont know its bize just from that header
+			but parent of those 2 do need to know its bize,
+			and rightHeader often knows its bize but may also be a literal cbt256
+			or may be a bitstring bigger than fits in cbtHeightAndBize46
+			(in which case its a normal funcall with curriesAllIf23 and curriesMoreIf23).
+			This wouldnt be a problem if 2 child id256 are known, instead of just the first 64 bits of each.
+			Maybe this function should take 8 longs?
+			
+			
+			TODO
+		}
 	}
 	
 	public static final int mask23 = (1<<23)-1;
@@ -71,13 +125,18 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	
 	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, int curriesAllIf23, int curriesMoreIf23){
 		return 0xf900000000000000L | ((opbyte&0xffL)<<48) | (containsAxOf2Params?(1L<<47):0L)
-			| ((curriesAllIf23&mask23)<<23) | (curriesMoreIf23&mask23);
+			| (((long)(curriesAllIf23&mask23))<<23) | (curriesMoreIf23&mask23);
 	}
 	
 	public static long headerOfBlobUpTo4tBThatsNotALiteralCbt256(byte opbyte, long cbtHeightAndBize46){
 		return 0xf900400000000000L | ((opbyte&0xffL)<<48) | (cbtHeightAndBize46&mask46);
 	}
 	
+	/** If !isLiteralCbt256(header) then use headerOfFuncall of 2 cbt128. Most random 256 bits are their own id,
+	so only in 1/256 of cases would you need to use 2 cbt128 like that (other than is implied by the literal cbt256
+	those are its childs, and cbt64s are thoses childs and so on down to (Op.blob u) being 1 and (Op.blob (u u)) being 0,
+	and past that all the way down to cleanLeaf/u.
+	*/
 	public static long headerOfLiteralCbt256(long header, long b, long c, long d){
 		if(!isLiteralCbt256(header)) throw new RuntimeException("Not a literal cbt256");
 		return header;
@@ -113,7 +172,7 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 		return -1;
 	}
 	
-	/** is 256 bits that is its own id if its first byte is not (byte)'\\'. Most possible 256 bits are. */
+	/** is 256 bits that is its own id if its first byte is not 0xf9. Most possible 256 bits are. */
 	public static boolean isLiteralCbt256(long header){
 		return header>>>56 != 0xf9;
 	}
@@ -126,6 +185,24 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 		return isLiteralCbt256(header)
 			? (header<0 ? opByteOfBlobStartingWith1 : opByteOfBlobStartingWith0)
 			: (byte)(header>>>48);
+	}
+	
+	/** this might be slower than just calling opbyte(long)
+	cuz it fits in CPU L2 cache but maybe not L1 cache. TODO experiment.
+	Also, its important things can be computed in very little memory to GPU optimize,
+	but this optimization is for CPUs.
+	*/
+	public static byte opbyte_using64kBCache(long header){
+		return opbyte_using64kBCache((int)(header>>>48));
+	}
+	
+	private static final byte[] opbyte_using64kBCache;
+	static{
+		opbyte_using64kBCache = new byte[1<<16];
+		for(int i=0; i<opbyte_using64kBCache.length; i++) {
+			//not always valid header but opbyte(long) doesnt look at the low 48 bits
+			opbyte_using64kBCache[i] = opbyte(((long)i)<<48);
+		}
 	}
 	
 	/*public static long bizeIsKnown(){

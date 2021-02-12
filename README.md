@@ -147,7 +147,7 @@ if(first byte is not 0xf9){
 		//is cbt of powOf2 number of bits from 1..2^46 bits, and knows the index of the last 1 bit if exists.
 		cbtHeightAndBize46 //high 1 bit tells which powOf2. Bits below that tell wheres the last 1 bit (if it exists).
 	}else{
-		curriesAll23 //is 2^23-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf23.
+		curriesAllIf23 //is 2^23-1 if bigger. number of this.l.l.l.l...l until get to u/leaf plus curriesMoreIf23.
 		curriesMoreIf23 //curries until eval. is 2^23-1 if bigger. is 0 if op8 is Op.deepLazy aka is (a snapshot of) evaling.
 	}
 }
