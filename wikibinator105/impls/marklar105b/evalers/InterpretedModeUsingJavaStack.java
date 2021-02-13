@@ -1,24 +1,24 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impls.marklar105b.evalers;
 import static wikibinator105.impls.marklar105b.ImportStatic.*;
-
-import wikibinator105.impls.marklar105b.fn;
+import wikibinator105.impls.marklar105b.*;
 import wikibinator105.spec.*;
 
-public class InterpretedMode implements Evaler<fn>{
+public class InterpretedModeUsingJavaStack implements Evaler<fn>{
 	
-	public static final InterpretedMode instance = new InterpretedMode();
+	public static final InterpretedModeUsingJavaStack instance = new InterpretedModeUsingJavaStack();
 	
 	public static final EvalerChain chain = new SimpleEvalerChain(instance);
 	
-	public $λ<fn> eval(long gas, fn func, fn z){
-		if(gas <= 0) throw new RuntimeException("FIXME redesign maxSpend make this easier to pay, like in occamsfuncer you just call $(number) but I like it being a param instead of stateful");
+	public $<fn> Eval(long gas, fn func, fn z){
+		if(gas <= 0) throw new RuntimeException("Since everything costs at least 1 gas, including calling this to check the gas, caller should not have called this. gas="+gas);
+		//if(gas == 0) throw new RuntimeException("FIXME redesign maxSpend make this easier to pay, like in occamsfuncer you just call $(number) but I like it being a param instead of stateful");
 		gas--;
 		
 		//FIXME pay 1 instantly, avoid infinite loops etc.
 		
 		fn ret = AxfprCache.getOrNull(func, z);
-		if(ret != null) return new $λ(gas,ret);
+		if(ret != null) return new $<fn>(gas,ret);
 		
 		if(!z.isclean() && func.isclean()){
 			//FIXME pay gas, as this forkEdits it recursively down to u/U
@@ -46,8 +46,14 @@ public class InterpretedMode implements Evaler<fn>{
 			throw new RuntimeException("Shouldnt be any "+Op._root+" in this prototype as thats mostly for mounting it into other systems such as axiomforest");
 		case _chooser: case _Chooser:
 			throw new RuntimeException("The switch only happens at 7+ params, so this shouldnt happen");
-		case wiki: case Wiki:
-			ret = null; //FIXME
+		case wiki:
+			ret = null; //optimization of calling (S I I (S I I)) then running out of gas. Dont cache ret if run out of gas.
+			//return funcThatInfloopsForAllPossibleParams.e(u); //(S I I (S I I))
+		break;
+		case Wiki:
+			$<fn> WikiReturned = Wiki(gas, z);
+			ret = WikiReturned.fn; //null if not enough gas, such as if dont (yet?) know what Wiki does for that param
+			gas = WikiReturned.gas;
 		case isLeaf:
 			//TODO optimize. Dont need "z = z.clean();" in this case.
 			ret = z.a() ? t : f;
@@ -73,11 +79,16 @@ public class InterpretedMode implements Evaler<fn>{
 			ret = null; //FIXME
 		break;
 		case trecurse: case Trecurse:
+			/*
 			//TODO xz and yz in parallel recursively (can become many threads), in some cases,
 			//but not when it takes longer due to thread switch lag.
 			fn xz = x.e(z);
 			fn yz = y.e(z);
 			ret = xz.e(yz);
+			*/
+			$<fn> forkReturned = Fork(gas, x, y, z); //this is singleThreaded, unless a subclass multithreads it in some cases
+			ret = forkReturned.fn;
+			gas = forkReturned.gas;
 		break;
 		case blob: case Blob:
 			//(Op.blob u) is bit1, and (Op.blob (u u)) is bit0, which are both cbts of 1 bit,
@@ -127,97 +138,36 @@ public class InterpretedMode implements Evaler<fn>{
 			//For now, just do it on java stack, but even when using java stack,
 			//but I want to use java stack less and less over future versions,
 			//maybe eventually getting it like occamsfuncer callquads that completely do their own stack on heap.
+			//.equals will be derived as combos of U/universalFunc called on itself, then an Evaler instance
+			//created to call an idMaker on things recursively and compare by ids (which are cached in Axfpr),
+			//after checking == and other fast checks to detect trivial nonequality or trivial equality first,
+			//but != doesnt prove nonequality in DedupLevel.dlWeakCbtButStrongAboveIt,
+			//and != does prove nonequality if all cbt up to id size are deduped by cbt content
+			//and everything above them is deduped by hashtable using System.identityHashCode.
+			//That will do perfect dedup without most things needing an id,
+			//but its too slow to use cuz cant wrap large arrays such as int[5632453]
+			//without creating all their internal nodes as binary forest of 256 or 128 bits each
+			//and upward each internal node going into AxfprCache as (L x) called on (R x) -> x,
+			//aka (L x (R x)) equals x forall x. The eager creation of all those internal nodes,
+			//instead of lazy of it, would make it impractical to copy between GPU memory and CPU memory,
+			//screen pixels, acyclicFlow (double,double)->double ops in evolved musical instruments in double[], etc.
+			//So .equals is (TODO) lazy of generating id and comparing them
+			//(inside derived lambda which computes equals, and that being an Evaled.java optimizations of it), TODO.
 			ret = x.e(y).equals(z) ? u : uu;
 		}
-		AxfprCache.put(func, z, ret);
-		return new $λ(gas,ret);
+		if(gas == 0) ret = null;
+		if(ret != null) AxfprCache.put(func, z, ret);
+		//If ret == null, this means didnt have enough gas to do the requested calculation,
+		//and giving back whatever amount of gas was not used.
+		return new $(gas,ret);
 	}
 	
 	public boolean are2CbtsOfSameSize(λ x, λ y){
 		throw new RuntimeException("TODO");
 	}
 
-}
-
-
-
-
-
-
-
-
-/*
-public $λ eval(long maxSpend, λ func, λ param){
-	
-	long gas = maxSpend;
-	//FIXME subtract from gas, but before each subtract check if it would be nonnegative.
-	//TODO should gas be static long (or static double) like I used in occamsfuncer?
-	int isLeafsByte = nextIsleafsByte(func.isLeafsByte())&0xff;
-	boolean isDirty = TODO; //FIXME get from isLeafsByte
-	//FIXME just create callpair/cp if theres not enuf curries,
-	//considering that Op.ax evals at 6 and 7 curries, and everything else only at 7.
-	λ ret;
-	Op op = null; //FIXME get this from isLeafsByte
-	
-	//TODO handle Op.ax with 5 or 6 curries here (Todo choose 5 or 6 that eval should do something)...
-	//	Get its 3 params (ignoring its 4th, hasnt got it yet) and ret = call one on the other then call
-	//a derived equals function on what that returns to compare it to the return value in ax's param
-	//and if they dont equal then infloop else its halted and TODO cache that.
-	//Or... consider the existence of the 6 param form to be that cache, and call it at 5 (of 7) params...
-	//That seems the better way... todo that.
-	
-	OLD...
-	ukΩuuuw? (λ   λ     λ     λ     λ     λ     λ)    ? //wiki
-	ukΩuuua? (λ   λ     λ     λ     λ     λ   (λ λ))  ? //isleaf
-	ukΩuu∩l? (λ   λ     λ     λ     λ   (λ λ)   λ)    ? //getfunc/l
-	ukΩuu∩r? (λ   λ     λ     λ     λ   (λ λ) (λ λ))  ? //getparam/r
-	ukΩu∩t?? (λ   λ     λ     λ   (λ λ)   λ)    ?     ? //tru/t
-	ukΩu∩f?? (λ   λ     λ     λ   (λ λ) (λ λ))  ?     ? //fal/f/fi
-	ukΩ∩s??? (λ   λ     λ   (λ λ)   λ  )  ?     ?     ? //trecurse/s
-	ukΩ∩p??? (λ   λ     λ   (λ λ) (λ λ))  ?     ?     ? //pair/p
-	XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ     λ)    ? //1
-	XXXXXXXX (λ   λ   (λ λ)   λ     λ     λ   (λ λ))  ? //0
-	XXXXXXXX (λ   λ   (λ λ)   λ     λ   (λ λ))  ?     ? //infcur_if_next_param_is_leaf_else_curry_if_its_unarynum
-	XXXXXXXX (λ   λ   (λ λ)   λ   (λ λ))  ?     ?     ? //typeval_and_the_2_get_truthval_ops
-	ukƱx???? (λ   λ   (λ λ) (λ λ))  ?     ?     ?     ? //ax/x/axiomOp
-	
-	
-	//TODO make sure none of this logic uses loops or recursion outside of calling eval recursively,
-	//such as in Op.ax to check if the observed return value equals the correct return val,
-	//use the derived equals function.
-	//This logic needs to be ported to a lambda so it can be used in emulation, dovetailing, etc.
-	
-	switch(op){ //7 curries, normal eval
-	case wiki:
-		throw new RuntimeException("TODO (wiki x) == ret in (ax ret wiki x) if thats known and isDirty(isLeafsByte). (wiki x) infloops if isClean(isLeafsByte).");
-	case isleaf:
-		ret = param.a()?t:f; //FIXME cost 1 gas, do at top of this eval func.
-	case l:
-		ret = param.l(); //FIXME cost 1 gas, do at top of this eval func.
-	case r:
-		ret = param.r(); //FIXME cost 1 gas, do at top of this eval func.
-	case t:
-		ret = func.r(); //FIXME cost 1 gas, do at top of this eval func.
-	case fi:
-		ret = param; //FIXME cost 1 gas, do at top of this eval func.
-	case curry:
-		λ x = func.l().r();
-		λ y = func.r();
-		TODO choose order of linkedlist used in currying, and if want to reverse there vs reverse it in syntax,
-		as in [a b c d] being [[[a b] c] d] vs [a [b [c d]]].
-	case cleancall:
-		TODO
-	case s:
-		λ x = func.l().r();
-		λ y = func.r();
-		ret = (x param (y param)); //FIXME use gas, the e(long,λ) func.
-	case pair: case typeval:
-		λ x = func.l().r();
-		λ y = func.r();
-		ret = (param x y); //FIXME use gas, the e(long,λ) func.
-	case ax:
-		infloop;
+	public $<fn> Wiki(long maxSpend, fn param){
+		return WikiState.bestKnownApproximationOfSparseSubsetOfWiki.apply(maxSpend,param);
 	}
-	TODO
 
-}*/
+}

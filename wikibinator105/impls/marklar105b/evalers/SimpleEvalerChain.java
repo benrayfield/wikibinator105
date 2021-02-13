@@ -1,8 +1,9 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impls.marklar105b.evalers;
+import wikibinator105.impls.marklar105b.fn;
 import wikibinator105.spec.*;
 
-public class SimpleEvalerChain implements EvalerChain{
+public class SimpleEvalerChain implements EvalerChain<fn>{
 	
 	protected boolean on = true;
 	
@@ -20,8 +21,16 @@ public class SimpleEvalerChain implements EvalerChain{
 	}
 
 	/** todo optimize by extending SimpleCompiled directly and overriding this apply func, consistent with setOn and prev etc? */
-	public $λ eval(long maxSpend, λ func, λ param){
-		return (on?wrapMe:prevOrNull).eval(maxSpend, func, param);
+	public $<fn> Eval(long maxSpend, fn func, fn param){
+		return (on?wrapMe:prevOrNull).Eval(maxSpend, func, param);
+	}
+	
+	public $<fn> Fork(long maxSpend, fn funcA, fn funcB, fn param){
+		return (on?wrapMe:prevOrNull).Fork(maxSpend, funcA, funcB, param);
+	}
+	
+	public $<fn> Wiki(long maxSpend, fn param){
+		return (on?wrapMe:prevOrNull).Wiki(maxSpend, param);
 	}
 
 	public void setOn(boolean on){

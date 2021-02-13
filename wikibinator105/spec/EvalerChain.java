@@ -30,7 +30,7 @@ else run in interpreted mode (the default Compiled) when no optimization is know
 As BinaryOperator<fn> its the same as UnaryOperator<fn> on cp(its 2 params),
 without needing to create that object. Its call x on y -> z.
 */
-public interface EvalerChain extends Evaler{
+public interface EvalerChain<T extends λ> extends Evaler<T>{
 		
 	/** If prev()==null then this must be on */
 	public void setOn(boolean on);

@@ -2,7 +2,7 @@
 package wikibinator105.impls.marklar105b.nodes;
 import static wikibinator105.impls.marklar105b.ImportStatic.*;
 import wikibinator105.impls.marklar105b.fn;
-import wikibinator105.impls.marklar105b.evalers.InterpretedMode;
+import wikibinator105.impls.marklar105b.evalers.InterpretedModeUsingJavaStack;
 import wikibinator105.spec.*;
 
 public abstract class AbstractFn implements fn{
@@ -11,7 +11,7 @@ public abstract class AbstractFn implements fn{
 	even if you have a more optimized form ready to use now, use setCompiled(EvalerChain)
 	so EvalerChain.prev() is InterpretedMode.evalerChain for example.
 	*/
-	protected EvalerChain chain = InterpretedMode.chain;
+	protected EvalerChain chain = InterpretedModeUsingJavaStack.chain;
 	
 	public fn p(fn r){
 		return cp(this,r);

@@ -31,6 +31,17 @@ public interface fn extends λ<fn>{
 	
 	public long marklar105bHeader();
 	
+	/** Low 8 bits of bIZe IF its a cbt1..cbt<2^45>,
+	aka bit index of last 1 bit, or 0 if its not a blob or if it is a blob but is all 0s.
+	an optimization needed to create long header from 2 long headers and 2 of these bizif bytes,
+	in case one of the 2 childs is a literal cbt256 (that is its own id, so the 45 bits of bize arent in header),
+	and the only way to know bize would be to find the last 1 bit in those 256 bits,
+	but only have the first 64 of those 256 bits (of 2 of id256),
+	so also cache a byte (bizif) of the position of the last 1 bit.
+	If its a literal cbt1..cbt128 then this can be derived from marklar105bHeader.
+	*/
+	public byte lizif();
+	
 	public default long bizeUpTo4tBElseNegOne(){
 		return MarklarId105b.bizeUpTo4tBElseNegOne(marklar105bHeader());
 	}

@@ -411,9 +411,9 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	and those (x z) and (y z) often do the same call multiple times using the <func param return> caches
 	which will be in (Op.ax ret param func) or in optimizations of that in hashtables in the VM.
 	*/
-	public $λ<Subclass> e(long maxSpend, Subclass r);
+	public $<Subclass> e(long maxSpend, Subclass r);
 	
-	public default $λ<Subclass> e(long maxSpend, Object r){
+	public default $<Subclass> e(long maxSpend, Object r){
 		return e(maxSpend,w(r));
 	}
 	

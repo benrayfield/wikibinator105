@@ -240,9 +240,10 @@ public class ImportStatic{
 	...
 	Also do that for Secondlast aka secondlast.dirty() so call setCompiled on that too but
 	a different func that does the dirty form of it.
-	*/
+	*
 	public static final fn secondlast = null;
 	public static final fn Secondlast = null; //FIXME should be secondlast.dirty(), and read comment in that about setCompiled here
+	*/
 	
 	public static fn t(fn x){ return cp(t,x); }
 	public static fn T(fn x){ return cp(T,x); }

@@ -78,7 +78,7 @@ public class Simpleλ extends AbstractFn{
 	}
 
 
-	public $λ e(long maxSpend, fn r){
+	public $ e(long maxSpend, fn r){
 		throw new RuntimeException("TODO");
 	}
 

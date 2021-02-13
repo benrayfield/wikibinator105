@@ -515,7 +515,15 @@ public enum Op{
 	
 	
 	
-	/** (curryOrInfcurOrTypeval λ) is infcur ((1) and (2)).
+	/** UPDATE: use (infcur λ λ λ) instead of (t (t (t λ))) in the example below,
+	cuz id types will often cache number of curries so far and remaining,
+	such as marklarId105b can cache up to around 8 million number of params of 1 function
+	so far and curries remaining, and past that would use interpreted mode and will (in theory)
+	work in p2p network if a function takes 1 trillion parameters using ax fpr caching
+	(cuz anything less than perfectly reproducing the behaviors of the universal function may be a security flaw),
+	though you would normally use 1-20 parameters and put bigger things in linkedlists, blobs, treemaps, etc.
+	<br><br>
+	(curryOrInfcurOrTypeval λ) is infcur ((1) and (2)).
 	(1) (curryOrInfcurOrTypeval λ type value) aka (infcur type value),
 		where type != λ, is how to use it as typeval, though its still infcur as it can take infinity curries.
 	(2) (curryOrInfcurOrTypeval λ λ ...) aka (infcur λ ...), is how to use it as not typeval.

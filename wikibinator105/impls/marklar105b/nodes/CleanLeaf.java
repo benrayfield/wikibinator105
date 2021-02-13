@@ -48,7 +48,7 @@ public class CleanLeaf extends AbstractFn{
 		throw new RuntimeException("TODO");
 	}
 
-	public $λ<fn> e(long maxSpend, fn r){
+	public $<fn> e(long maxSpend, fn r){
 		throw new RuntimeException("TODO");
 	}
 

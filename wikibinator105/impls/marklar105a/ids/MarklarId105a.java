@@ -29,7 +29,7 @@ public final class MarklarId105a /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	
 	public static final MarklarId105a instance = new MarklarId105a();
 
-	public Blob idOfLeaf(){
+	/*public Blob idOfLeaf(){
 		throw new RuntimeException("TODO");
 	}
 
@@ -43,10 +43,10 @@ public final class MarklarId105a /*implements IdMaker_old_useFuncsDirectlyAsIdma
 
 	/*public Blob idOfCallPair(EnumSet<λColor> colors, Blob funcId, Blob paramId){
 		throw new RuntimeException("TODO");
-	}*/
+	}*
 
 	public λ fn(){
 		throw new RuntimeException("TODO");
-	}
+	}*/
 
 }

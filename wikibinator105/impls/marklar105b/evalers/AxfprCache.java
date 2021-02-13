@@ -3,6 +3,17 @@ import java.util.HashMap;
 import java.util.Map;
 import wikibinator105.impls.marklar105b.fn;
 
+/** func param return caching, like in https://en.wikipedia.org/wiki/Continuation but more stateless than that,
+though you could derive continuations from this by including a treemap param in functions
+that call eachother and pass that same or forkEdited treemap to deeper calls.
+This is a pure math system more like lambdas than continuations, and also pattern-calculus and combinator,
+so it doesnt exactly fit into any existing category of functions.
+To represent it as lambdas, you'd need a funcall function that takes 2 params,
+instead of calling those 2 on eachother directly, to make the reflect ops (l r isleaf isclean) work,
+or you could build that into the 2 functions as long as they're never called on anything not
+created by combos of such a universal function which would break the reflect ops.
+Thats built into λ.e(λ) and λ.e(long,λ) and happens automatically when anything is called on anything.
+*/
 public class AxfprCache{
 	
 	public static int cacheEntries(){

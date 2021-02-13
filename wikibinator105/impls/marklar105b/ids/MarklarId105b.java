@@ -1,6 +1,5 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impls.marklar105b.ids;
-
 import wikibinator105.spec.Op;
 
 /** The default kind of id of a wikibinator105 node. More kinds of ids can be created at runtime,
@@ -62,38 +61,23 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	}
 	*/
 	
-	/** FIXME are all 8 longs needed? Use parentHeaderIfLeftIsALiteralCbt256(long,long,short) instead? */
-	public static long parentHeaderIfLeftIsALiteralCbt256(
+	
+	
+	/** This is the most general, though slower, and usually you dont need to do it this slow way.
+	This does not compute hash bits and only needs to see the non-header bits in case theres literal data in them
+	thats so big it replaces the header (which starts with any byte other than 0xf9 to say so).
+	You can avoid this slowness by first calling isLiteralCbt256(leftHeader), and if false,
+	call parentHeaderIfLeftIsNotALiteralCbt256(leftHeader,rightHeader),
+	else you can use the bize you already know it is (may be in Simpleλ.java etc?)
+	to call parentHeaderIfLeftIsALiteralCbt256(long,long,short),
+	or maybe a subclass of λ that has 4 longs and a boolean to say if the hash is computed yet
+	and maybe an extra few fields for caches.
+	*
+	public static long parentHeader(
 			long leftHeader, long leftB, long leftC, long leftD,
 			long rightHeader, long rightB, long rightC, long rightD){
-		TODO call parentHeaderIfLeftIsALiteralCbt256(long,long,short) using these.
-	}
-	
-	/** resultingBize is range 0..511 and must be given since its not derivable from the 2 headers
-	in all possible cases, since its a compression for 256 to be their own id in most cases (when doesnt start with 0xf9).
-	<br><br>
-	Bize is always the number of bits before the last 1 in cbt content, or 0 if its all 0s,
-	and to know the difference between all 0s and the first bit being 1 then all the others are 0s
-	(which are both bize 0), those have 2 different opbytes cuz in a blob the opbyte knows the first bit.
-	<br><br>
-	Bize ranges 0(inclusive)..infinity(exclusive) regardless of how its stored in what kinds of ids,
-	and if a certain data type cant hold enough bits you can still use interpreted mode of lambdas for unlimited bize,
-	which it will retreat to in cases thats asked but the local optimizations dont have enough bits,
-	because otherwise it would not be a correct implementation of the wikibinator105 universal function.
-	<br><br>
-	That simple definition gets complex depending on optimizations such as trying to compute it
-	using only the first 64 bits of each of 2 id256s that are lazyevaled ids
-	and considering that if 256 bits dont start with the byte 0xf9 then they are their own id,
-	so in that case you need all 256 bits to look for that last 1 bit, or to know the bize which is the short param here.
-	<br><br>
-	If right is a cbt256 of 256 0s, then resultingBize is bize of left.
-	If left is not all 0s and right is not a cbt256 then resultingBize is 256 + bize of left,
-	cuz its (leftCbt leftCbt).
-	If right is a cbt256 that is not all 0s, then bize is 256 + bize of right.
-	If both are all 0s, then bize is 0.
-	*/
-	public static long parentHeaderIfLeftIsALiteralCbt256(long leftHeader, long rightHeader, short resultingBize){
-		TODO
+		TODO call parentHeaderIfLeftIsALiteralCbt256(long,long,short) or parentHeaderIfLeftIsALiteralCbt256(long,long)
+		depending if left is a literal cbt256.
 	}
 	
 	public static long parentHeaderIfLeftIsNotALiteralCbt256(long leftHeader, long rightHeader){
@@ -118,6 +102,47 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 			TODO
 		}
 	}
+	
+	/** resultingBize is range 0..511 and must be given since its not derivable from the 2 headers
+	in all possible cases, since its a compression for 256 bits to be their own id
+	in most cases (when doesnt start with 0xf9).
+	<br><br>
+	Bize is always the number of bits before the last 1 in cbt/blob content, or 0 if its all 0s,
+	and ranges 0(inclusive)..infinity(exclusive) which must be supported in all Wikibinator105 VMs
+	as it is just a thing that lambdas can ask about lambdas that dont know about internal optimizations.
+	<br><br>
+	That simple definition gets complex depending on optimizations such as trying to compute it
+	using only the first 64 bits of each of 2 id256s that are lazyevaled ids
+	and considering that if 256 bits dont start with the byte 0xf9 then they are their own id,
+	so in that case you need all 256 bits to look for that last 1 bit, or to know the bize which is the short param here.
+	<br><br>
+	To know the difference between all 0s and the first bit being 1 and all the others 0s
+	(which are both bize 0), those have 2 different opbytes
+	cuz in a blob the opbyte (Op.blob u) aka 1 vs (Op.blob (u u)) aka 0
+	knows the first bit and is a binary tree of bits after that.
+	<br><br>
+	Bize ranges 0(inclusive)..infinity(exclusive) regardless of how its stored in what kinds of ids,
+	and if a certain data type cant hold enough bits you can still use interpreted mode of lambdas for unlimited bize,
+	which it will retreat to in cases thats asked but the local optimizations dont have enough bits,
+	because otherwise it would not be a correct implementation of the wikibinator105 universal function.
+	<br><br>
+	If right is a cbt256 of 256 0s, then resultingBize is bize of left.
+	If left is not all 0s and right is not a cbt256 then resultingBize is 256 + bize of left,
+	cuz its (leftCbt leftCbt).
+	If right is a cbt256 that is not all 0s, then bize is 256 + bize of right.
+	If both are all 0s, then bize is 0.
+	*
+	public static long parentHeaderIfLeftIsALiteralCbt256(long leftHeader, long rightHeader, short resultingBize){
+		TODO
+	}*/
+	public static long parentHeader(long leftHeader, byte leftLizif, long rightHeader, byte rightLizif){
+		boolean leftIsLiteralCbt256 = isLiteralCbt256(leftHeader);
+		boolean rightIsLiteralCbt256 = isLiteralCbt256(rightHeader);
+		if()
+			
+		TODO
+	}
+	
 	
 	public static final int mask23 = (1<<23)-1;
 	
@@ -170,6 +195,42 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 			return cbtHeightAndBize46^(1L<<(63-leadingZeros)); //remove high 1 bit (which tells cbt height)
 		}
 		return -1;
+	}
+	
+	/** see parentHeader(long leftHeader, byte leftLizif, long rightHeader, byte rightLizif).
+	Returns null if header is of a cbt256, which is the only case when it cant be known from header.
+	<br><br>
+	OLD...
+	if cant be known just from that header, such as if its a literal cbt256
+	in which case you need to know all 256 bits to know where the last 1 bit is (or if its all 0s),
+	or if its a cbt/blob bigger than 2^45-1 bits in which case the header knows about curries but not bitstrings
+	and would have to be computed by lambdas recursively
+	(average of constant cost if AxfprCache remembers such calls on childs).
+	*/
+	public static Byte lizif(long header){
+		if(isLiteralCbt256(header)) return null;
+		return (byte)Math.max(0,bizeUpTo4tBElseNegOne(header)); //max changes -1 to 0
+	}
+	
+	/** Always works, unlike lizif(long header)==null if isLiteralCbt256(long header) cuz need more info.
+	A faster way is to cache the lizif byte in each node, and compute it upward from each 2 childs,
+	and only call this when loading a node from an id256, or when when wrapping
+	an int[] or double[] etc (childs are aligned on powOf2 size ranges) and generating their ids
+	as most blocks of 256 bits in those will be their own id but some will
+	be 2 of cbt128 (cuz starts with a certain byte).
+	*/
+	public static byte lizif(long header, long b, long c, long d){
+		Byte lizif = lizif(header);
+		return lizif!=null ? lizif : (byte)Math.max(0,255-numberOfTrailingZeros(header, b, c, d));
+	}
+	
+	/** same as Long.numberOfTrailingZeros(int256) would be. Ranges 0 to 256 */
+	public static int numberOfTrailingZeros(long a, long b, long c, long d){
+		if(d != 0) return (byte)(255-Long.numberOfTrailingZeros(d));
+		if(c != 0) return (byte)(191-Long.numberOfTrailingZeros(c));
+		if(b != 0) return (byte)(127-Long.numberOfTrailingZeros(b));
+		if(a != 0) return (byte)(63-Long.numberOfTrailingZeros(a));
+		return 256;
 	}
 	
 	/** is 256 bits that is its own id if its first byte is not 0xf9. Most possible 256 bits are. */
