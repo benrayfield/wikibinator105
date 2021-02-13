@@ -1,5 +1,9 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impls.marklar105b.ids;
+import java.security.MessageDigest;
+
+import immutable.util.HashUtil;
+import immutable.util.MathUtil;
 import wikibinator105.spec.Op;
 
 /** The default kind of id of a wikibinator105 node. More kinds of ids can be created at runtime,
@@ -135,13 +139,33 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	public static long parentHeaderIfLeftIsALiteralCbt256(long leftHeader, long rightHeader, short resultingBize){
 		TODO
 	}*/
-	public static long parentHeader(long leftHeader, byte leftLizif, long rightHeader, byte rightLizif){
+	public static long parentHeader(
+			long leftHeader, byte leftLizif, long leftCMayBeReturnedAsHeaderIfReturnLiteralCbt256_ignoredIfLeftIsNotACbt128,
+			long rightHeader, byte rightLizif){
 		boolean leftIsLiteralCbt256 = isLiteralCbt256(leftHeader);
 		boolean rightIsLiteralCbt256 = isLiteralCbt256(rightHeader);
 		if()
 			
 		TODO
 	}
+	
+	/** or more generally use parentHeader(...) */
+	public static long parentHeaderIfLeftIsNotACbt128(long leftHeader, byte leftLizif, long rightHeader, byte rightLizif){
+		return parentHeader(leftHeader, leftLizif, 0L, rightHeader, rightLizif);
+	}
+	
+	/** or more generally use parentHeader(...) */
+	public static long parentHeaderIfLeftOpIsNotBlob(long leftHeader, long rightHeader){
+		if(op(leftHeader)==Op.blob) throw new RuntimeException("Op.blob cant be used in this simplified function thats here for convenience");
+		return parentHeader(leftHeader, (byte)0, 0L, rightHeader, (byte)0);
+	}
+	
+	public static long[] parentId(
+			long leftHeader, long leftB, long leftC, long leftD,
+			long rightHeader, long rightB, long rightC, long rightD) {
+		return parentId(defaultHashAlgorithm, leftHeader, leftB, leftC, leftD, rightHeader, rightB, rightC, rightD);
+	}
+			
 	
 	/** Eager eval of id256. Usually lazyeval is best.
 	Returns long[4], a marklar105b id deterministicly generated from 2 child marklar105b ids.
@@ -151,26 +175,71 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	which should be fast enough to, if you wanted (not necessary),
 	generate global id of every frame of video (1/60 second) in a FPS game and screen blits etc,
 	or at least it could at low resolution. Will have to experiment with it to know exactly how fast.
+	Default hashAlgorithm is "SHA3-256", and whatever it is, only the last 192 bits are used.
+	TODO would it be more secure to XOR in the other 64 bits into all 3 of the other 64 64 64 bits?
 	*/
 	public static long[] parentId(
+			String hashAlgorithm,
 			long leftHeader, long leftB, long leftC, long leftD,
 			long rightHeader, long rightB, long rightC, long rightD){
 		long header = parentHeader(
-			leftHeader, lizif(leftHeader,leftB,leftC,leftD),
+			leftHeader, lizif(leftHeader,leftB,leftC,leftD), leftC,
 			rightHeader, lizif(rightHeader,rightB,rightC,rightD)
 		);
-		if they are both cbt1..cbt64 then those 1..64 + 1..64 bits are last 2..128 bits of parent.
-		if they are both cbt128 then
-		check if left's 128 bits's first byte is 0xf9 and if so do normal call pair else literalCbt256.
-		else do normal call pair.
-		
-		if literalcbt1..256 else normal callpair:
-		return new long[]{
-			header,
-			TODO,
-			TODO, //hash or literal cbt1..cbt256
-			TODO
+		if(isLiteralCbt256(header)){ //concat(cbt128,cbt128). header==leftC. Most random 256 bits are their own id.
+			assert header==leftC; //FIXME when are JVM assert turned on?
+			return new long[]{ leftC, leftD, rightC, rightD };
+		}else if(isLiteralCbt1To128(header)){
+			"TODO concat the bits, and put it (2..128 bits) at the end of parents 256 bits.""
+			
+			/** FIXME TODO
+			
+			if they are both cbt1..cbt64 then those 1..64 + 1..64 bits are last 2..128 bits of parent.
+			
+			if they are both cbt128 then
+			check if left's 128 bits's first byte is 0xf9 and if so do normal call pair else literalCbt256.
+			else do normal call pair.
+			
+			if literalcbt1..256 else normal callpair:
+			
+			
+			
+			
+			return new long[]{
+				header,
+				TODO,
+				TODO, //hash or literal cbt1..cbt256
+				TODO
+			}
+			*/
+		}else{
+			long[] ret = new long[4];
+			ret[0] = header;
+			hash192(hashAlgorithm, ret, 1, leftHeader, leftB, leftC, leftD, rightHeader, rightB, rightC, rightD); //last 192 bits are hash
+			return ret;
 		}
+	}
+	
+	/** last 192 bits of hashAlgorithm. returns long[3] */
+	public static long[] hash192(String hashAlgorithm, long... in){
+		long[] ret = new long[3];
+		hash192(hashAlgorithm,ret,0,in);
+		return ret;
+	}
+	
+	/** change this, for example to "SHA256", and it will work in CPU,
+	but any GPU optimizations of it would not change algorithm with it automatically unless TODO those
+	are generated from lambdas at runtime in custom JIT compiler I'm making for wikibinator105.
+	*/
+	public static final String defaultHashAlgorithm = "SHA3-256";
+	
+	/** last 192 bits of sha3_256. writes writeHere[offset..(offset+2)]. normally this is long[8] of 2 id256s.
+	*/
+	public static void hash192(String hashAlgorithm, long[] writeHere, int offset, long... in){
+		byte[] hash = HashUtil.sha3_256(MathUtil.longsToBytes(in));
+		writeHere[offset] = MathUtil.readLongFromByteArray(hash, hash.length-24);
+		writeHere[offset+1] = MathUtil.readLongFromByteArray(hash, hash.length-16);
+		writeHere[offset+2] = MathUtil.readLongFromByteArray(hash, hash.length-8);
 	}
 	
 	
@@ -276,6 +345,10 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 		return isLiteralCbt256(header)
 			? (header<0 ? opByteOfBlobStartingWith1 : opByteOfBlobStartingWith0)
 			: (byte)(header>>>48);
+	}
+	
+	public static Op op(long header){
+		return Op.atOpbyte(opbyte(header));
 	}
 	
 	/** this might be slower than just calling opbyte(long)
