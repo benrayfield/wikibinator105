@@ -143,6 +143,36 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 		TODO
 	}
 	
+	/** Eager eval of id256. Usually lazyeval is best.
+	Returns long[4], a marklar105b id deterministicly generated from 2 child marklar105b ids.
+	Should take a few microseconds for one of these, or a few nanoseconds in GPU for many (id,id)->id in parallel,
+	so when GPU gives you a large primitive array,
+	it can also give you the id of that array (in log number of kernel calls) or not,
+	which should be fast enough to, if you wanted (not necessary),
+	generate global id of every frame of video (1/60 second) in a FPS game and screen blits etc,
+	or at least it could at low resolution. Will have to experiment with it to know exactly how fast.
+	*/
+	public static long[] parentId(
+			long leftHeader, long leftB, long leftC, long leftD,
+			long rightHeader, long rightB, long rightC, long rightD){
+		long header = parentHeader(
+			leftHeader, lizif(leftHeader,leftB,leftC,leftD),
+			rightHeader, lizif(rightHeader,rightB,rightC,rightD)
+		);
+		if they are both cbt1..cbt64 then those 1..64 + 1..64 bits are last 2..128 bits of parent.
+		if they are both cbt128 then
+		check if left's 128 bits's first byte is 0xf9 and if so do normal call pair else literalCbt256.
+		else do normal call pair.
+		
+		if literalcbt1..256 else normal callpair:
+		return new long[]{
+			header,
+			TODO,
+			TODO, //hash or literal cbt1..cbt256
+			TODO
+		}
+	}
+	
 	
 	public static final int mask23 = (1<<23)-1;
 	

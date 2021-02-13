@@ -47,7 +47,7 @@ public class WikiState{
 	regardless of order of gets and puts,
 	<br><br>
 	but other than those, things in Wiki will in general be any (Op.Ax u (Op.Fpr Op.Wiki param ret)),
-	which is more general than Wiki such as (Op.Ax u (Op.Fpr Op.Wiki param ret))
+	which is more general than Wiki such as (Op.Ax u (Op.Fpr L ["abc" "def"] (pair "abc")).
 	*/
 	public static BiFunction<Long,fn,$<fn>> bestKnownApproximationOfSparseSubsetOfWiki = (Long gas, fn param)->{
 		return new $(gas,null);
