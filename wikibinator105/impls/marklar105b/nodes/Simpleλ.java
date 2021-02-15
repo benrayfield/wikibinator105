@@ -20,8 +20,18 @@ public class Simpleλ extends AbstractFn{
 	public Simpleλ(fn l, fn r){
 		this.l = l;
 		this.r = r;
+		byte lLizif = l.lizif(), rLizif = r.lizif();
+		long lh = l.marklar105bHeader(), rh = r.marklar105bHeader();
+		//TODO optimize call parentHeaderIfLeftIsNotACbt128 without l.j(0) in some cases?
+		//Can give parentHeader func 0L insterad of l.j(0) if
+		//l is a literal cbt128 whose first content byte is not 0xf9, so avoid computing j(0) is faster in that case?
+		//j(0) is very fast for blobs/cbts but slower for nonblobs.
+		this.header = parentHeader(lh, lLizif, l.j(0), rh, rLizif);
+		//TODO That 1 ignored bit before the 15 15 15 bits... put containsBit1 in that.
+		this.lizif = parentLizif(this.header, lLizif, rLizif, containsBit1(rh,rLizif));
 		
-		long lh = l.marklar105bHeader();
+		
+		/*long lh = l.marklar105bHeader();
 		long rh = r.marklar105bHeader();
 		long myHeader = 0;
 		byte myLizif = 0;
@@ -37,6 +47,7 @@ public class Simpleλ extends AbstractFn{
 		if(!isLiteralCbt256) myHeader = parentHeaderIfLeftIsNotACbt128(lh, l.lizif(), rh, r.lizif());;
 		header = myHeader;
 		lizif = myLizif;
+		*/
 				
 				
 			

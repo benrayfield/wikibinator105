@@ -44,6 +44,33 @@ It seems similar to how a universal function works. Theres only 1 word but you c
 */
 public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdmaker*/{
 	
+	/** If first byte is not this, its a literal cbt256 that is its own id, so most random 256 bits are their own id,
+	else its a normal id.
+	*/
+	public static final byte noncbt256firstbyte = (byte)0xf9;
+	
+	public static final long noncbt256firstbyteLong = ((long)noncbt256firstbyte)<<56;
+	
+	public static final long mask15 = (1<<15)-1;
+	
+	public static final long mask45 = (1L<<45)-1;
+	
+	public static final long mask46 = (1L<<46)-1;
+	
+	/** If first byte is not 0xf9, none of the masks apply, as all 256 bits of the id are literal data */
+	public static final long maskContainsAxof2params_ifFirstByteIsNotF9 = (1L<<47);
+	
+	/** If first byte is not 0xf9, none of the masks apply, as all 256 bits of the id are literal data */
+	public static final long maskIsBitstringUpTo2tB_ifFirstByteIsNotF9 = (1L<<46);
+	//FIXME 2tB not 2tB, and its cbtHeightAndBize45 not cbtHeightAndBize46.
+	//FIXME reorder the 3 mask bits (that come after the first 16 bits when not literalCbt256)
+	//aka containsaxof2params containsbit1 isblobupto2power44minus1bits?
+	
+	public static final long maskContainsBit1_ifFirstByteIsNotF9 = (1L<<45);
+	
+	/** height of (Op.blob u) and of (Op.blob (u u)) */
+	public static final int minHeightOfCbt = 7;
+	
 	/* Almost done.. TODO instead of 2 of 23, have 3 of 15 (reserve 1 bit to mean "some other data format, maybe cid/ipld/ipfs/URN/contenttype/etc related?"):
 		ignoreThisBit1 heightIf15 curryAllIf15 curryMoreIf15.
 	This way, can efficiently have cbts up to 2^32766 bits (sparse of course) since they have to verify height of their param,
@@ -150,12 +177,87 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	public static long parentHeader(
 			long leftHeader, byte leftLizif, long leftCMayBeReturnedAsHeaderIfReturnLiteralCbt256_ignoredIfLeftIsNotACbt128,
 			long rightHeader, byte rightLizif){
-		boolean leftIsLiteralCbt256 = isLiteralCbt256(leftHeader);
-		boolean rightIsLiteralCbt256 = isLiteralCbt256(rightHeader);
-		if()
+		
+		consider Op.deeplazy
+		
+		boolean leftIsLiteralCbt128 = isLiteralCbt128(leftHeader);
+		boolean rightIsLiteralCbt128 = isLiteralCbt128(rightHeader);
+		//Cbt called on anything is cbt twice as big, by if its param is anything except a cbt of same size
+		//its return value is instead itself called on itself, but thats an eval, and before that it would be Op._deeplazy.
+		//So here, its only a cbt256 if both its childs are cbt128 and if the first byte of left's content is not 0xf9.
+		boolean parentIsLiteralCbt256 = leftIsLiteralCbt128 & rightIsLiteralCbt128
+			& isLiteralCbt256(leftCMayBeReturnedAsHeaderIfReturnLiteralCbt256_ignoredIfLeftIsNotACbt128); //check for 0xf9
+		if(parentIsLiteralCbt256) return leftCMayBeReturnedAsHeaderIfReturnLiteralCbt256_ignoredIfLeftIsNotACbt128;
+		
+		TODO next opbyte or copy opbyte.
+		
+		Compute cbtheightandbize45 (in last 45 bits of header)
+		
+		compute containsBit1 by oring that from 2 childs and with self's opbyte being the opbyte of bit1.
+		compute similar for containsaxof2params.
+		
+		compute the 3 short15s (heightif and 2 curriesif)
+		
+		
+		
+		
+		
+		
+		//boolean rightIsLiteralCbt128 = isLiteralCbt128(rightHeader);
+		//boolean leftIsLiteralCbt256 = isLiteralCbt256(leftHeader);
+		//boolean rightIsLiteralCbt256 = isLiteralCbt256(rightHeader);
+		//if()
 			
 		TODO
 	}
+	
+	/** see fn.lizif() */
+	public static byte parentLizif(long parentHeader, byte leftChildLizif, byte rightChildLizif, boolean rightContainsBit1){
+		if(isLiteralCbt256(parentHeader)){
+			return rightContainsBit1 ? leftChildLizif : rightChildLizif;
+					
+			/*if(isRightChildAll0s){
+				return leftChildLizif;
+			}else{
+				ret
+			}
+			
+			//is the index 0..255 of the last 1 bit in the 256 literal bits that is its own id256, or 0 if its all 0s.
+			if(!isRightChildAll0s || rightChildLizif != 0){ //right child is not all 0s cuz know it has a last 1 bithas a last 1 bit somewhere
+				return (byte)(128+rightChildLizif);
+			}else if(isRightChildAll0s){
+				//lizif 0 means either the content is all 0s or the content is a 1 then the rest are all 0s,
+				//and to know the difference you check opbyte, as theres 2 different opbytes for blobs that
+				//start with 0 vs blobs that start with 1.
+			}else{
+				
+			}
+			TODO
+			*/
+		}else if((parentHeader&maskIsBitstringUpTo2tB_ifFirstByteIsNotF9) != 0){
+			return (byte)bizeUpTo2tBElseNegOneIfBiggerCbtOrCantKnowFromOnlyHeaderCuzIsLiteralCbt256(parentHeader);
+		}else{
+			return 0;
+		}
+	}
+	
+	static final long containsBit1_optimization = (1L<<63)|maskContainsBit1_ifFirstByteIsNotF9;
+	
+	/** does it deeply anywhere contain (Op.blob u) aka clean bit 1, even if its not a cbt it may still contain that */
+	public static boolean containsBit1(long header, byte lizif){
+		return lizif != 0 || (header&containsBit1_optimization) != 0; //optimization of the commentedout code below
+		/*if(lizif != 0){
+			return true;
+		}else if(isLiteralCbt256(header)){ //lizif==0 so its either 256 0s or 1 then 255 0s
+			return header!=0;
+		}else{
+			return (header&maskContainsBit1_ifFirstByteIsNotF9) != 0;
+			//FIXME go down from 4tB to 2tB so these 3 bits are part of all non-isLiteralCbt256 headers,???
+			//instead of having to check if it uses the cbtHeightAndBize46???
+		}*/
+	}
+	//FIXME TODO wherever theres 15 15 15 is (parentHeader, etc) put the containsBit1 cache in it,
+	//and other times derive it from opbyte and lizif.
 	
 	/** or more generally use parentHeader(...) */
 	public static long parentHeaderIfLeftIsNotACbt128(long leftHeader, byte leftLizif, long rightHeader, byte rightLizif){
@@ -194,36 +296,48 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 			leftHeader, lizif(leftHeader,leftB,leftC,leftD), leftC,
 			rightHeader, lizif(rightHeader,rightB,rightC,rightD)
 		);
-		if(isLiteralCbt256(header)){ //concat(cbt128,cbt128). header==leftC. Most random 256 bits are their own id.
+		if(isLiteralCbt256(header)){ //(cbt128,cbt128)->cbt256 by concat. header==leftC. Most random 256 bits are their own id.
 			assert header==leftC; //FIXME when are JVM assert turned on?
 			return new long[]{ leftC, leftD, rightC, rightD };
-		}else if(isLiteralCbt1To128(header)){
-			"TODO concat the bits, and put it (2..128 bits) at the end of parents 256 bits.""
-			
-			/** FIXME TODO
-			
-			if they are both cbt1..cbt64 then those 1..64 + 1..64 bits are last 2..128 bits of parent.
-			
-			if they are both cbt128 then
-			check if left's 128 bits's first byte is 0xf9 and if so do normal call pair else literalCbt256.
-			else do normal call pair.
-			
-			if literalcbt1..256 else normal callpair:
-			
-			
-			
-			
-			return new long[]{
-				header,
-				TODO,
-				TODO, //hash or literal cbt1..cbt256
-				TODO
-			}
-			*/
 		}else{
-			return id256FromParentHeaderConcatHash192_onlyUseIfNotLiteralCbt(header, hashAlgorithm,
-				leftHeader, leftB, leftC, leftD,
-				rightHeader, rightB, rightC, rightD);
+			int leftCbtHeight = heightIf15(leftHeader)-minHeightOfCbt; //number of bits in cbt is 2^cbtHeight, including padding.
+			int rightCbtHeight = heightIf15(rightHeader)-minHeightOfCbt;
+			//cbt called on anything is cbt twice as big, so if they're different heights it has to eval that first,
+			//which is a bigO(1) eval to just call left on left, but this parentId function was given the 2 childs,
+			//and if those 2 childs cant be together in a halted state as they are, it has to be marked as Op._deeplazy.
+			if(isLiteralCbt1To128(header) && leftCbtHeight == rightCbtHeight){
+				//TODO optimize by not using switch here, but the switch might be useful for debugging for a while.
+				long c = 0, d = 0;
+				//cbt1 to cbt128 literals have all 0s between end of header and start of the content which is at end of id256.
+				switch(leftCbtHeight){
+				case 1: //(cbt1,cbt1)->cbt2 by concat
+					d = (leftD<<1)|rightD;
+				break;
+				case 2: //(cbt2,cbt2)->cbt4
+					d = (leftD<<2)|rightD;
+				break;
+				case 3: //(cbt4,cbt4)->cbt8
+					d = (leftD<<4)|rightD;
+				break;
+				case 4: //(cbt8,cbt8)->cbt16
+					d = (leftD<<8)|rightD;
+				break;
+				case 5: //(cbt16,cbt16)->cbt32
+					d = (leftD<<16)|rightD;
+				break;
+				case 6: //(cbt32,cbt32)->cbt64
+					d = (leftD<<32)|rightD;
+				break;
+				case 7: //(cbt64,cbt64)->cbt128
+					c = leftD;
+					d = rightD;
+				}
+				return new long[]{ header, 0, c, d };
+			}else{
+				return id256FromParentHeaderConcatHash192_onlyUseIfNotLiteralCbt(header, hashAlgorithm,
+					leftHeader, leftB, leftC, leftD,
+					rightHeader, rightB, rightC, rightD);
+			}
 		}
 	}
 	
@@ -269,37 +383,21 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 		writeHere[offset+2] = MathUtil.readLongFromByteArray(hash, hash.length-8);
 	}
 	
-	/** If first byte is not this, its a literal cbt256 that is its own id, so most random 256 bits are their own id,
-	else its a normal id.
-	*/
-	public static final byte noncbt256firstbyte = (byte)0xf9;
 	
-	public static final long noncbt256firstbyteLong = ((long)noncbt256firstbyte)<<56;
-	
-	public static final long mask15 = (1<<15)-1;
-	
-	public static final long mask45 = (1L<<45)-1;
-	
-	public static final long mask46 = (1L<<46)-1;
-	
-	/** If first byte is not 0xf9, none of the masks apply, as all 256 bits of the id are literal data */
-	public static final long maskContainsAxof2params_ifFirstByteIsNotF9 = (1L<<47);
-	
-	/** If first byte is not 0xf9, none of the masks apply, as all 256 bits of the id are literal data */
-	public static final long maskIsBitstringUpTo4tB_ifFirstByteIsNotF9 = (1L<<46);
-	
-	/** height of (Op.blob u) and of (Op.blob (u u)) */
-	public static final int minHeightOfCbt = 7;
 	
 	/** casts the ints to shorts */
-	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, int heightIf15, int curriesAllIf15, int curriesMoreIf15){
-		return headerOfFuncall(opbyte, containsAxOf2Params, (short)heightIf15, (short)curriesAllIf15, (short)curriesMoreIf15);
+	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, boolean containsBit1,
+			int heightIf15, int curriesAllIf15, int curriesMoreIf15){
+		return headerOfFuncall(opbyte, containsAxOf2Params, containsBit1,
+			(short)heightIf15, (short)curriesAllIf15, (short)curriesMoreIf15);
 	}
 	
-	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, short heightIf15, short curriesAllIf15, short curriesMoreIf15){
+	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, boolean containsBit1,
+			short heightIf15, short curriesAllIf15, short curriesMoreIf15){
 		//TODO verify the 3 shorts are all positive else throw? or drop the sign bit (using mask15)?
 		return noncbt256firstbyteLong | ((opbyte&0xffL)<<48)
 			| (containsAxOf2Params?maskContainsAxof2params_ifFirstByteIsNotF9:0L)
+			| (containsBit1?maskContainsBit1_ifFirstByteIsNotF9:0L)
 			| (((long)heightIf15)<<30) | ((long)curriesMoreIf15<<15) | (long)curriesMoreIf15;
 			//| (((long)(curriesAllIf23&mask23))<<23) | (curriesMoreIf23&mask23);
 	}
@@ -310,9 +408,12 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 			"Too big to fit in cbtHeightAndBize46 cbtHeight="+cbtHeight+" bize="+bize);
 		return (1L<<cbtHeight)|bize;
 	}
+	//FIXME 2tB not 2tB, and its cbtHeightAndBize45 not cbtHeightAndBize46.
+	//FIXME reorder the 3 mask bits (that come after the first 16 bits when not literalCbt256)
+	//aka containsaxof2params containsbit1 isblobupto2power44minus1bits?
 	
-	public static long headerOfBlobUpTo4tBThatsNotALiteralCbt256(byte opbyte, long cbtHeightAndBize46){
-		return noncbt256firstbyteLong | maskIsBitstringUpTo4tB_ifFirstByteIsNotF9
+	public static long headerOfBlobUpTo2tBThatsNotALiteralCbt256(byte opbyte, long cbtHeightAndBize46){
+		return noncbt256firstbyteLong | maskIsBitstringUpTo2tB_ifFirstByteIsNotF9
 			| ((opbyte&0xffL)<<48) | (cbtHeightAndBize46&mask46);
 	}
 	
@@ -320,14 +421,14 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	If first byte is noncbt256firstbyte, height is minHeightOfCbt+8.
 	Height of a cbt of size 2^n bits is minHeightOfCbt+n.
 	Cbt of size 1 2 4 8 16 32 64 128 and usually 256 (depending on first byte) fits in an id256.
-	Cbt<2^45> aka 4tB, has cbtHeightAndBize46 in its header
+	Cbt<2^45> aka 2tB, has cbtHeightAndBize46 in its header
 	instead of [ignoreThisBit1, short heightIf15, short curriesAllIf15, short curriesMoreIf15] in normal call pair.
-	Cbt<2^46> and bigger use normal call pairs. See maskIsBitstringUpTo4tB_ifFirstByteIsNotF9.
+	Cbt<2^46> and bigger use normal call pairs. See maskIsBitstringUpTo2tB_ifFirstByteIsNotF9.
 	Normal call pairs know their specific height if its 0..0x7ffe (Short.MAX_VALUE-1). 0x7fff means higher.
 	*/
 	public static short heightIf15(long header){
 		if(isLiteralCbt256(header)) return minHeightOfCbt+8;
-		if((header&maskIsBitstringUpTo4tB_ifFirstByteIsNotF9) != 0)
+		if((header&maskIsBitstringUpTo2tB_ifFirstByteIsNotF9) != 0)
 			return (short)(minHeightOfCbt+45-Long.numberOfLeadingZeros(header&mask46));
 		return (short)((header>>>30)&mask15);
 	}
@@ -397,18 +498,33 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	/** Op._root. This never occurs, at least in this prototype,
 	but may occur when mounting wikibinator105 in other systems like axiomforest.
 	*/
-	public static final long headerOfRoot = headerOfFuncall((byte)1, false, 0, 0, 7);
+	public static final long headerOfRoot = headerOfFuncall((byte)1, false, false, 0, 0, 7);
 	
-	/** (Op._root u) */
-	public static final long headerOfCleanLeaf = headerOfFuncall((byte)2, false, 1, 1, 6);
+	/** FIXME
+	??? (Op._root Op._root). FIXME _root isnt really a node in the system, so to make this consistent
+	I might need to define dirtyLeaf as (_root cleanLeaf).
+	Originally it was (leaf leaf) as the prefix of CLEAN and (leaf (leaf leaf)) as the prefix of DIRTY.
+	These kind of things wont break anything at the opbyte level, but the redesign
+	for the reflect ops (l r isleaf isclean L R Isleaf Isclean) to not be able to return _root
+	and instead (L cleanLeaf)->identityFunc and (R cleanLeaf)->cleanLeaf
+	and (L DirtyLeaf)->IdentityFunc and (R DirtyLeaf)->DirtyLeaf, for the purpose of (L x (R x)) equals x forall x...
+	That redesign will have to involve opbyte not always being made of isleaf of right child
+	since 1 of the bits in opbyte is for each of the first 0..7 curries,
+	and the first such curry was originally _root but _root cant be a node in the system (except for mounting it etc),
+	so that bit in opbyte (which slides to higher bit with each next curry) will mean clean vs dirty,
+	and all those opbits after it will mean isleaf vs is something other than leaf. 
+	*/
+	public static final long headerOfCleanLeaf = headerOfFuncall((byte)2, false, false, 1, 1, 6);
 	
-	/** (Op._root anything_except_u) such as (Op._root u) */
-	public static final long headerOfDirtyLeaf = headerOfFuncall((byte)3, false, 2, 1, 6);
+	/** FIXME see comment of headerOfCleanLeaf.
+	(Op._root anything_except_ROOT) such as (Op._root cleanLeaf). ???
+	*/
+	public static final long headerOfDirtyLeaf = headerOfFuncall((byte)3, false, false, 2, 1, 6);
 	
 	/** bize is bitstring size, which is stored in header if its up to 2^45-1 bits (4 terabytes).
 	TODO return what if its not a blob/cbt or is bigger than that? For now at least, returns -1 for that. 
 	*/
-	public static long bizeUpTo4tBElseNegOne(long header){
+	public static long bizeUpTo2tBElseNegOneIfBiggerCbtOrCantKnowFromOnlyHeaderCuzIsLiteralCbt256(long header){
 		if(isLiteralCbt256(header)) throw new RuntimeException("need the whole 256 bits to know where last 1 bit (if exists) is");
 		if((header&(1L<<46))!=0){ //the isBitstringUpTo4Terabytes bit. Will be 0 if is not a blob or if too big for header.
 			long cbtHeightAndBize46 = header&((1L<<46)-1);
@@ -433,7 +549,8 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	*/
 	public static Byte lizif(long header){
 		if(isLiteralCbt256(header)) return null;
-		return (byte)Math.max(0,bizeUpTo4tBElseNegOne(header)); //max changes -1 to 0
+		//max changes -1 to 0
+		return (byte)Math.max(0,bizeUpTo2tBElseNegOneIfBiggerCbtOrCantKnowFromOnlyHeaderCuzIsLiteralCbt256(header));
 	}
 	
 	/** Always works, unlike lizif(long header)==null if isLiteralCbt256(long header) cuz need more info.
