@@ -21,8 +21,11 @@ Or both may be evalingAndWontHalt which happens if (x λ) will never halt.
 */
 public enum λColor{
 	
-	/* λ/u/leaf/theUniversalFunction. */
-	coLeaf(true,true,true),
+	/* λ/u/leaf/theUniversalFunction. TODO should there be a separate color for CleanLeaf vs DirtyLeaf? */
+	coCleanLeaf(true,true,true),
+	
+	/* Λ/U/Leaf/TheUniversalFunction. TODO should there be a separate color for CleanLeaf vs DirtyLeaf? */
+	coDirtyLeaf(true,true,true),
 	
 	/** See comments in Op enum for what is and is not halted, based only on its forest shape,
 	which can be known in bigO(1) if certain caches are used or bigO(numberOfNodesReachableBelow) without those caches.

@@ -60,7 +60,7 @@ public interface λ<Subclass extends λ> extends UnaryOperator<Subclass>/*, Blob
 	--λColor.java comment 2021-2-12. Read more there.
 	*/
 	public default λColor color(){
-		return a() ? λColor.coLeaf : λColor.coHaltedNonleaf;
+		return a() ? (isclean() ? λColor.coCleanLeaf : λColor.coDirtyLeaf) : λColor.coHaltedNonleaf;
 	}
 	
 	/** UPDATE: superposition() will be done in user level code

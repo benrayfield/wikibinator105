@@ -1,6 +1,7 @@
 /** Ben F Rayfield offers this software opensource MIT license */
 package wikibinator105.impls.marklar105b.nodes;
 import static wikibinator105.impls.marklar105b.ImportStatic.*;
+import static wikibinator105.impls.marklar105b.ids.MarklarId105b.*;
 import wikibinator105.impls.marklar105b.ids.MarklarId105b;
 import wikibinator105.impls.marklar105b.*;
 import wikibinator105.spec.*;
@@ -13,19 +14,47 @@ public class Simpleλ extends AbstractFn{
 	
 	public final long header;
 	
-	/** leaf *
-	public Simpleλ(){
-		isLeafsByte = TODO this must be a specific thing given that leaf.l is identityFunc and leaf.r is leaf.
-	}*/
+	public final byte lizif;
 	
 	/** nonleaf */
 	public Simpleλ(fn l, fn r){
-	//public Simpleλ(λColor color, fn l, fn r){
 		this.l = l;
 		this.r = r;
+		
+		long lh = l.marklar105bHeader();
+		long rh = r.marklar105bHeader();
+		long myHeader = 0;
+		byte myLizif = 0;
+		boolean isLiteralCbt256 = false;
+		if(isLiteralCbt128(lh)){ //dont need to check rh cuz a cbt called on anything is a cbt twice as big
+			long lFirstLong = l.j(0);
+			if(lFirstLong>>56 != noncbt256firstbyte){ //this (whose childs are l and r) is a literal cbt256
+				myHeader = lFirstLong;
+				isLiteralCbt256 = true;
+			}
+		}
+		"FIXME set myLizif where?"
+		if(!isLiteralCbt256) myHeader = parentHeaderIfLeftIsNotACbt128(lh, l.lizif(), rh, r.lizif());;
+		header = myHeader;
+		lizif = myLizif;
+				
+				
+			
+		
+		/* 
+		//public Simpleλ(λColor color, fn l, fn r){
 		//this.opByte = parentOpByte(l.opByte(),r.opByte());
 		//this.opByte = parentOpByte(l.opByte(),r.opByte());
-		this.header = MarklarId105b.parentHeader(l.marklar105bHeader(), r.marklar105bHeader());
+		
+		return MarklarId105b.isLiteralCbt256(marklar105bHeader());
+		
+		public default boolean isLiteralCbt128(){
+			return MarklarId105b.heigh marklar105bHeader());
+		}
+		
+		this.header = MarklarId105b.parentHeader(l.marklar105bHeader(), l.lizif(), r.marklar105bHeader(), r.lizif());
+		*/
+		
 		//long[] headerAndBize = parentHeaderAndBize(color, l.header(), l.bize(), r.header(), r.bize()); //TODO optimize by not creating long[2]?
 		//this.header = headerAndBize[0];
 		//this.bize = headerAndBize[1];
@@ -83,16 +112,6 @@ public class Simpleλ extends AbstractFn{
 	}
 
 
-	public byte opbyte(){
-		throw new RuntimeException("TODO");
-	}
-
-
-	public Blob blob(){
-		throw new RuntimeException("TODO");
-	}
-
-
 	public fn apply(fn t){
 		throw new RuntimeException("TODO");
 	}
@@ -133,8 +152,8 @@ public class Simpleλ extends AbstractFn{
 	}
 
 
-	public boolean containsAxOf2Params(){
-		throw new RuntimeException("TODO");
+	public byte lizif(){
+		return lizif;
 	}
 
 }

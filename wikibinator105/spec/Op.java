@@ -708,6 +708,17 @@ public enum Op{
 		return opbyte<0 ? opbyte : (byte)(opbyte<<1);
 	}
 	
+	/*public static boolean isHalted(byte opbyte){
+		FIXME cant know this if its Op.curryOrInfcurOrTypeval as it has a variable number of curries
+		Do i need to add an isHalted bit? In marklar105b this can be known by curriesMoreIf15 being nonzero,
+		so opbyte isnt what need to compute this.
+		
+		if(opbyte >= 0) return true; //0..6 curries and is not _deeplazy
+		if(opbyte == 0) return false; //_deeplazy
+		//has 7 or more curries
+		if(opbyte == )
+	}*/
+	
 	//TODO rename isStrange to isVararg, counting ax as vararg since it evals at 2 specific number of curries,
 	//which is a very weak form of vararg compared to the curry ops and 0 and 1 ops.
 	

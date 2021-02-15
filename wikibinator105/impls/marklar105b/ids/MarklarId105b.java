@@ -44,6 +44,14 @@ It seems similar to how a universal function works. Theres only 1 word but you c
 */
 public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdmaker*/{
 	
+	/* Almost done.. TODO instead of 2 of 23, have 3 of 15 (reserve 1 bit to mean "some other data format, maybe cid/ipld/ipfs/URN/contenttype/etc related?"):
+		ignoreThisBit1 heightIf15 curryAllIf15 curryMoreIf15.
+	This way, can efficiently have cbts up to 2^32766 bits (sparse of course) since they have to verify height of their param,
+	and number of curries goes in id up to 32766 curries, and past that have to use lambdas to count curries up to unlimited.
+	32767 means "doesnt fit in 15 bits".
+	Know its a cbt IFF its Op.blob (which opbyte tells, which is copied from l().l().l()...l() after curry 7 forall node).
+	*/
+	
 	/*
 	//Here's the datastruct for MarklarId105b:
 	if(first byte is not 0xf9){
@@ -213,11 +221,20 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 			}
 			*/
 		}else{
-			long[] ret = new long[4];
-			ret[0] = header;
-			hash192(hashAlgorithm, ret, 1, leftHeader, leftB, leftC, leftD, rightHeader, rightB, rightC, rightD); //last 192 bits are hash
-			return ret;
+			return id256FromParentHeaderConcatHash192_onlyUseIfNotLiteralCbt(header, hashAlgorithm,
+				leftHeader, leftB, leftC, leftD,
+				rightHeader, rightB, rightC, rightD);
 		}
+	}
+	
+	/** returns id256 */
+	public static long[] id256FromParentHeaderConcatHash192_onlyUseIfNotLiteralCbt(
+			long header, String hashAlgorithm, long... in){
+		if(isLiteralCbt(header)) throw new RuntimeException("isLiteralCbt "+header);
+		long[] ret = new long[4];
+		ret[0] = header;
+		hash192(hashAlgorithm,ret,1,in);
+		return ret;
 	}
 	
 	/** last 192 bits of hashAlgorithm. returns long[3] */
@@ -225,6 +242,16 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 		long[] ret = new long[3];
 		hash192(hashAlgorithm,ret,0,in);
 		return ret;
+	}
+	
+	/** literal cbt1..256 that fits in an implies its 2 child id256s so dont need to store them */
+	public static boolean isLiteralCbt(long header){
+		//return isLiteralCbt256(header) || isLiteralCbt1To128(header);
+		return isCbt(header) && heightIf15(header)<=minHeightOfCbt+8;
+	}
+	
+	public static boolean isLiteralCbt1To128(long header){
+		return isCbt(header) && heightIf15(header)<minHeightOfCbt+8;
 	}
 	
 	/** change this, for example to "SHA256", and it will work in CPU,
@@ -236,24 +263,121 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 	/** last 192 bits of sha3_256. writes writeHere[offset..(offset+2)]. normally this is long[8] of 2 id256s.
 	*/
 	public static void hash192(String hashAlgorithm, long[] writeHere, int offset, long... in){
-		byte[] hash = HashUtil.sha3_256(MathUtil.longsToBytes(in));
+		byte[] hash = HashUtil.hash(hashAlgorithm,MathUtil.longsToBytes(in));
 		writeHere[offset] = MathUtil.readLongFromByteArray(hash, hash.length-24);
 		writeHere[offset+1] = MathUtil.readLongFromByteArray(hash, hash.length-16);
 		writeHere[offset+2] = MathUtil.readLongFromByteArray(hash, hash.length-8);
 	}
 	
+	/** If first byte is not this, its a literal cbt256 that is its own id, so most random 256 bits are their own id,
+	else its a normal id.
+	*/
+	public static final byte noncbt256firstbyte = (byte)0xf9;
 	
-	public static final int mask23 = (1<<23)-1;
+	public static final long noncbt256firstbyteLong = ((long)noncbt256firstbyte)<<56;
+	
+	public static final long mask15 = (1<<15)-1;
+	
+	public static final long mask45 = (1L<<45)-1;
 	
 	public static final long mask46 = (1L<<46)-1;
 	
-	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, int curriesAllIf23, int curriesMoreIf23){
-		return 0xf900000000000000L | ((opbyte&0xffL)<<48) | (containsAxOf2Params?(1L<<47):0L)
-			| (((long)(curriesAllIf23&mask23))<<23) | (curriesMoreIf23&mask23);
+	/** If first byte is not 0xf9, none of the masks apply, as all 256 bits of the id are literal data */
+	public static final long maskContainsAxof2params_ifFirstByteIsNotF9 = (1L<<47);
+	
+	/** If first byte is not 0xf9, none of the masks apply, as all 256 bits of the id are literal data */
+	public static final long maskIsBitstringUpTo4tB_ifFirstByteIsNotF9 = (1L<<46);
+	
+	/** height of (Op.blob u) and of (Op.blob (u u)) */
+	public static final int minHeightOfCbt = 7;
+	
+	/** casts the ints to shorts */
+	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, int heightIf15, int curriesAllIf15, int curriesMoreIf15){
+		return headerOfFuncall(opbyte, containsAxOf2Params, (short)heightIf15, (short)curriesAllIf15, (short)curriesMoreIf15);
+	}
+	
+	public static long headerOfFuncall(byte opbyte, boolean containsAxOf2Params, short heightIf15, short curriesAllIf15, short curriesMoreIf15){
+		//TODO verify the 3 shorts are all positive else throw? or drop the sign bit (using mask15)?
+		return noncbt256firstbyteLong | ((opbyte&0xffL)<<48)
+			| (containsAxOf2Params?maskContainsAxof2params_ifFirstByteIsNotF9:0L)
+			| (((long)heightIf15)<<30) | ((long)curriesMoreIf15<<15) | (long)curriesMoreIf15;
+			//| (((long)(curriesAllIf23&mask23))<<23) | (curriesMoreIf23&mask23);
+	}
+	
+	/** cbtHeight is (TODO) height+heightOfCbt1 */
+	public static long cbtHeightAndBize46(int cbtHeight, long bize){
+		if(cbtHeight > 45 || (bize&mask45) != bize) throw new RuntimeException(
+			"Too big to fit in cbtHeightAndBize46 cbtHeight="+cbtHeight+" bize="+bize);
+		return (1L<<cbtHeight)|bize;
 	}
 	
 	public static long headerOfBlobUpTo4tBThatsNotALiteralCbt256(byte opbyte, long cbtHeightAndBize46){
-		return 0xf900400000000000L | ((opbyte&0xffL)<<48) | (cbtHeightAndBize46&mask46);
+		return noncbt256firstbyteLong | maskIsBitstringUpTo4tB_ifFirstByteIsNotF9
+			| ((opbyte&0xffL)<<48) | (cbtHeightAndBize46&mask46);
+	}
+	
+	/** Nonnegative short. 0x7fff (Short.MAX_VALUE) means higher.
+	If first byte is noncbt256firstbyte, height is minHeightOfCbt+8.
+	Height of a cbt of size 2^n bits is minHeightOfCbt+n.
+	Cbt of size 1 2 4 8 16 32 64 128 and usually 256 (depending on first byte) fits in an id256.
+	Cbt<2^45> aka 4tB, has cbtHeightAndBize46 in its header
+	instead of [ignoreThisBit1, short heightIf15, short curriesAllIf15, short curriesMoreIf15] in normal call pair.
+	Cbt<2^46> and bigger use normal call pairs. See maskIsBitstringUpTo4tB_ifFirstByteIsNotF9.
+	Normal call pairs know their specific height if its 0..0x7ffe (Short.MAX_VALUE-1). 0x7fff means higher.
+	*/
+	public static short heightIf15(long header){
+		if(isLiteralCbt256(header)) return minHeightOfCbt+8;
+		if((header&maskIsBitstringUpTo4tB_ifFirstByteIsNotF9) != 0)
+			return (short)(minHeightOfCbt+45-Long.numberOfLeadingZeros(header&mask46));
+		return (short)((header>>>30)&mask15);
+	}
+	
+	/** Nonnegative short. 0x7fff (Short.MAX_VALUE) means more than 0x7ffe total curries (so far + more) before eval */
+	public static short curriesAllIf15(long header){
+		if(isCbt(header)){
+			return Short.MAX_VALUE; //cbt (like infcur) has infinity curries left, just keeps appending curries
+			//return heightIf15(header); //FIXME is this right?
+		}else{
+			return (short)((header>>>15)&mask15);
+		}
+	}
+	
+	
+	/** Nonnegative short. 0x7fff (Short.MAX_VALUE) means more than 0x7ffe curries before eval */
+	public static short curriesMoreIf15(long header){
+		if(isCbt(header)){
+			return Short.MAX_VALUE; //cbt (like infcur) has infinity curries left, just keeps appending curries
+		}else{
+			return (short)(header&mask15);
+		}
+	}
+	
+	/** If true, contains any (Op.ax x y) for any x and y, which affect SyncLevel
+	(makes it harder to sync cuz it claims things about what calls return what else vs return something other than that,
+	which is necessary for caching func_param_return but you dont have to (or can) share those caches in p2p network
+	which accumulates them as bloomFilter of you cant have (Op.ax u y) and (Op.ax (u u) y) for any y,
+	aka you cant have (AxA y) and (axB y) for any y, cuz (axA y) means (y u)->u and (axB y) means (y u)-> anything_except_u.
+	Also, Op.ax is how to do typed lambdas (param can be anything, and return is a constraint system with turingComplete types),
+	such as the constraint (ax u (fpr func param ret)) is a claim that (func param)->ret.
+	Its most reliable to only share things that are CLEAN (vs DIRTY) and !containsAxof2params(its header),
+	and explore into DIRTY andOr containsAxof2params as a research path.
+	*/
+	public static boolean containsAxof2params(long header){
+		return isLiteralCbt256(header) ? false : ((header&maskContainsAxof2params_ifFirstByteIsNotF9) != 0);
+	}
+	
+	public static boolean isHalted(long header){
+		return curriesMoreIf15(header)>0;
+	}
+	
+	public static final byte opByteOfBlobStartingWith1 = Op.opbyteConcatCleanleaf(Op.opbyte(Op.blob));
+	
+	public static final byte opByteOfBlobStartingWith0 = Op.opbyteConcatAnythingButCleanleaf(Op.opbyte(Op.blob));
+	
+	public static boolean isCbt(long header){
+		byte opbyte = opbyte(header);
+		//TODO optimize those 2 opbytes differ by only the low bit of opbyte. use a mask and 1 ==? 
+		return opbyte==opByteOfBlobStartingWith1 || opbyte==opByteOfBlobStartingWith0;
 	}
 	
 	/** If !isLiteralCbt256(header) then use headerOfFuncall of 2 cbt128. Most random 256 bits are their own id,
@@ -266,19 +390,20 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 		return header;
 	}
 	
-	/** Op._deeplazy */
+	/** Op._deeplazy. This isnt a constant. It needs to know heightIf15 *
 	public static final long headerOfDeeplazy = headerOfFuncall((byte)0, false, 0, 0);
+	*/
 	
 	/** Op._root. This never occurs, at least in this prototype,
 	but may occur when mounting wikibinator105 in other systems like axiomforest.
 	*/
-	public static final long headerOfRoot = headerOfFuncall((byte)1, false, 0, 7);
+	public static final long headerOfRoot = headerOfFuncall((byte)1, false, 0, 0, 7);
 	
 	/** (Op._root u) */
-	public static final long headerOfCleanLeaf = headerOfFuncall((byte)2, false, 1, 6);
+	public static final long headerOfCleanLeaf = headerOfFuncall((byte)2, false, 1, 1, 6);
 	
 	/** (Op._root anything_except_u) such as (Op._root u) */
-	public static final long headerOfDirtyLeaf = headerOfFuncall((byte)3, false, 1, 6);
+	public static final long headerOfDirtyLeaf = headerOfFuncall((byte)3, false, 2, 1, 6);
 	
 	/** bize is bitstring size, which is stored in header if its up to 2^45-1 bits (4 terabytes).
 	TODO return what if its not a blob/cbt or is bigger than that? For now at least, returns -1 for that. 
@@ -337,9 +462,9 @@ public final class MarklarId105b /*implements IdMaker_old_useFuncsDirectlyAsIdma
 		return header>>>56 != 0xf9;
 	}
 	
-	public static final byte opByteOfBlobStartingWith1 = Op.opbyteConcatCleanleaf(Op.opbyte(Op.blob));
-	
-	public static final byte opByteOfBlobStartingWith0 = Op.opbyteConcatAnythingButCleanleaf(Op.opbyte(Op.blob));
+	public static boolean isLiteralCbt128(long header){
+		return isCbt(header) && heightIf15(header)==minHeightOfCbt+7;
+	}
 	
 	public static byte opbyte(long header){
 		return isLiteralCbt256(header)

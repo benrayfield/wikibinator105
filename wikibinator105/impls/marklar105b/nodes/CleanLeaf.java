@@ -60,4 +60,9 @@ public class CleanLeaf extends AbstractFn{
 		throw new RuntimeException("TODO");
 	}
 
+	/** 0 cuz not a cbt so its bize is 0 */
+	public byte lizif(){
+		return 0;
+	}
+
 }

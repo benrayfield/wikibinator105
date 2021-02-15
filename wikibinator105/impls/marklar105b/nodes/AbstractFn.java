@@ -3,6 +3,7 @@ package wikibinator105.impls.marklar105b.nodes;
 import static wikibinator105.impls.marklar105b.ImportStatic.*;
 import wikibinator105.impls.marklar105b.fn;
 import wikibinator105.impls.marklar105b.evalers.InterpretedModeUsingJavaStack;
+import wikibinator105.impls.marklar105b.ids.MarklarId105b;
 import wikibinator105.spec.*;
 
 public abstract class AbstractFn implements fn{
@@ -29,6 +30,11 @@ public abstract class AbstractFn implements fn{
 	
 	public void setCompiled(EvalerChain c){
 		chain = c;
+	}
+	
+
+	public boolean containsAxOf2Params(){
+		return MarklarId105b.containsAxof2params(marklar105bHeader()) ;
 	}
 
 }
